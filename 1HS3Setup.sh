@@ -1,4 +1,5 @@
 #1HS3 FOLDED PREP
+#run with tleap -s -f leap.in on CL
 
 source leaprc.RNA.OL3
 source leaprc.water.tip3p
