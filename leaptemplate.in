@@ -1,0 +1,14 @@
+#Template FOLDED PREP
+#run with tleap -s -f leap.in on CL
+
+source leaprc.RNA.OL3
+source leaprc.water.tip3p
+mol = loadpdb in.pdb
+addions mol Na+ 0
+solvateoct mol TIP3PBOX 10.0
+addionsrand mol Na+ 000 Cl- 000
+savepdb mol out.pdb
+saveamberparm mol out.prmtop out.inpcrd
+saveamberparm mol out.prmtop out.rst7
+check mol
+quit
