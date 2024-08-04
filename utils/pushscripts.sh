@@ -6,6 +6,7 @@
 # DO NOT cp data files
 # RUN ME FROM THE PROJECT DIRECTORY SCRIPTS FOLDER
 # /afs/crc.nd.edu/user/i/ithomps3/VersionControlled/utils/pushscripts.sh $OutputName #$CommitMessage
+# With alias in .bashrc command is **** pushscripts $OutputName *******
 # -------------------
 
 ISABEL_GIT_DIR="/afs/crc.nd.edu/user/i/ithomps3/VersionControlled/"
