@@ -1,9 +1,9 @@
 #!/bin/bash 
-#$ -M nkarpins@nd.edu
+#$ -M ithomps3@nd.edu
 #$ -m abe
 #$ -pe smp 24 
 #$ -q long
-#$ -N admy-dna1check 
+#$ -N GGC-rna-md1check 
 
 module load amber/22.0
 

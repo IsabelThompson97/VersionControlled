@@ -1,9 +1,9 @@
-#!/bin/bash
-#$ -M nkarpins@nd.edu
+#!/bin/bash 
+#$ -M ithomps3@nd.edu
 #$ -m abe
-#$ -pe smp 24
+#$ -pe smp 24 
 #$ -q long
-#$ -N md3_doublecheck 
+#$ -N md3_GGCcheck 
 
 module load amber/22.0
 
