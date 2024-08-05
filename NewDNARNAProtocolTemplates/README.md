@@ -125,7 +125,7 @@ Once you have created these files (your system), you may proceed with the “New
 2.	Second minimization: Let everything relax 
 -	2500 steps (1000 steepest descents/1500 conjugate gradient)
 3.	Defrost (md1): Begin constant volume to warm to proper temperature with restrained solute
--	100ps NPT 
+-	100ps NVT 
 -	Langevin temperature control 0 -> 300K
 -	25 kcal/mol-Å2 restraints (solute)
 4.	Equilibration (md2): Switch to constant pressure to get proper density while gradually releasing restraints on solute (5-stage release with strong restraints for first 40ps while density is changing most rapidly)250ps NPT
