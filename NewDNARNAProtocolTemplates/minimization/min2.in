@@ -1,4 +1,4 @@
-dna_distamycin minimization run
+ggc minimization run
  &cntrl
   imin=1,
   ntx=1,
