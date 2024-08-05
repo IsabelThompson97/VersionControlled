@@ -7,4 +7,4 @@
 
 module load amber/22.0
 
-mpirun -np $NSLOTS $AMBERHOME/bin/sander.MPI -O -i md4.in -o md4.out -p final_double_bound.prmtop -c md3_NewVolume.rst -r md4.rst -x md4.nc -ref md3.rst
+mpirun -np $NSLOTS $AMBERHOME/bin/sander.MPI -O -i md4.in -o md4.out -p ggc.prmtop -c md3_NewVolume.rst -r md4.rst -x md4.nc -ref md3.rst
