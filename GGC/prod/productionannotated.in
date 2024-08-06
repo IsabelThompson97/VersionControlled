@@ -1,0 +1,14 @@
+Production run NVT
+ &cntrl
+  imin=0,                          ## No minimization
+  irest=1, ntx=5,                  ## Restart MD with coordinates
+  ntb=1,                           ## Periodic boundaries, constant volume
+  ig=-1,                           ## Random seed
+  cut=10.0,                        ## Non-bonded interactions cutoff 10A
+  ntc=2, ntf=2,                    ## ntc=2 Hydrogen bond constraints SHAKE for TIP3P
+  tempi=310.0, temp0=310.0,        ## Temp controlled 310K intial, 310k hold
+  ntt=3, gamma_ln=1.0,             ## Langevin thermostat, collision freq. 1.0^-1 ps
+  nstlim=50000000, dt=0.002,       ## ntslim=50000000 steps; dt=0.002 ps timestep
+  ntpr=1000 ntwx=500, ntwr=10000,  ## ntpr=Every 1000 steps energy printed to human readable .mdout and .mdinfo
+ /                                 ## ntwr=Every 10000 steps restrt file written
+                                   ## ntwx=Every 500 steps coordinates written to .mdcrd
