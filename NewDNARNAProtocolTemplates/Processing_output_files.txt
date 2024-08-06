@@ -15,4 +15,4 @@ process_mdout.perl ../../md1.out ../../md2a.out ../../md2b.out ../../md2c.out ..
 
 xmgrace summary.EPTOT
 xmgrace summary.EKTOT
-xmgrave summary.ETOT
+xmgrave summary.ETOT #### Other metrics of interest ####
