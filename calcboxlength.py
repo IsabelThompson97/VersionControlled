@@ -5,7 +5,7 @@ length = 51.0315158
 predicted_volume = (1/2)*(4/3)**(3/2)*(length)**3
 print("Predicted volume:",predicted_volume)
 
-average_actual_volume = 117830.1850
+average_actual_volume = 102563.4482
 print("Average volume:",average_actual_volume)
 
 length_3 = average_actual_volume/((1/2)*(4/3)**(3/2))
