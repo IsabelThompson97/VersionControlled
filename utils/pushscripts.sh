@@ -20,7 +20,8 @@ STORE_AT=$ISABEL_GIT_DIR$ARG_1
 
 mkdir $STORE_AT
 
-cp * $STORE_AT
+cp *.in $STORE_AT
+cp *.sh $STORE_AT
 
 # ------------
 
