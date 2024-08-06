@@ -1,8 +1,18 @@
 ### To analyze Total Energy, Kinetic Energy, Potential Energy, Temperature, Pressure, Volume, and Density ###
 ### To analyze Average Energy, Kinetic Energy, Potential Energy, Temperature, Pressure, Volume, and Density ###
 
+module load amber/22.0
+module load xmgr
+
 mkdir analysis
 
 cd analysis
 
+mkdir mdX
+
 process_mdout.perl ../md1.out ../md2a.out ../md2b.out ../md2c.out ../md2d.out ### whatever output files you want to analyze ###
+process_mdout.perl ../../md1.out ../../md2a.out ../../md2b.out ../../md2c.out ../../md2d.out ../../md2e.out ../../md3.out ../../md4.out
+
+xmgrace summary.EPTOT
+xmgrace summary.EKTOT
+xmgrave summary.ETOT
