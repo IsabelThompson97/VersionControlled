@@ -7,9 +7,9 @@ source leaprc.water.tip3p
 mol = loadpdb ggc_h.pdb
 addions mol Na+ 0
 solvateoct mol TIP3PBOX 12.0
-addionsrand mol Na+ 57 Cl- 57
-savepdb mol finalGGC.pdb
+addionsrand mol Na+ 57 Cl- 57 #unfolded Na+ 436 Cl- 436
+check mol
+savepdb mol finalggc.pdb
 saveamberparm mol ggc.prmtop ggc.inpcrd
 saveamberparm mol ggc.prmtop ggc.rst7
-check mol
 quit
