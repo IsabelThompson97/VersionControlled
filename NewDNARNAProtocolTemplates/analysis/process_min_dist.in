@@ -1,0 +1,8 @@
+parm file.prmtop
+trajin file.nc
+# trajin #2
+# trajin #3
+# .
+autoimage :your residue numbers
+nativecontacts :residue #(s) you are interested in :other residue #(s) you are interested in mindist name mindistData
+run
