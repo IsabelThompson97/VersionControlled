@@ -1,0 +1,15 @@
+parm ggc.prmtop
+trajin md_final01.nc
+trajin md_final2.nc
+trajin md_final3.nc
+trajin md_final4.nc
+trajin md_final5.nc
+trajin md_final6.nc
+trajin md_final7.nc
+trajin md_final8.nc
+trajin md_final9.nc
+trajin md_final_10.nc
+
+autoimage :1-12
+hbond hbonds out hbonds.dat
+run
