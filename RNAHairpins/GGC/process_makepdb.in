@@ -1,5 +1,5 @@
 parm ggc.prmtop
-trajin md_final9.nc 1000 2000
+trajin md_final9.nc 1000 1100
 
 autoimage
 trajout md9pdb.pdb pdb

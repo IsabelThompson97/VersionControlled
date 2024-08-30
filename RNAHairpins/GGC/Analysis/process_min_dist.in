@@ -13,3 +13,4 @@ trajin md_final_10.nc
 autoimage :1-12
 nativecontacts :1 :12 mindist name mindistData
 run
+quit
