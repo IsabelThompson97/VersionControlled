@@ -4,5 +4,6 @@ trajin file.nc
 # trajin #3
 # .
 # .
-rms first:1-12&!@H= out rmsd.dat
+rms first :yourresiduenumbers&!@H= out rmsd.dat
 run
+quit

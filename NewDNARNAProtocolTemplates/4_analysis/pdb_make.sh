@@ -3,7 +3,7 @@
 #$ -m abe
 #$ -pe smp 24
 #$ -q long
-#$ -N  md9_makepdb
+#$ -N  pdbmodel_makepdb
 
 module load amber/22.0
 

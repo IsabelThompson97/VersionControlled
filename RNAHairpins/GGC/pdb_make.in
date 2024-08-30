@@ -1,7 +1,0 @@
-parm ggc.prmtop
-trajin md_final9.nc 1000 1010
-
-autoimage
-trajout md9pdb.pdb pdb
-run
-quit
