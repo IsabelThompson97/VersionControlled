@@ -4,6 +4,7 @@ trajin file.nc
 # trajin #3
 # .
 # .
+autoimage :yourresiduenumbers
 rms first :yourresiduenumbers&!@H= out rmsd.dat
 run
 quit
