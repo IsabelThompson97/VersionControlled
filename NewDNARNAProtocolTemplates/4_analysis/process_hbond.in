@@ -1,0 +1,10 @@
+parm file.prmtop
+trajin file.nc
+# trajin #2
+# trajin #3
+# .
+# .
+autoimage :your residue numbers
+hbond hbonds out hbonds.dat
+run
+quit

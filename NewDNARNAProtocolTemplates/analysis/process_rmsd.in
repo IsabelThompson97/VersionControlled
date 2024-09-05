@@ -1,8 +1,0 @@
-parm file.prmtop
-trajin file.nc
-# trajin #2 
-# trajin #3
-# .
-# .
-rms first:1-12&!@H= out rmsd.dat
-run

@@ -7,4 +7,4 @@
 
 module load amber/22.0
 
-cpptraj -i process_rmsd.in
+cpptraj -i process_rmsd.in #change .in script for different analyses

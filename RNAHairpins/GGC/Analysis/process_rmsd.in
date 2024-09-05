@@ -10,6 +10,7 @@ trajin md_final8.nc
 trajin md_final9.nc
 trajin md_final_10.nc
 
+autoimage :1-12
 rms first :1-12&!@H= out rmsd.dat
 run
 quit

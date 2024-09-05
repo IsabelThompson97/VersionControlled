@@ -6,3 +6,5 @@ trajin file.nc
 autoimage :your residue numbers
 nativecontacts :residue #(s) you are interested in :other residue #(s) you are interested in mindist name mindistData
 run
+write mindist.dat mindistData[mindist]
+quit

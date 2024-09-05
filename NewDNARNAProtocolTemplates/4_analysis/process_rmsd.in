@@ -1,0 +1,10 @@
+parm file.prmtop
+trajin file.nc
+# trajin #2 
+# trajin #3
+# .
+# .
+autoimage :yourresiduenumbers
+rms first :yourresiduenumbers&!@H= out rmsd.dat
+run
+quit
