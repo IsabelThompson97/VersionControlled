@@ -11,6 +11,6 @@ trajin md_final9.nc
 trajin md_final_10.nc
 
 autoimage :1-12
-rms first :1-12&!@H= out rmsd.dat
+rms first :1-12&!@H= out ./process_cpptraj/rmsd.dat
 run
 quit

@@ -11,6 +11,6 @@ trajin md_final9.nc
 trajin md_final_10.nc
 
 autoimage :1-12
-hbond hbonds out hbonds.dat
+hbond hbonds out ./process_cpptraj/hbonds.dat
 run
 quit
