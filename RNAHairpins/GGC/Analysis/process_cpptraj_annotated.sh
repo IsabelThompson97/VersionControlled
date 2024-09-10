@@ -29,7 +29,7 @@ cp rmsd.dat rmsd.txt
 # cp hbonds.dat hbonds.txt
 
 #_____________________________________________
-# cpptraj -i ./process_cpptraj/process_min_dist.in
+# cpptraj -i ./process_cpptraj/process_minDist.in
 # cd process_cpptraj
 # cp minDist.dat minDist.txt
 
