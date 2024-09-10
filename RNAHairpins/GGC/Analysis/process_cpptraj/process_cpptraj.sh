@@ -8,20 +8,17 @@
 
 module load amber/22.0
 
-cd ..
+cpptraj -i process_hbondsLifetime.in
 
-cpptraj -i ./process_cpptraj/process_rmsd.in
-
-cd process_cpptraj
-cp rmsd.dat rmsd.txt
+# -----------------------------------------
+# cpptraj -i process_rmsd.in
+# cp rmsd.dat rmsd.txt
 
 # ----------------------------------------
-# cpptraj -i ./process_cpptraj/process_hbondFrames.in
-# cd process_cpptraj
+# cpptraj -i process_hbondFrames.in
 # cp hbondFrames.dat hbondFrames.txt
 
 #_____________________________________________
-# cpptraj -i ./process_cpptraj/process_minDist.in
-# cd process_cpptraj
+# cpptraj -i process_minDist.in
 # cp minDist.dat minDist.txt
 
