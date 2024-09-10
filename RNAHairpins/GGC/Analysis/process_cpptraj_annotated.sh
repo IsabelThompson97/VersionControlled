@@ -24,9 +24,9 @@ cd process_cpptraj
 cp rmsd.dat rmsd.txt
 
 # ----------------------------------------
-# cpptraj -i ./process_cpptraj/process_hbondframes.in
+# cpptraj -i ./process_cpptraj/process_hbondFrames.in
 # cd process_cpptraj
-# cp hbonds.dat hbonds.txt
+# cp hbondFrames.dat hbondFrames.txt
 
 #_____________________________________________
 # cpptraj -i ./process_cpptraj/process_minDist.in
