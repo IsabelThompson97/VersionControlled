@@ -1,0 +1,13 @@
+parm topology.prmtop
+trajin md*.nc
+autoimage
+strip :WAT
+trajout trajctory_noWater.nc
+run
+
+parmin topology.prmtop
+parm topology.prmtop
+parmstrip :WAT
+parmwrite out topology_noWater.prmtop
+run
+quit

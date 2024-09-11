@@ -7,4 +7,4 @@
 
 module load amber/22.0
 
-cpptraj -i pdb_make.in
+cpptraj -i pmakePDB.in
