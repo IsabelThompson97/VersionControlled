@@ -11,7 +11,7 @@ trajin ../md_final9.nc
 trajin ../md_final_10.nc
 
 autoimage
-hbond contacts :1-12 avgout hbondLifetimeAvg.dat series nointramol uuseries hbondLifetime.gnu
+hbond contacts :1-12 avgout hbondLifetimeAvg.dat series uuseries hbondLifetime.gnu
 go
 lifetime contacts[solutehb] out hbondContactsLifetime.dat
 go
