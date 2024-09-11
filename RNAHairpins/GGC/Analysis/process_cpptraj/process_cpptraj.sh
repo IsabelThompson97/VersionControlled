@@ -3,7 +3,7 @@
 #$ -m abe
 #$ -pe smp 24
 #$ -q long
-#$ -N cpptrajProcess_ggcFolded
+#$ -N hbondsLifetime_ggcFolded
 
 
 module load amber/22.0
