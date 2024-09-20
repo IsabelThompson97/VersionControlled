@@ -3,12 +3,17 @@
 #$ -m abe
 #$ -pe smp 24
 #$ -q long
-#$ -N hbondsLifetime_ggcFolded
+#$ -N radGyr_ggcFolded
 
 
 module load amber/22.0
 
-cpptraj -i process_hbondsLifetime.in
+cpptraj -i process_radiusGyr.in
+cp radGyr.dat radGyr.txt
+
+# -----------------------------------------
+
+#cpptraj -i process_hbondsLifetime.in
 
 # -----------------------------------------
 # cpptraj -i process_rmsd.in
