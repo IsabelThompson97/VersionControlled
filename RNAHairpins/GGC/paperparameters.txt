@@ -1,4 +1,4 @@
-Project Parameters from Paper
+Parameters from Paper
 
 Periodic Boundary Conditions: Truncated octahedreal box, min distance 10 A (solvateoct mol TIP3PBOX 10.0)(cut=10)
 Force Field: Amber f99 + bsc0 + XOL3 (source leaprc.RNA.OL3)
