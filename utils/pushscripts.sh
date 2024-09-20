@@ -22,6 +22,8 @@ mkdir $STORE_AT
 
 cp *.in $STORE_AT
 cp *.sh $STORE_AT
+cp *.ipynb $STORE_AT
+cp *.py $STORE_AT
 
 # ------------
 
