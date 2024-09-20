@@ -1,0 +1,14 @@
+Project Parameters from Paper
+
+Periodic Boundary Conditions: Truncated octahedreal box, min distance 12 A (solvateoct mol TIP3PBOX 12.0, cut 12.0)(cut=10 in min and md)
+Force Field: Amber f99 + bsc0 + XOL3 (source leaprc.RNA.OL3)
+Water Model: TIP3P (source leaprc.water.tip3p)
+Neutralize RNA (addions mol Na+ 0)
+Add 1 M NaCl (addionsrand mol Na+ X Cl- X)
+
+
+Thermostat: Langevin 310K, timestep 2 ps, collison freq 1 ps-1 (temp=310; ntt=3 gamma_ln=1.0)
+Barostat: Monte Carlo, 100 step attempt frequency (ntp=1; barostat=2)
+Hydrogen Bond Constraints: SHAKE (ntc=2; ntf=2)
+Restraints: Keep as standard release through equilibration (restraintmask=' :1-12')
+Simulation time: Stepwise minimzation and equilibration
