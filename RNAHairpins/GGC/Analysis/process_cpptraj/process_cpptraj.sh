@@ -3,13 +3,12 @@
 #$ -m abe
 #$ -pe smp 24
 #$ -q long
-#$ -N radGyr_ggcFolded
-
+#$ -N radGyrHeavy_folded
 
 module load amber/22.0
 
 cpptraj -i process_radiusGyr.in
-cp radGyr.dat radGyr.txt
+cp radGyrHeavyOnly.dat radGyrHeavyOnly.txt
 
 # -----------------------------------------
 

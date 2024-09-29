@@ -10,7 +10,7 @@ trajin ../../../production/md_final8.nc
 trajin ../../../production/md_final9.nc
 trajin ../../../production/md_final_10.nc
 autoimage :1-12
-nativecontacts :1 :12 mindist name mindistData
+nativecontacts :1@8 :12@365 mindist name mindistDataO
 run
-write minDist.dat mindistData[mindist]
+write minDistRiboseO.dat mindistDataO[mindist]
 quit

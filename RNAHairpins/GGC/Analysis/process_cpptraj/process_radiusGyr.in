@@ -11,6 +11,6 @@ trajin ../../../production/md_final9.nc
 trajin ../../../production/md_final_10.nc
 
 autoimage
-radgyr :1-12 out radGyr.dat mass nomax
+radgyr :1-12&!(@H=) out radGyrHeavyOnly.dat mass nomax
 run
 quit
