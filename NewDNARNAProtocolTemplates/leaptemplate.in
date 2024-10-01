@@ -12,4 +12,4 @@ savepdb mol out.pdb
 saveamberparm mol out.prmtop out.inpcrd
 saveamberparm mol out.prmtop out.rst7
 check mol
-quit
+quit 
