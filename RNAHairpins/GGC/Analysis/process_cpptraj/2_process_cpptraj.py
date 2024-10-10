@@ -6,66 +6,44 @@ import time as time
 
 class RadiusofGyrationAnalysis:
     def __init__(self, txt_file_path):
-        # Initialize the file paths
         self.txt_file_path = txt_file_path
         self.csv_file_path = 'radGyrData.csv'  # Output .csv file path
         self.output_file_path = 'AnalysisOutput.txt'  # Output .txt file path
+        self.time = time.asctime()
 
     def append_to_output(self, text):
-        self.time = time.asctime()
         with open(self.output_file_path, 'a') as f:
             f.write(text + '\n\n')
 
     def convert_txt_to_csv(self):
-        # Define your custom column names
         column_names = ['Frame', 'RadiusofGyration']
-        
-        # Read the .txt file while skipping the first line, assigning custom column names, and handling whitespace
         data = pd.read_csv(self.txt_file_path, sep=r'\s+', skiprows=1, names=column_names)
-        
-        # Save the data as .csv
         data.to_csv(self.csv_file_path, index=False)
         self.append_to_output(f"Data successfully converted to {self.csv_file_path}")
 
-    def scale_x_axis_to_ns(self, total_simulation_ns):
-        # Load the CSV data
+    def scale_x_to_ns(self, total_ns):
         data = pd.read_csv(self.csv_file_path)
-
-        # Calculate the total number of frames
         total_frames = data['Frame'].max()
-
-        # Scale Frame column to nanoseconds and create new "Time(ns)" column
-        data['Time(ns)'] = data['Frame'] * (total_simulation_ns / total_frames)
-
-        # Save the new data with the Time(ns) column
-        scaled_csv_file_path = 'radGyrData.csv'
-        data.to_csv(scaled_csv_file_path, index=False)
-        self.csv_file_path = scaled_csv_file_path  # Update to use this file in future
+        data['Time(ns)'] = data['Frame'] * (total_ns / total_frames)
+        data.to_csv(self.csv_file_path, index=False)
         self.append_to_output(f"Data scaled to {total_ns} ns and saved to {self.csv_file_path}")
 
     def analyze_and_plot(self):
-        # Load the scaled CSV data
         data = pd.read_csv(self.csv_file_path)
-
-        # Extract both columns
         time_ns = data['Time(ns)']
         radGyr = data['RadiusofGyration']
 
-        # Calculate the statistics
         max_value = radGyr.max()
         min_value = radGyr.min()
         average = radGyr.mean()
         std_dev = radGyr.std()
 
-        # Find the frames corresponding to the max and min values
         max_frame = data.loc[radGyr.idxmax(), 'Frame']
         min_frame = data.loc[radGyr.idxmin(), 'Frame']
 
-        # Find the top 5 largest and smallest values
         top_5_largest = data.nlargest(5, 'RadiusofGyration')
         top_5_smallest = data.nsmallest(5, 'RadiusofGyration')
 
-        # Create a text output
         output_text = (
             f"Maximum Radius of Gyration (Å): {max_value} (Frame: {max_frame})\n"
             f"Minimum Radius of Gyration (Å): {min_value} (Frame: {min_frame})\n"
@@ -77,19 +55,15 @@ class RadiusofGyrationAnalysis:
             f"{top_5_smallest[['Frame', 'RadiusofGyration']].to_string(index=False)}\n"
         )
 
-        # Append the text output to the file
         self.append_to_output('------------------- Radius of Gyration ------------------------------  ' + self.time + '\n\n' + output_text + '\n' 
                               + '-------------------------------------------------' + '\n\n')
 
-        # Plot the data using Time(ns) for the x-axis
         plt.figure(figsize=(12, 6))
         plt.plot(time_ns, data['RadiusofGyration'], color='purple', alpha=0.75, linewidth=.3)
         plt.xlim(0, time_ns.max())
 
-        # Add horizontal line for the average value
         plt.hlines(y=average, xmin=time_ns.min(), xmax=time_ns.max(), color='r', linestyle='-')
 
-        # Add labels and title
         plt.xlabel('Time (ns)')
         plt.ylabel('Radius of Gyration (Å)')
         plt.title('Radius of Gyration vs. Time (ns)')
@@ -97,16 +71,13 @@ class RadiusofGyrationAnalysis:
         ticks = np.linspace(0, time_ns.max(), num=11)
         plt.xticks(ticks=ticks, labels=[f'{tick:.1f}' for tick in ticks])
 
-        # Save the plot to a file
         plot_file_path = 'radGyrPlot.png'
         plt.savefig(plot_file_path)
 
-        # Show the plot
         plt.show()
 
 class MinDistAnalysis:
     def __init__(self, txt_file_path):
-        # Initialize the file paths
         self.txt_file_path = txt_file_path
         self.csv_file_path = 'minDistData.csv'  # Output .csv file path
         self.output_file_path = 'AnalysisOutput.txt'  # Output .txt file path
@@ -139,15 +110,12 @@ class MinDistAnalysis:
         average = min_dist.mean()
         std_dev = min_dist.std()
 
-        # Find the frames corresponding to the max and min values
         max_frame = data.loc[min_dist.idxmax(), 'Frame']
         min_frame = data.loc[min_dist.idxmin(), 'Frame']
 
-        # Find the top 5 largest and smallest values
         top_5_largest = data.nlargest(5, 'MinDist')
         top_5_smallest = data.nsmallest(5, 'MinDist')
 
-        # Create a text output
         output_text = (
             f"Maximum Distance (Å): {max_value} (Frame: {max_frame})\n"
             f"Minimum Distance (Å): {min_value} (Frame: {min_frame})\n"
@@ -158,7 +126,6 @@ class MinDistAnalysis:
             f"Top 5 Smallest Values and Corresponding Frames:\n"
             f"{top_5_smallest[['Frame', 'MinDist']].to_string(index=False)}\n"
         )
-
 
         self.append_to_output('------------------- Minimum Distance ------------------------------  ' + self.time + '\n\n' + output_text + '\n' 
                               + '-------------------------------------------------' + '\n\n')
@@ -213,15 +180,12 @@ class RMSDAnalysis:
         average = rmsd.mean()
         std_dev = rmsd.std()
 
-        # Find the frames corresponding to the max and min values
         max_frame = data.loc[rmsd.idxmax(), 'Frame']
         min_frame = data.loc[rmsd.idxmin(), 'Frame']
 
-        # Find the top 5 largest and smallest values
         top_5_largest = data.nlargest(5, 'RMSD')
         top_5_smallest = data.nsmallest(5, 'RMSD')
 
-        # Create a text output
         output_text = (
             f"Maximum RMSD (Å): {max_value} (Frame: {max_frame})\n"
             f"Minimum RMSD (Å): {min_value} (Frame: {min_frame})\n"
@@ -286,15 +250,12 @@ class rmsdToFoldedAnalysis:
         average = rmsd.mean()
         std_dev = rmsd.std()
 
-        # Find the frames corresponding to the max and min values
         max_frame = data.loc[rmsd.idxmax(), 'Frame']
         min_frame = data.loc[rmsd.idxmin(), 'Frame']
 
-        # Find the top 5 largest and smallest values
         top_5_largest = data.nlargest(5, 'RMSD')
         top_5_smallest = data.nsmallest(5, 'RMSD')
 
-        # Create a text output
         output_text = (
             f"Maximum RMSD (Å): {max_value} (Frame: {max_frame})\n"
             f"Minimum RMSD (Å): {min_value} (Frame: {min_frame})\n"
@@ -359,15 +320,12 @@ class HBondsAnalysis:
         average = hbonds.mean()
         std_dev = hbonds.std()
 
-        # Find the frames corresponding to the max and min values
         max_frame = data.loc[hbonds.idxmax(), 'Frame']
         min_frame = data.loc[hbonds.idxmin(), 'Frame']
 
-        # Find the top 5 largest and smallest values
         top_5_largest = data.nlargest(5, 'HBonds')
         top_5_smallest = data.nsmallest(5, 'HBonds')
 
-        # Create a text output
         output_text = (
             f"Maximum Number of HBonds: {max_value} (Frame: {max_frame})\n"
             f"Minimum Number of HBonds: {min_value} (Frame: {min_frame})\n"
@@ -382,15 +340,12 @@ class HBondsAnalysis:
         self.append_to_output('------------------- HBonds ------------------------------  ' + self.time + '\n\n' + output_text + '\n' 
                               + '-------------------------------------------------' + '\n\n')
 
-        # Plot the data using Time(ns) for the x-axis
         plt.figure(figsize=(12, 6))
         plt.plot(time_ns, hbonds, color='purple', alpha=0.75, linewidth=.3)
         plt.xlim(0, time_ns.max())
 
-        # Add horizontal line for the average value
         plt.hlines(y=average, xmin=0, xmax=time_ns.max(), color='r', linestyle='-')
 
-        # Add labels and title
         plt.xlabel('Time (ns)')
         plt.ylabel('Number of HBonds')
         plt.title('HBonds vs. Time')
@@ -412,7 +367,7 @@ radGyrAnalysis = RadiusofGyrationAnalysis('radGyr.txt')
 radGyrAnalysis.convert_txt_to_csv()
 
 # Scale the x-axis to a given simulation length (e.g., 100 nanoseconds)
-radGyrAnalysis.scale_x_axis_to_ns(500)
+radGyrAnalysis.scale_x_to_ns(500)
 
 # Analyze and plot the data
 radGyrAnalysis.analyze_and_plot()

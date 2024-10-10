@@ -1,8 +1,16 @@
-parm ../ggcUnfolded_nowater.prmtop
-trajin ../ggcUnfolded_fullTraj.nc
-
+parm ../../../production/ggc.prmtop
+trajin ../../../production/md_final01.nc
+trajin ../../../production/md_final2.nc
+trajin ../../../production/md_final3.nc
+trajin ../../../production/md_final4.nc
+trajin ../../../production/md_final5.nc
+trajin ../../../production/md_final6.nc
+trajin ../../../production/md_final7.nc
+trajin ../../../production/md_final8.nc
+trajin ../../../production/md_final9.nc
+trajin ../../../production/md_final_10.nc
 autoimage :1-12
-nativecontacts :1@8 :12@365 mindist name mindistDataRiboseO
+nativecontacts :1@8 :12@365 mindist name mindistDataO
 run
-write minDistRiboseO.dat mindistDataRiboseO[mindist]
+write minDistRiboseO.dat mindistDataO[mindist]
 quit
