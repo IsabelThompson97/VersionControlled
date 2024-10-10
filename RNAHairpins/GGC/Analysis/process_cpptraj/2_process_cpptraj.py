@@ -7,8 +7,8 @@ import time as time
 class RadiusofGyrationAnalysis:
     def __init__(self, txt_file_path):
         self.txt_file_path = txt_file_path
-        self.csv_file_path = 'radGyrData.csv'  # Output .csv file path
-        self.output_file_path = 'AnalysisOutput.txt'  # Output .txt file path
+        self.csv_file_path = 'radGyrData.csv' 
+        self.output_file_path = 'AnalysisOutput.txt'
         self.time = time.asctime()
 
     def append_to_output(self, text):
@@ -79,8 +79,8 @@ class RadiusofGyrationAnalysis:
 class MinDistAnalysis:
     def __init__(self, txt_file_path):
         self.txt_file_path = txt_file_path
-        self.csv_file_path = 'minDistData.csv'  # Output .csv file path
-        self.output_file_path = 'AnalysisOutput.txt'  # Output .txt file path
+        self.csv_file_path = 'minDistData.csv'
+        self.output_file_path = 'AnalysisOutput.txt'
         self.time = time.asctime()
 
     def append_to_output(self, text):
@@ -88,7 +88,7 @@ class MinDistAnalysis:
             f.write(text + '\n\n')
 
     def convert_txt_to_csv(self):
-        column_names = ['Frame', 'MinDist']  # Custom column names
+        column_names = ['Frame', 'MinDist']
         data = pd.read_csv(self.txt_file_path, sep=r'\s+', skiprows=1, names=column_names)
         data.to_csv(self.csv_file_path, index=False)
         self.append_to_output(f"Data successfully converted to {self.csv_file_path}")
