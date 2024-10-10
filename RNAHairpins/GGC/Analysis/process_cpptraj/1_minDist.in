@@ -1,0 +1,8 @@
+parm ../ggcUnfolded_nowater.prmtop
+trajin ../ggcUnfolded_fullTraj.nc
+
+autoimage :1-12
+nativecontacts :1@8 :12@365 mindist name mindistDataRiboseO
+run
+write minDistRiboseO.dat mindistDataRiboseO[mindist]
+quit

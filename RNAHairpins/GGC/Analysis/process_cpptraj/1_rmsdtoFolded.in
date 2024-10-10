@@ -1,0 +1,9 @@
+parm ../ggcUnfolded_nowater.prmtop [unfoldedParm]
+trajin ../ggcUnfolded_fullTraj.nc parm [unfoldedParm]
+parm ../ggcFoldedFinalNoWat.pdb [foldedParm]
+reference ../ggcFoldedFinalNoWat.pdb parm [foldedParm] [folded]
+
+autoimage :1-12
+rmsd ref [folded] :1-12&!@H= :1-12&!@H= out rmsd_toFolded.dat
+run
+quit

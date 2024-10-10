@@ -1,0 +1,7 @@
+parm ../ggcUnfolded_nowater.prmtop
+trajin ../ggcUnfolded_fullTraj.nc
+
+autoimage
+radgyr :1-12&!@H= out radGyr.dat mass nomax
+run
+quit
