@@ -19,7 +19,7 @@ STORE_AT=$ISABEL_GIT_DIR$ARG_1
 #echo $ISABEL_GIT_DIR
 #echo "Arg1 = $ARG_1"
 
-mkdir $STORE_AT
+mkdir -p $STORE_AT
 
 cp *.in $STORE_AT
 cp *.sh $STORE_AT
