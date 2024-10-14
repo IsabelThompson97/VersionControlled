@@ -76,7 +76,7 @@ class RadiusofGyrationAnalysis:
 
         plt.show()
 
-class rmsdToFoldedAnalysis:
+class RMSDtoFoldedAnalysis:
     def __init__(self, txt_file_path):
         self.txt_file_path = txt_file_path
         self.csv_file_path = 'rmsd_toFolded.csv'
@@ -527,7 +527,7 @@ print('Radius of Gyration analysis complete')
 # ____________________RMSD to Folded______________________
 # Usage:
 # Initialize the class with the .txt file path
-rmsdtoFoldedAnalysis = rmsdToFoldedAnalysis('rmsd_toFolded.txt')
+rmsdtoFoldedAnalysis = RMSDToFoldedAnalysis('rmsd_toFolded.txt')
 
 # Convert .txt to .csv 
 rmsdtoFoldedAnalysis.convert_txt_to_csv()
