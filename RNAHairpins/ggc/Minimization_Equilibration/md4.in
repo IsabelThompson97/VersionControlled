@@ -1,7 +1,8 @@
 Equilibrate md4 for 1 ns in NVT
  &cntrl
   imin=0,
-  irest=1, ntx=5,
+  irest=1, 
+  ntx=5,
   ntb=1,
   cut=10.0,
   ntc=2, ntf=2,
