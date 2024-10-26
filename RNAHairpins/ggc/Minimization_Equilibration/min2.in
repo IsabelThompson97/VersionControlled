@@ -1,11 +1,11 @@
-min2 minimization
+min2 minimization - full relaxation
  &cntrl
   imin=1,
-  ntx=1,
   irest=0,
+  ntx=1,
   maxcyc=2500,
   ncyc=1000,
+  cut=10.0,
   ntpr=100,
   ntwx=0,
-  cut=10.0,
  /

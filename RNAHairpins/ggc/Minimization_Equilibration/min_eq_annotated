@@ -1,0 +1,177 @@
+------------------------------------------------------------------------------------
+
+min1 minimization - solvent relaxation, solute restraints
+ &cntrl
+  imin=1,                          ! Energy minimization
+  irest=0,                         ! New simulation - velocities ignored, timestep set to 0
+  ntx=1,                           ! Coordinates read from inpcrd file
+  maxcyc=1000,                     ! 1000 minimization cycles/steps (500 steepest descent, 500 conjugate gradient)
+  ncyc=500,                        ! Switch from steepest descent to conjugate gradient after 500 cycles
+  ntr=1,                           ! Cartesian space restraints with harmonic potential
+  restraint_wt=500.0,              ! Positional restraint weight (kcal mol^-1 -Å^2)
+  restraintmask=':1-12',           ! Restraint mask
+  cut=10.0,                        ! Non-bonded interaction cutoff 
+  ntpr=100,                        ! Energy information printed to mdout and mdinfo every 100 steps
+  ntwx=0,                          ! No coordinates written to trajectory file
+ /
+
+------------------------------------------------------------------------------------
+
+min2 minimization - relaxation
+ &cntrl
+  imin=1,                          ! Energy minimization
+  irest=0,                         ! Run a new simulation - velocities ignored, timestep set to 0
+  ntx=1,                           ! Coordinates read from inpcrd file
+  maxcyc=2500,                     ! 2500 minimization cycles/steps (1000 steepest descent, 1500 conjugate gradient)
+  ncyc=1000,                       ! Switch from steepest descent to conjugate gradient after 1000 cycles
+  cut=10.0,                        ! Non-bonded interaction cutoff 
+  ntpr=100,                        ! Energy information printed to mdout and mdinfo every 100 steps
+  ntwx=0,                          ! No coordinates written to trajectory file
+ /
+
+------------------------------------------------------------------------------------
+
+md1 defrost 0 to 310K with restraints on RNA 100ps NVT
+ &cntrl
+  imin=0,                                               ! No minimization
+  irest=0, ntx=1,                                       ! No restart, only coordinates
+  ntb=1,                                                ! Periodic boundaries constant volume (NVT)
+  ntr=1, restraint_wt=25.0, restraintmask=':1-12',      ! Solute restraints
+  cut=10.0,                                             ! Non-bonded interaction cutoff 
+  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntt=3, gamma_ln=1.0,                                  ! Langevin thermostat, collision freq 1.0 ps^-1
+  tempi=0, temp0=310,                                   ! Initial temp 0K, reference temp 310K
+  nstlim=50000, dt=0.002,                               ! Timestep 0.002 ps, 50000 steps (100ps)
+  ntpr=100,                                             ! Energy printed to mdout/mdinfo every 100 steps
+  ntwx=100,                                             ! Coordinates written to trajectory every 100 steps 
+  ntwr=1000,                                            ! Restart written every 1000 steps
+ /
+
+------------------------------------------------------------------------------------
+
+md2a minimization restraint 25kcal 50ps 310K NPT
+ &cntrl
+  imin=0,                                               ! No minimization
+  irest=1, ntx=5,                                       ! Restart with coord and velocities
+  ntb=2,                                                ! Perodic boundaries constant pressure (NPT)
+  ntp=1, barostat=2,                                    ! Isotropic position scaling, Monte Carlo barostat 
+  taup=1.0, pres0=1.0,                                  ! Pressure relaxation time 1.0, reference pressure 1 bar
+  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, ommitted
+  cut=10.0,                                             ! Non-bonded interaction cutoff
+  ntr=1, restraint_wt=25.0, restraintmask=':1-12',      ! Solute restraints
+  ntt=3, gamma_ln=1.0,                                  ! Langevin thermostat, collision freq 1.0 ps^-1
+  tempi=310.0, temp0=310.0,                             ! Initial temp 310K, reference temp 310K
+  nstlim=25000, dt=0.002,                               ! Timestep 0.002 ps, 25000 steps (50ps)
+  ntpr=100, ntwx=1000, ntwr=1000,                       ! Energy printed/100 steps, coord/100 steps, restart/1000 steps
+ /
+
+------------------------------------------------------------------------------------
+
+md2b minimization restraint 20kcal 50ps 310K NPT
+  &cntrl
+  imin=0,
+  irest=1, ntx=5,
+  ntb=2,
+  ntp=1, barostat=2, 
+  taup=1.0, pres0=1.0,
+  ntc=2, ntf=2,
+  cut=10.0,
+  ntr=1, restraint_wt=20.0, restraintmask=':1-12',
+  ntt=3, gamma_ln=1.0,
+  tempi=310.0, temp0=310.0,
+  nstlim=25000, dt=0.002,
+  ntpr=100, ntwx=1000, ntwr=1000,
+ /
+
+------------------------------------------------------------------------------------
+
+md2c minimization restraint 15kcal 50ps 310K NPT
+  &cntrl
+  imin=0,
+  irest=1, ntx=5,
+  ntb=2,
+  ntp=1, barostat=2, 
+  taup=1.0, pres0=1.0,
+  ntc=2, ntf=2,
+  cut=10.0,
+  ntr=1, restraint_wt=15.0, restraintmask=':1-12',
+  ntt=3, gamma_ln=1.0,
+  tempi=310.0, temp0=310.0,
+  nstlim=25000, dt=0.002,
+  ntpr=100, ntwx=1000, ntwr=1000,
+ /
+
+------------------------------------------------------------------------------------
+
+md2d minimization restraint 10kcal 50ps 310K NPT
+  &cntrl
+  imin=0,
+  irest=1, ntx=5,
+  ntb=2,
+  ntp=1, barostat=2, 
+  taup=1.0, pres0=1.0,
+  ntc=2, ntf=2,
+  cut=10.0,
+  ntr=1, restraint_wt=10.0, restraintmask=':1-12',
+  ntt=3, gamma_ln=1.0,
+  tempi=310.0, temp0=310.0,
+  nstlim=25000, dt=0.002,
+  ntpr=100, ntwx=1000, ntwr=1000,
+ /
+
+------------------------------------------------------------------------------------
+
+md2e minimization restraint 5kcal 50ps 310K NPT
+  &cntrl
+  imin=0,
+  irest=1, ntx=5,
+  ntb=2,
+  ntp=1, barostat=2, 
+  taup=1.0, pres0=1.0,
+  ntc=2, ntf=2,
+  cut=10.0,
+  ntr=1, restraint_wt=5.0, restraintmask=':1-12',
+  ntt=3, gamma_ln=1.0,
+  tempi=310.0, temp0=310.0,
+  nstlim=25000, dt=0.002,
+  ntpr=100, ntwx=1000, ntwr=1000,
+ /
+
+------------------------------------------------------------------------------------
+
+md3 equilibration 200ps 400K NPT
+ &cntrl
+  imin=0,                                               ! No minimization
+  irest=1, ntx=5,                                       ! Restart with coord and velocities
+  ntb=2,                                                ! Perodic boundaries constant pressure (NPT)
+  ntp=1, barostat=2,                                    ! Isotropic position scaling, Monte Carlo barostat 
+  taup=1.0, pres0=1.0,                                  ! Pressure relaxation time 1.0, reference pressure 1 bar
+  cut=10.0,                                             ! Non-bonded interaction cutoff
+  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntt=3, gamma_ln=1.0,                                  ! Langevin thermostat, collision freq 1.0 ps^-1
+  tempi=310.0, temp0=310.0,                             ! Initial temp 310K, reference temp 310K
+  ntxo=1,                                               ! Formmated restart file
+  nstlim=100000, dt=0.002,                              ! Timestep 0.002 ps, 100000 steps (200ps)
+  ntpr=100, ntwx=1000, ntwr=1000,                       ! Energy printed/100 steps, coord/100 steps, restart/1000 steps
+ /
+
+------------------------------------------------------------------------------------
+
+Recalculate new box size
+
+------------------------------------------------------------------------------------
+
+md4 equilibration 1ns 310K NVT
+ &cntrl
+  imin=0,                                               ! No minimization
+  irest=1, ntx=5,                                       ! Restart with coord and velocities
+  ntb=1,                                                ! Perodic boundaries constant volume (NVT)
+  cut=10.0,                                             ! Non-bonded interaction cutoff
+  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntt=3, gamma_ln=1.0,                                  ! Langevin thermostat, collision freq 1.0 ps^-1
+  tempi=310.0, temp0=310.0,                             ! Initial temp 310K, reference temp 310K
+  nstlim=500000, dt=0.002,                              ! Timestep 0.002 ps, 500000 steps (1000ps)
+  ntpr=500, ntwx=1000, ntwr=100000,                     ! Energy printed/500 steps, coord/1000 steps, restart/100000 steps
+ /
+
+------------------------------------------------------------------------------------
