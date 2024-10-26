@@ -1,4 +1,4 @@
-Minimization Restraint 15kcal 50ps
+md2c minimization restraint 15kcal 50ps 310K NPT
  &cntrl
   imin=0,
   irest=1,

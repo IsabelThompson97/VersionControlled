@@ -1,4 +1,4 @@
-ggc minimization run
+min2 minimization
  &cntrl
   imin=1,
   ntx=1,

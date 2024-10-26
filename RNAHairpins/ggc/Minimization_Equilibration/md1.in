@@ -1,4 +1,4 @@
-Defrost NVT 0 to 310 K with res on RNA
+md1 defrost 0 to 310K with restraints on RNA 100ps NVT
  &cntrl
   imin=0,
   irest=0,

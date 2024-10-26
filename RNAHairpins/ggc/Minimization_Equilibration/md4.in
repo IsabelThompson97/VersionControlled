@@ -1,4 +1,4 @@
-Equilibrate md4 for 1 ns in NVT
+md4 equilibration 1ns 400K NVT
  &cntrl
   imin=0,
   irest=1, 

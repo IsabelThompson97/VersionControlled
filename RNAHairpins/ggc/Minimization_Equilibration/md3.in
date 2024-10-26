@@ -1,4 +1,4 @@
-Equilibrization md3
+md3 equilibration 200ps 400K NPT
  &cntrl
   imin=0,
   irest=1,
