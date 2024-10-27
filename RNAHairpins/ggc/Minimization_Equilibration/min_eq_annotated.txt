@@ -38,7 +38,7 @@ md1 defrost 0 to 310K with restraints on RNA 100ps NVT
   ntb=1,                                                ! Periodic boundaries constant volume (NVT)
   ntr=1, restraint_wt=25.0, restraintmask=':1-12',      ! Solute restraints
   cut=10.0,                                             ! Non-bonded interaction cutoff 
-  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, omitted
   ntt=3, gamma_ln=1.0,                                  ! Langevin thermostat, collision freq 1.0 ps^-1
   tempi=0, temp0=310,                                   ! Initial temp 0K, reference temp 310K
   nstlim=50000, dt=0.002,                               ! Timestep 0.002 ps, 50000 steps (100ps)
@@ -56,7 +56,7 @@ md2a minimization restraint 25kcal 50ps 310K NPT
   ntb=2,                                                ! Periodic boundaries constant pressure (NPT)
   ntp=1, barostat=2,                                    ! Isotropic position scaling, Monte Carlo barostat 
   taup=1.0, pres0=1.0,                                  ! Pressure relaxation time 1.0, reference pressure 1 bar
-  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntc=2, ntf=2,                                         ! SHAKE - bonds involving hydrogen constrained, omitted
   cut=10.0,                                             ! Non-bonded interaction cutoff
   ntr=1, restraint_wt=25.0, restraintmask=':1-12',      ! Solute restraints
   ntt=3, gamma_ln=1.0,                                  ! Langevin thermostat, collision freq 1.0 ps^-1
@@ -147,7 +147,7 @@ md3 equilibration 200ps 400K NPT
   ntp=1, barostat=2,                             ! Isotropic position scaling, Monte Carlo barostat 
   taup=1.0, pres0=1.0,                           ! Pressure relaxation time 1.0, reference pressure 1 bar
   cut=10.0,                                      ! Non-bonded interaction cutoff
-  ntc=2, ntf=2,                                  ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntc=2, ntf=2,                                  ! SHAKE - bonds involving hydrogen constrained, omitted
   ntt=3, gamma_ln=1.0,                           ! Langevin thermostat, collision freq 1.0 ps^-1
   tempi=310.0, temp0=310.0,                      ! Initial temp 310K, reference temp 310K
   ntxo=1,                                        ! Formatted restart file
@@ -167,7 +167,7 @@ md4 equilibration 1ns 310K NVT
   irest=1, ntx=5,                                ! Restart with coord and velocities
   ntb=1,                                         ! Periodic boundaries constant volume (NVT)
   cut=10.0,                                      ! Non-bonded interaction cutoff
-  ntc=2, ntf=2,                                  ! SHAKE - bonds involving hydrogen constrained, ommitted
+  ntc=2, ntf=2,                                  ! SHAKE - bonds involving hydrogen constrained, omitted
   ntt=3, gamma_ln=1.0,                           ! Langevin thermostat, collision freq 1.0 ps^-1
   tempi=310.0, temp0=310.0,                      ! Initial temp 310K, reference temp 310K
   nstlim=500000, dt=0.002,                       ! Timestep 0.002 ps, 500000 steps (1000ps)
