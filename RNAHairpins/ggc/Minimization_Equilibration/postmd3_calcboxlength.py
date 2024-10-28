@@ -1,3 +1,8 @@
+## 1.	Box length from first three columns of last line in md3.rst
+## 2.	Average volume from md3.mdout
+## 3.	Copy md3.rst to md3_NewVolume.rst, replace first three columns of last line with new box length
+
+
 ### ============ MD3, Adjusting the truncated octahedron box length ============ ###
 
 length = 51.0315158
