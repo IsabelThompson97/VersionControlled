@@ -1,7 +1,7 @@
 
 Project Parameters ______________________________________
 
-Periodic Boundary Conditions: Truncated octahedreal box, min distance 12 A (solvateoct mol TIP3PBOX 12.0, cut 12.0)(cut=10 in min and md)
+Periodic Boundary Conditions: Truncated octahedreal box, min distance 12 A (solvateoct mol TIP3PBOX 12.0)
 Force Field: Amber f99 + bsc0 + XOL3 (source leaprc.RNA.OL3)
 Water Model: TIP3P (source leaprc.water.tip3p)
 Neutralize RNA (addions mol Na+ 0)
