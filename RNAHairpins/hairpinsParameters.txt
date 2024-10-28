@@ -12,41 +12,19 @@ Thermostat: Langevin 310K, timestep 2 ps, collison freq 1 ps-1 (temp=310; ntt=3 
 Barostat: Monte Carlo, 100 step attempt frequency (ntp=1; barostat=2)
 Hydrogen Bond Constraints: SHAKE (ntc=2; ntf=2)
 Restraints: Keep as standard release through equilibration (restraintmask=' :1-12')
-Simulation time: Stepwise minimzation and equilibration
+Simulation time: Stepwise minimization and equilibration
 
 
-
-
-Parameters from Paper ______________________________________
-
-Periodic Boundary Conditions: Truncated octahedreal box, min distance 10 A (solvateoct mol TIP3PBOX 10.0)(cut=10)
-Force Field: Amber f99 + bsc0 + XOL3 (source leaprc.RNA.OL3)
-Water Model: TIP3P (source leaprc.water.tip3p)
-Neutralize RNA (addions mol Na+ 0)
-Add 1 M NaCl (addionsrand mol Na+ X Cl- X)
-
-
-Thermostat: Langevin 310K, timestep 2 ps, collison freq 2 ps-1 (temp=310; ntt=3 gamma_ln=2)
-Barostat: Monte Carlo, 100 step attempt frequency (ntp=1; barostat=2)
-Hydrogen Bond Constraints: SHAKE (ntc=2; ntf=2)
-Restraints: 3 kcal mol-1 A-2 (ntr=1; restraint_wt=3;restraintmask=' :1-13')
-Simulation time: 1 microsecond
-
-
-
-
-Production run NVT_______________________________________
+Production run NVT_____________________________________
  &cntrl
-  imin=0,                          ## No minimization
-  irest=1, ntx=5,                  ## Restart MD with coordinates
-  ntb=1,                           ## Periodic boundaries, constant volume
-  ig=-1,                           ## Random seed
-  cut=10.0,                        ## Non-bonded interactions cutoff 10A
-  ntc=2, ntf=2,                    ## ntc=2 Hydrogen bond constraints SHAKE for TIP3P
-  tempi=310.0, temp0=310.0,        ## Temp controlled 310K intial, 310k hold
-  ntt=3, gamma_ln=1.0,             ## Langevin thermostat, collision freq. 1.0^-1 ps
-  nstlim=50000000, dt=0.002,       ## ntslim=50,000,000 steps; dt=0.002 ps (2 fs) timestep; total time = 100 ns
-  ntpr=1000 ntwx=500, ntwr=10000,  ## ntpr=Every 1000 steps energy printed to human readable .mdout and .mdinfo
- /                                 ## ntwr=Every 10000 steps restrt file written
-                                   ## ntwx=Every 500 steps coordinates written to .mdcrd
-
+  imin=0,                          ! No minimization
+  irest=1, ntx=5,                  ! Restart MD with coordinates
+  ntb=1,                           ! Periodic boundaries, constant volume
+  ig=-1,                           ! Random seed
+  cut=10.0,                        ! Non-bonded interactions cutoff 10A
+  ntc=2, ntf=2,                    ! ntc=2 Hydrogen bond constraints SHAKE for TIP3P
+  ntt=3, gamma_ln=1.0,             ! Langevin thermostat, collision freq. 1.0^-1 ps
+  tempi=310.0, temp0=310.0,        ! Initial temp 310K, reference temp 310K
+  nstlim=50000000, dt=0.002,       ! 50,000,000 steps, 0.002 ps (2 fs) timestep, total time = 100 ns
+  ntpr=1000 ntwx=500, ntwr=10000,  ! Energy printed to mdinfo mdout/1000 steps, coord written/500 steps, rst written/10000 steps
+ /
