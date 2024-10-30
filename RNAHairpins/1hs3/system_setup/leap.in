@@ -1,5 +1,5 @@
 # 1hs3 FOLDED PREP
-# 1hs3.pdb downloaded from PDB
+# 1hs3.pdb downloaded from PDB 413 atoms
 # pdb4amber -i 1hs3.pdb -o 1hs3_pdb4amber.pdb --reduce --dry
 # Run with tleap -s -f leap.in on CL
 
@@ -15,3 +15,17 @@ savepdb mol 1hs3_final.pdb
 saveamberparm mol 1hs3.prmtop 1hs3.inpcrd
 saveamberparm mol 1hs3.prmtop 1hs3.rst7
 quit
+
+
+# 413 atoms, 4.12 kDa, 13 residues 
+# 12 Na+ ions required to neutralize.
+# Scaling up box by a factor of 1.239917 to meet diagonal cut criterion
+  # Solute vdw bounding box:              32.537 28.417 25.355
+  # Total bounding box for atom centers:  62.295 62.295 62.295
+    #  (box expansion for 'iso' is  21.0%)
+  # Solvent unit box:                     18.774 18.774 18.774
+# The number of boxes:  x= 4  y= 4  z= 4
+  # Volume: 126789.456 A^3 (oct)
+  # Total mass 66862.852 amu,  Density 0.876 g/cc
+  # Added 3469 residues.
+# Add 59 NaCl for 0.1M
