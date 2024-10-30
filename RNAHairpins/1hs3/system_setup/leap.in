@@ -1,4 +1,6 @@
 # 1hs3 FOLDED PREP
+# 1hs3.pdb downloaded from PDB
+# pdb4amber -i 1hs3.pdb -o 1hs3_pdb4amber.pdb --reduce --dry
 # Run with tleap -s -f leap.in on CL
 
 
