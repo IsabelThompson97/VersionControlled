@@ -1,0 +1,592 @@
+log started: Wed Oct 30 15:51:27 2024
+
+Log file: ./leap.log
+>> # ----- NOTE: this is designed for PDB format 3!
+>> #       Uses ff99bsc0_chiOL3 for RNA
+>> #       	(ff99): Wang et al. J. Comp. Chem. 21: 1049, 2000
+>> #       	(bsc0): Perez et al. Biophys J. 92: 3817, 2007
+>> #       	(chiOL3): Zgarbova et al. JCTC 7: 2886, 2011
+>> #           (note: all of the above are in parm10.dat, loaded below)
+>> #
+>> #	load atom type hybridizations
+>> #
+>> addAtomTypes {
+>> 	{ "H"   "H" "sp3" }
+>> 	{ "HO"  "H" "sp3" }
+>> 	{ "HS"  "H" "sp3" }
+>> 	{ "H1"  "H" "sp3" }
+>> 	{ "H2"  "H" "sp3" }
+>> 	{ "H3"  "H" "sp3" }
+>> 	{ "H4"  "H" "sp3" }
+>> 	{ "H5"  "H" "sp3" }
+>> 	{ "HW"  "H" "sp3" }
+>> 	{ "HC"  "H" "sp3" }
+>> 	{ "HA"  "H" "sp3" }
+>> 	{ "HP"  "H" "sp3" }
+>> 	{ "HZ"  "H" "sp3" }
+>> 	{ "OH"  "O" "sp3" }
+>> 	{ "OS"  "O" "sp3" }
+>> 	{ "O"   "O" "sp2" }
+>> 	{ "O2"  "O" "sp2" }
+>> 	{ "OP"  "O" "sp2" }
+>> 	{ "OW"  "O" "sp3" }
+>> 	{ "CT"  "C" "sp3" }
+>> 	{ "CX"  "C" "sp3" }
+>> 	{ "CS"  "C" "sp2" }
+>> 	{ "C"   "C" "sp2" }
+>> 	{ "C*"  "C" "sp2" }
+>> 	{ "CA"  "C" "sp2" }
+>> 	{ "CB"  "C" "sp2" }
+>> 	{ "CC"  "C" "sp2" }
+>> 	{ "CN"  "C" "sp2" }
+>> 	{ "CM"  "C" "sp2" }
+>> 	{ "CK"  "C" "sp2" }
+>> 	{ "CQ"  "C" "sp2" }
+>> 	{ "CD"  "C" "sp2" }
+>> 	{ "C5"  "C" "sp2" }
+>> 	{ "C4"  "C" "sp2" }
+>> 	{ "CP"  "C" "sp2" }
+>> 	{ "CI"  "C" "sp3" }
+>> 	{ "CW"  "C" "sp2" }
+>> 	{ "CV"  "C" "sp2" }
+>> 	{ "CR"  "C" "sp2" }
+>> 	{ "CY"  "C" "sp2" }
+>> 	{ "C0"  "Ca" "sp3" }
+>> 	{ "MG"  "Mg" "sp3" }
+>> 	{ "N"   "N" "sp2" }
+>> 	{ "NA"  "N" "sp2" }
+>> 	{ "N2"  "N" "sp2" }
+>> 	{ "N*"  "N" "sp2" }
+>> 	{ "NB"  "N" "sp2" }
+>> 	{ "NC"  "N" "sp2" }
+>> 	{ "NT"  "N" "sp3" }
+>> 	{ "NY"  "N" "sp2" }
+>> 	{ "N3"  "N" "sp3" }
+>> 	{ "S"   "S" "sp3" }
+>> 	{ "SH"  "S" "sp3" }
+>> 	{ "P"   "P" "sp3" }
+>> 	{ "LP"  ""  "sp3" }
+>> 	{ "EP"  ""  "sp3" }
+>> 	{ "F"   "F" "sp3" }
+>> 	{ "Cl"  "Cl" "sp3" }
+>> 	{ "Br"  "Br" "sp3" }
+>> 	{ "I"   "I"  "sp3" }
+>> }
+>> #
+>> #	Load the main parameter set.
+>> #
+>> parm10 = loadamberparams parm10.dat
+Loading parameters: /opt/crc/a/amber/22.0/amber22/dat/leap/parm/parm10.dat
+Reading title:
+PARM99 + frcmod.ff99SB + frcmod.parmbsc0 + OL3 for RNA
+>> #
+>> #	Load main chain and terminating nucleic acids
+>> #
+>> 
+>> loadOff RNA.lib
+Loading library: /opt/crc/a/amber/22.0/amber22/dat/leap/lib/RNA.lib
+Loading: A
+Loading: A3
+Loading: A5
+Loading: AN
+Loading: C
+Loading: C3
+Loading: C5
+Loading: CN
+Loading: G
+Loading: G3
+Loading: G5
+Loading: GN
+Loading: OHE
+Loading: U
+Loading: U3
+Loading: U5
+Loading: UN
+>> 
+>> #
+>> #	Define the PDB name map for the nucleic acids
+>> #
+>> addPdbResMap {
+>>   { 0 "G" "G5"  } { 1 "G" "G3"  } 
+>>   { 0 "A" "A5"  } { 1 "A" "A3"  } 
+>>   { 0 "C" "C5"  } { 1 "C" "C3"  } 
+>>   { 0 "U" "U5"  } { 1 "U" "U3"  } 
+>> #  some old Amber residue names for RNA:
+>>   { 0  "RA5" "A5" } { 1 "RA3" "A3"} {"RA" "A" }
+>>   { 0  "RC5" "C5" } { 1 "RC3" "C3"} {"RC" "C" }
+>>   { 0  "RG5" "G5" } { 1 "RG3" "G3"} {"RG" "G" }
+>>   { 0  "RU5" "U5" } { 1 "RU3" "U3"} {"RU" "U" }
+>> #  uncomment out the following if you have this old style RNA files:
+>> # { 0 "GUA" "G5"  } { 1 "GUA" "G3"  } { "GUA" "G" }
+>> # { 0 "ADE" "A5"  } { 1 "ADE" "A3"  } { "ADE" "A" }
+>> # { 0 "CYT" "C5"  } { 1 "CYT" "C3"  } { "CYT" "C" }
+>> # { 0 "URA" "R5"  } { 1 "URA" "R3"  } { "URA" "R" }
+>> 
+>> }
+>> 
+>> #  try to be good about reading in really old atom names as well:
+>> addPdbAtomMap {
+>>   { "O5*" "O5'" }
+>>   { "C5*" "C5'" }
+>>   { "C4*" "C4'" }
+>>   { "O4*" "O4'" }
+>>   { "C3*" "C3'" }
+>>   { "O3*" "O3'" }
+>>   { "C2*" "C2'" }
+>>   { "O2*" "O2'" }
+>>   { "C1*" "C1'" }
+>>   { "C5M" "C7"  }
+>>   { "H1*" "H1'" }
+>>   { "H2*1" "H2'" }
+>>   { "H2*2" "H2''" }
+>>   { "H2'1" "H2'" }
+>>   { "H2'2" "H2''" }
+>>   { "H3*" "H3'" }
+>>   { "H4*" "H4'" }
+>>   { "H5*1" "H5'" }
+>>   { "H5*2" "H5''" }
+>>   { "H5'1" "H5'" }
+>>   { "H5'2" "H5''" }
+>>   { "HO'2" "HO2'" }
+>>   { "H5T"  "HO5'" }
+>>   { "H3T"  "HO3'" }
+>>   { "O1'" "O4'" }
+>>   { "OA"  "OP1" }
+>>   { "OB"  "OP2" }
+>>   { "O1P" "OP1" }
+>>   { "O2P" "OP2" }
+>>   { "O3P" "OP3" }
+>> }
+>> 
+> 
+> source leaprc.water.tip3p
+----- Source: /opt/crc/a/amber/22.0/amber22/dat/leap/cmd/leaprc.water.tip3p
+----- Source of /opt/crc/a/amber/22.0/amber22/dat/leap/cmd/leaprc.water.tip3p done
+>> #
+>> #       Load water and ions for TIP3P + Li/Merz monovalent ions 
+>> #       + Joung-Chetham monovalent ions
+>> #       + Li/Merz highly charged ions (+2 to +4, 12-6 normal usage set)
+>> #
+>> #       Note: the Li/Merz monovalent set is loaded only to get Tl+,
+>> #          Cu+, Ag+ NH4+, H3O+.  Since we load Joung-Cheatham second,
+>> #          the alkali halide parameters come from the Joung-Cheatham set
+>> #
+>> addAtomTypes {
+>> 	{ "HW"  "H" "sp3" }
+>> 	{ "OW"  "O" "sp3" }
+>> 	{ "F-"   "F" "sp3" }
+>> 	{ "Cl-"  "Cl" "sp3" }
+>> 	{ "Br-"  "Br" "sp3" }
+>> 	{ "I-"   "I"  "sp3" }
+>> 	{ "Li+"  "Li"  "sp3" }
+>> 	{ "Na+"  "Na"  "sp3" }
+>> 	{ "K+"  "K"  "sp3" }
+>> 	{ "Rb+"  "Rb"  "sp3" }
+>> 	{ "Cs+"  "Cs"  "sp3" }
+>> 	{ "Mg+"  "Mg"  "sp3" }
+>>     { "Tl+"  "Tl"  "sp3" }
+>>     { "Cu+"  "Cu"  "sp3" }
+>>     { "Ag+"  "Ag"  "sp3" }
+>>     { "NH4+"  "N"  "sp3" }
+>>     { "H3O+"  "O"  "sp3" }
+>>     { "Be2+" "Be"  "sp3" }
+>>     { "Cu2+" "Cu"  "sp3" }
+>>     { "Ni2+" "Ni"  "sp3" }
+>>     { "Pt2+" "Pt"  "sp3" }
+>>     { "Zn2+" "Zn"  "sp3" }
+>>     { "Co2+" "Co"  "sp3" }
+>>     { "Pd2+" "Pd"  "sp3" }
+>>     { "Ag2+" "Ag"  "sp3" }
+>>     { "Cr2+" "Cr"  "sp3" }
+>>     { "Fe2+" "Fe"  "sp3" }
+>>     { "Mg2+" "Mg"  "sp3" }
+>>     { "V2+"  "V"   "sp3" }
+>>     { "Mn2+" "Mn"  "sp3" }
+>>     { "Hg2+" "Hg"  "sp3" }
+>>     { "Cd2+" "Cd"  "sp3" }
+>>     { "Yb2+" "Yb"  "sp3" }
+>>     { "Ca2+" "Ca"  "sp3" }
+>>     { "Sn2+" "Sn"  "sp3" }
+>>     { "Pb2+" "Pb"  "sp3" }
+>>     { "Eu2+" "Eu"  "sp3" }
+>>     { "Sr2+" "Sr"  "sp3" }
+>>     { "Sm2+" "Sm"  "sp3" }
+>>     { "Ba2+" "Ba"  "sp3" }
+>>     { "Ra2+" "Ra"  "sp3" }
+>>     { "Al3+" "Al"  "sp3" }
+>>     { "Fe3+" "Fe"  "sp3" }
+>>     { "Cr3+" "Cr"  "sp3" }
+>>     { "In3+" "In"  "sp3" }
+>>     { "Tl3+" "Tl"  "sp3" }
+>>     { "Y3+"  "Y"   "sp3" }
+>>     { "La3+" "La"  "sp3" }
+>>     { "Ce3+" "Ce"  "sp3" }
+>>     { "Pr3+" "Pr"  "sp3" }
+>>     { "Nd3+" "Nd"  "sp3" }
+>>     { "Sm3+" "Sm"  "sp3" }
+>>     { "Eu3+" "Eu"  "sp3" }
+>>     { "Gd3+" "Gd"  "sp3" }
+>>     { "Tb3+" "Tb"  "sp3" }
+>>     { "Dy3+" "Dy"  "sp3" }
+>>     { "Er3+" "Er"  "sp3" }
+>>     { "Tm3+" "Tm"  "sp3" }
+>>     { "Lu3+" "Lu"  "sp3" }
+>>     { "Hf4+" "Hf"  "sp3" }
+>>     { "Zr4+" "Zr"  "sp3" }
+>>     { "Ce4+" "Ce"  "sp3" }
+>>     { "U4+"  "U"   "sp3" }
+>>     { "Pu4+" "Pu"  "sp3" }
+>>     { "Th4+" "Th"  "sp3" }
+>> }
+>> loadOff atomic_ions.lib
+Loading library: /opt/crc/a/amber/22.0/amber22/dat/leap/lib/atomic_ions.lib
+Loading: AG
+Loading: AL
+Loading: Ag
+Loading: BA
+Loading: BR
+Loading: Be
+Loading: CA
+Loading: CD
+Loading: CE
+Loading: CL
+Loading: CO
+Loading: CR
+Loading: CS
+Loading: CU
+Loading: CU1
+Loading: Ce
+Loading: Cl-
+Loading: Cr
+Loading: Dy
+Loading: EU
+Loading: EU3
+Loading: Er
+Loading: F
+Loading: FE
+Loading: FE2
+Loading: GD3
+Loading: H3O+
+Loading: HE+
+Loading: HG
+Loading: HZ+
+Loading: Hf
+Loading: IN
+Loading: IOD
+Loading: K
+Loading: K+
+Loading: LA
+Loading: LI
+Loading: LU
+Loading: MG
+Loading: MN
+Loading: NA
+Loading: NH4
+Loading: NI
+Loading: Na+
+Loading: Nd
+Loading: PB
+Loading: PD
+Loading: PR
+Loading: PT
+Loading: Pu
+Loading: RB
+Loading: Ra
+Loading: SM
+Loading: SR
+Loading: Sm
+Loading: Sn
+Loading: TB
+Loading: TL
+Loading: Th
+Loading: Tl
+Loading: Tm
+Loading: U4+
+Loading: V2+
+Loading: Y
+Loading: YB2
+Loading: ZN
+Loading: Zr
+>> loadOff solvents.lib
+Loading library: /opt/crc/a/amber/22.0/amber22/dat/leap/lib/solvents.lib
+Loading: CHCL3BOX
+Loading: DC4
+Loading: FB3
+Loading: FB3BOX
+Loading: FB4
+Loading: FB4BOX
+Loading: MEOHBOX
+Loading: NMABOX
+Loading: O3P
+Loading: OP3
+Loading: OPC
+Loading: OPC3BOX
+Loading: OPCBOX
+Loading: PL3
+Loading: POL3BOX
+Loading: QSPCFWBOX
+Loading: SPC
+Loading: SPCBOX
+Loading: SPCFWBOX
+Loading: SPF
+Loading: SPG
+Loading: T4E
+Loading: TIP3PBOX
+Loading: TIP3PFBOX
+Loading: TIP4PBOX
+Loading: TIP4PEWBOX
+Loading: TIP5PBOX
+Loading: TP3
+Loading: TP4
+Loading: TP5
+Loading: TPF
+>> HOH = TP3
+>> WAT = TP3
+>> loadAmberParams frcmod.tip3p
+Loading parameters: /opt/crc/a/amber/22.0/amber22/dat/leap/parm/frcmod.tip3p
+Reading force field modification type file (frcmod)
+Reading title:
+This is the additional/replacement parameter set for TIP3P water
+>> loadAmberParams frcmod.ions1lm_126_tip3p
+Loading parameters: /opt/crc/a/amber/22.0/amber22/dat/leap/parm/frcmod.ions1lm_126_tip3p
+Reading force field modification type file (frcmod)
+Reading title:
+Li/Merz ion parameters of monovalent ions for TIP3P water model (12-6 normal usage set)
+>> loadAmberParams frcmod.ionsjc_tip3p
+Loading parameters: /opt/crc/a/amber/22.0/amber22/dat/leap/parm/frcmod.ionsjc_tip3p
+Reading force field modification type file (frcmod)
+Reading title:
+Monovalent ion parameters for Ewald and TIP3P water from Joung & Cheatham JPCB (2008)
+>> loadAmberParams frcmod.ions234lm_126_tip3p
+Loading parameters: /opt/crc/a/amber/22.0/amber22/dat/leap/parm/frcmod.ions234lm_126_tip3p
+Reading force field modification type file (frcmod)
+Reading title:
+Li/Merz ion parameters of divalent to tetravalent ions for TIP3P water model (12-6 normal usage set)
+>> 
+> 
+> mol = loadpdb 1hs3_pdb4amber.pdb
+Loading PDB file: ./1hs3_pdb4amber.pdb
+Matching PDB residue names to LEaP variables.
+Mapped residue G, term: Terminal/beginning, seq. number: 0 to: G5.
+Mapped residue A, term: Terminal/last, seq. number: 12 to: A3.
+  total atoms in file: 413
+> addions mol Na+ 0
+12 Na+ ions required to neutralize.
+Adding 12 counter ions to "mol" using 1A grid
+Total solute charge:  -12.00  Max atom radius:   2.10
+Grid extends from solute vdw + 3.22  to  9.32
+Box:
+   enclosing:  -0.61 -1.60 -7.77   41.23 43.28 31.86
+   sized:			      63.39 62.40 56.23
+   edge:        64.00
+Resolution:      1.00 Angstrom.
+Tree depth: 6
+Volume =  7.51% of box, grid points 19676
+ (no solvent present)
+Calculating grid charges
+Placed Na+ in mol at (19.39, 31.40, 12.23).
+Placed Na+ in mol at (22.39, 22.40, 8.23).
+Placed Na+ in mol at (28.39, 13.40, 19.23).
+Placed Na+ in mol at (15.39, 25.40, 8.23).
+Placed Na+ in mol at (18.39, 7.40, 21.23).
+Placed Na+ in mol at (14.39, 33.40, 17.23).
+Placed Na+ in mol at (35.39, 22.40, 16.23).
+Placed Na+ in mol at (7.39, 25.40, 6.23).
+Placed Na+ in mol at (19.39, 33.40, 23.23).
+Placed Na+ in mol at (9.39, 18.40, 17.23).
+Placed Na+ in mol at (24.39, 14.40, 14.23).
+Placed Na+ in mol at (25.39, 29.40, 7.23).
+
+Done adding ions.
+> solvateoct mol TIP3PBOX 12.0
+Scaling up box by a factor of 1.239917 to meet diagonal cut criterion
+  Solute vdw bounding box:              32.537 28.417 25.355
+  Total bounding box for atom centers:  62.295 62.295 62.295
+      (box expansion for 'iso' is  21.0%)
+  Solvent unit box:                     18.774 18.774 18.774
+The number of boxes:  x= 4  y= 4  z= 4
+  Volume: 126789.456 A^3 (oct)
+  Total mass 66862.852 amu,  Density 0.876 g/cc
+  Added 3469 residues.
+> addionsrand mol Na+ 59 Cl- 59
+Adding 118 counter ions to "mol". 3351 solvent molecules will remain.
+0: Placed Na+ in mol at (-20.07, -12.47, -9.60).
+Placed Cl- in mol at (24.02, 0.76, -3.64).
+0: Placed Na+ in mol at (0.67, -17.42, 12.12).
+Placed Cl- in mol at (-11.67, 4.67, 20.57).
+0: Placed Na+ in mol at (0.38, 11.81, 3.73).
+Placed Cl- in mol at (-6.05, 12.51, 4.39).
+0: Placed Na+ in mol at (-12.36, -4.58, -13.11).
+Placed Cl- in mol at (16.39, 0.89, -19.26).
+0: Placed Na+ in mol at (-3.39, 18.73, 12.00).
+Placed Cl- in mol at (-16.29, 16.83, 10.30).
+0: Placed Na+ in mol at (19.16, -1.80, 15.94).
+Placed Cl- in mol at (-1.75, 6.96, -28.24).
+0: Placed Na+ in mol at (-5.77, 15.06, -25.22).
+Placed Cl- in mol at (5.54, -24.48, -0.88).
+0: Placed Na+ in mol at (7.24, 11.02, 16.51).
+Placed Cl- in mol at (-18.83, -0.88, -21.92).
+0: Placed Na+ in mol at (18.97, -12.42, 16.82).
+Placed Cl- in mol at (-16.53, -15.75, 4.82).
+0: Placed Na+ in mol at (-23.34, -13.98, -10.10).
+Placed Cl- in mol at (-1.71, 18.35, 9.48).
+0: Placed Na+ in mol at (-2.58, 23.60, -14.03).
+Placed Cl- in mol at (-4.80, 18.36, -4.56).
+0: Placed Na+ in mol at (16.96, 6.10, -17.50).
+Placed Cl- in mol at (-24.25, -14.02, 13.52).
+0: Placed Na+ in mol at (-0.68, 13.15, -6.62).
+Placed Cl- in mol at (20.52, -1.12, -23.00).
+0: Placed Na+ in mol at (-6.20, 2.99, 11.80).
+Placed Cl- in mol at (-17.20, -5.10, 18.12).
+0: Placed Na+ in mol at (-25.42, -0.69, -8.82).
+Placed Cl- in mol at (15.33, 5.48, -5.07).
+0: Placed Na+ in mol at (-16.97, -2.70, 8.86).
+Placed Cl- in mol at (4.00, -8.16, 25.31).
+0: Placed Na+ in mol at (20.35, -11.16, -20.70).
+Placed Cl- in mol at (-4.72, 21.43, -17.50).
+0: Placed Na+ in mol at (15.30, -2.65, -7.44).
+Placed Cl- in mol at (-20.80, 7.63, 3.58).
+0: Placed Na+ in mol at (-2.70, 2.91, 16.82).
+Placed Cl- in mol at (-22.36, 5.49, 6.66).
+0: Placed Na+ in mol at (-5.28, 16.22, -19.26).
+Placed Cl- in mol at (-2.62, -24.27, 7.08).
+0: Placed Na+ in mol at (-7.98, 22.70, -10.43).
+Placed Cl- in mol at (-18.61, 13.56, 9.80).
+0: Placed Na+ in mol at (19.73, 14.78, 0.11).
+Placed Cl- in mol at (-13.13, -20.51, 9.76).
+0: Placed Na+ in mol at (8.44, -13.08, -19.53).
+Placed Cl- in mol at (-8.91, 25.06, 20.06).
+0: Placed Na+ in mol at (11.06, -8.20, 19.19).
+Placed Cl- in mol at (-4.30, 4.82, -18.82).
+0: Placed Na+ in mol at (14.11, -5.72, 27.26).
+Placed Cl- in mol at (-12.64, -16.60, 10.94).
+0: Placed Na+ in mol at (7.59, 4.53, -19.49).
+Placed Cl- in mol at (3.89, -1.74, 16.13).
+0: Placed Na+ in mol at (-18.24, -9.40, 18.80).
+Placed Cl- in mol at (25.05, 1.61, 13.61).
+0: Placed Na+ in mol at (10.84, -11.31, 5.79).
+Placed Cl- in mol at (-7.99, 14.45, 4.64).
+0: Placed Na+ in mol at (-23.48, -8.93, -2.33).
+Placed Cl- in mol at (-11.61, -12.43, -12.83).
+0: Placed Na+ in mol at (-9.03, 5.22, -17.08).
+Placed Cl- in mol at (-6.36, 22.42, -12.73).
+0: Placed Na+ in mol at (-0.20, 11.21, 0.92).
+Placed Cl- in mol at (13.20, -12.50, 1.37).
+0: Placed Na+ in mol at (-21.14, 18.12, 8.23).
+Placed Cl- in mol at (2.49, 1.02, -24.32).
+0: Placed Na+ in mol at (20.99, -2.17, -6.62).
+Placed Cl- in mol at (-13.86, 20.50, 11.75).
+0: Placed Na+ in mol at (23.38, -10.41, -4.05).
+Placed Cl- in mol at (22.89, 17.42, 0.98).
+0: Placed Na+ in mol at (-16.90, 3.81, -21.49).
+Placed Cl- in mol at (4.37, -6.65, 29.30).
+0: Placed Na+ in mol at (9.91, -24.64, 1.06).
+Placed Cl- in mol at (-22.62, 9.05, 18.00).
+0: Placed Na+ in mol at (-12.14, 18.48, 11.24).
+Placed Cl- in mol at (-15.56, -16.89, -4.22).
+0: Placed Na+ in mol at (-8.47, 2.83, -25.18).
+Placed Cl- in mol at (-22.84, -16.45, 3.56).
+0: Placed Na+ in mol at (-18.35, -7.31, -14.16).
+Placed Cl- in mol at (9.42, 25.05, -4.84).
+0: Placed Na+ in mol at (-14.33, 11.06, 13.26).
+Placed Cl- in mol at (5.08, 15.91, -2.85).
+0: Placed Na+ in mol at (-14.42, 10.19, 9.78).
+Placed Cl- in mol at (15.90, -20.51, 3.58).
+0: Placed Na+ in mol at (16.13, -13.27, -19.70).
+Placed Cl- in mol at (-17.19, 5.48, 21.48).
+0: Placed Na+ in mol at (20.72, -9.50, 20.73).
+Placed Cl- in mol at (15.32, 7.10, -12.73).
+0: Placed Na+ in mol at (21.47, -4.12, 0.92).
+Placed Cl- in mol at (-12.90, -4.67, 8.77).
+0: Placed Na+ in mol at (9.04, 14.06, 10.94).
+Placed Cl- in mol at (-8.90, 17.41, 12.15).
+0: Placed Na+ in mol at (-6.13, 12.63, -17.69).
+Placed Cl- in mol at (-8.96, 21.66, -20.82).
+0: Placed Na+ in mol at (-13.54, -12.42, -9.74).
+Placed Cl- in mol at (1.81, 20.55, -17.08).
+0: Placed Na+ in mol at (-25.76, -8.76, 15.85).
+Placed Cl- in mol at (4.37, 10.46, -0.07).
+0: Placed Na+ in mol at (3.37, -6.05, 26.89).
+Placed Cl- in mol at (26.14, 12.68, -7.44).
+0: Placed Na+ in mol at (-4.09, 8.99, -17.00).
+Placed Cl- in mol at (-16.60, 8.25, 10.43).
+0: Placed Na+ in mol at (-4.59, 19.33, -0.38).
+Placed Cl- in mol at (14.56, -3.50, 15.37).
+0: Placed Na+ in mol at (14.12, -3.89, 12.38).
+Placed Cl- in mol at (-12.28, 22.90, -17.90).
+0: Placed Na+ in mol at (-12.41, 13.52, -5.37).
+Placed Cl- in mol at (-4.72, -18.15, 2.58).
+0: Placed Na+ in mol at (-9.19, 20.07, -5.93).
+Placed Cl- in mol at (-9.63, -5.57, 14.25).
+0: Placed Na+ in mol at (5.06, 10.15, -22.97).
+Placed Cl- in mol at (20.10, 13.52, -5.37).
+0: Placed Na+ in mol at (16.20, 0.95, 19.51).
+Placed Cl- in mol at (15.68, -0.13, -3.43).
+0: Placed Na+ in mol at (-11.04, 18.87, 14.19).
+Placed Cl- in mol at (-6.45, 10.76, -19.61).
+0: Placed Na+ in mol at (-10.98, 5.21, -12.93).
+Placed Cl- in mol at (1.10, -19.61, 18.37).
+0: Placed Na+ in mol at (20.89, -1.95, -18.45).
+Placed Cl- in mol at (-11.52, -2.17, 19.93).
+> check mol
+Checking 'mol'....
+Checking parameters for unit 'mol'.
+Checking for bond parameters.
+Checking for angle parameters.
+Unit is OK.
+> savepdb mol 1hs3_final.pdb
+Writing pdb file: 1hs3_final.pdb
+   printing CRYST1 record to PDB file with box info
+> savamberparm mol 1hs3.prmtop 1hs3.inpcrd
+
+Error: Error from the parser: 
+       syntax error.
+       Check for typos, misspellings, etc.
+       Try help on the command name and desc on the command arguments.
+
+> saveamberparm mol 1hs3.prmtop 1hs3.inpcrd
+Checking Unit.
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+ total 87 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+  (Residues lacking connect0/connect1 - 
+   these don't have chain types marked:
+
+	res	total affected
+
+	WAT	3351
+  )
+ (no restraints)
+> saveamberparm mol 1hs3.prmtop 1hs3.rst7
+Checking Unit.
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+ total 87 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+  (Residues lacking connect0/connect1 - 
+   these don't have chain types marked:
+
+	res	total affected
+
+	WAT	3351
+  )
+ (no restraints)
+> quit
+	Quit
+
+Exiting LEaP: Errors = 1; Warnings = 0; Notes = 0.
