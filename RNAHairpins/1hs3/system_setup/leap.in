@@ -1,6 +1,6 @@
 # 1hs3 FOLDED PREP
 # Run with tleap -s -f leap.in on CL
-# MUST REMOVE TERMINAL PHOSPHATES
+
 
 source leaprc.RNA.OL3
 source leaprc.water.tip3p
