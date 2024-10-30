@@ -5,12 +5,13 @@
 
 ### ============ MD3, Adjusting the truncated octahedron box length ============ ###
 
-length = 51.0315158
+length = 51.8193752
+print("Length:",length)
 
 predicted_volume = (1/2)*(4/3)**(3/2)*(length)**3
 print("Predicted volume:",predicted_volume)
 
-average_actual_volume = 102563.4482
+average_actual_volume = 106502.5198
 print("Average volume:",average_actual_volume)
 
 length_3 = average_actual_volume/((1/2)*(4/3)**(3/2))
@@ -27,3 +28,10 @@ d = (average_actual_volume/predicted_volume)**(1/3)
 
 l_new = d*length
 print("New length of the box:", l_new)
+
+### Output ###
+# Length: 51.8193752
+# Predicted volume: 107116.06893674914
+# Average volume: 106502.5198
+# New length of the box: 51.720247120766096
+# New length of the box: 51.7202471207661
