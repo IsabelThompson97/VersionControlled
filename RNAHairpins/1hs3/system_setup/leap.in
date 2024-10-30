@@ -3,6 +3,7 @@
 # pdb4amber -i 1hs3.pdb -o 1hs3_pdb4amber.pdb --reduce --dry
 # Run with tleap -s -f leap.in on CL
 
+###################################################
 
 source leaprc.RNA.OL3
 source leaprc.water.tip3p
@@ -16,6 +17,7 @@ saveamberparm mol 1hs3.prmtop 1hs3.inpcrd
 saveamberparm mol 1hs3.prmtop 1hs3.rst7
 quit
 
+###################################################
 
 # 413 atoms, 4.12 kDa, 13 residues 
 # 12 Na+ ions required to neutralize.
