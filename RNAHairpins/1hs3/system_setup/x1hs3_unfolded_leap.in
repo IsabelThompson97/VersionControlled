@@ -1,0 +1,32 @@
+# 1hs3 FOLDED PREP
+# 1hs3.pdb downloaded from PDB 413 atoms, drag to linear in PyMol
+# pdb4amber -i 1hs3_unfolded.pdb -o 1hs3unfolded_pdb4amber.pdb --reduce --dry
+# Run with tleap -s -f leap.in on CL
+
+###################################################
+
+source leaprc.RNA.OL3
+source leaprc.water.tip3p
+mol = loadpdb 1hs3unfolded_pdb4amber.pdb
+addions mol Na+ 0
+solvateoct mol TIP3PBOX 12.0
+addionsrand mol Na+ 57 Cl- 57
+check mol
+savepdb mol 1hs3_unfoldedFinal.pdb
+saveamberparm mol 1hs3_unfolded.prmtop 1hs3_unfolded.inpcrd
+saveamberparm mol 1hs3_unfolded.prmtop 1hs3_unfolded.rst7
+quit
+
+###################################################
+
+# 413 atoms, 4.1 kDa, 13 residues 
+# 12 Na+ ions required to neutralize.
+# Scaling up box by a factor of 1.239917 to meet diagonal cut criterion
+  # Solute vdw bounding box:              102.580 16.512 14.969
+  # Total bounding box for atom centers:  126.580 126.580 126.580
+      # (box expansion for 'iso' is 914.9%)
+  # Solvent unit box:                     18.774 18.774 18.774
+  # Volume: 1038299.124 A^3 (oct)
+  # Total mass 578030.820 amu,  Density 0.924 g/cc
+  # Added 31842 residues.
+# Add 57 NaCl for 0.1M
