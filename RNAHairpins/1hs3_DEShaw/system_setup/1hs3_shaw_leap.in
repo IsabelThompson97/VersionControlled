@@ -1,0 +1,31 @@
+DE SHAW RNA Force Field + TIP4P-D Water Model + CHARM22 Ions
+###################################################
+
+source leaprc.RNA.Shaw
+source leaprc.water.tip4pd
+mol = loadpdb 1hs3_pdb4amber.pdb
+addions mol Na+ 0
+solvateoct mol TIP4PDBOX 12.0
+addionsrand mol Na+ 6 Cl- 6
+check mol
+savepdb mol 1hs3_ShawFinal.pdb
+saveamberparm mol 1hs3_shaw.prmtop 1hs3_shaw.inpcrd
+saveamberparm mol 1hs3_shaw.prmtop 1hs3_shaw.rst7
+quit
+
+###################################################
+
+# 413 atoms, 4.1 kDa, 13 residues 
+# 12 Na+ ions required to neutralize.
+# > solvateoct mol TIP4PDBOX 12.0
+# Scaling up box by a factor of 1.227566 to meet diagonal cut criterion
+  # Solute vdw bounding box:              32.484 29.075 25.850
+  # Total bounding box for atom centers:  61.945 61.945 61.945
+     # (box expansion for 'iso' is  18.5%)
+  # Solvent unit box:                     18.860 18.867 18.860
+  # Volume: 124698.154 A^3 (oct)
+  # Total mass 64484.740 amu,  Density 0.859 g/cc
+  # Added 3337 residues.
+# Add 6 Na+ and 6 Cl- for ~ 0.1M
+
+
