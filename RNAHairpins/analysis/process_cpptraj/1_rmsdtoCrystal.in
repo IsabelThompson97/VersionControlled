@@ -1,0 +1,9 @@
+parm ../../stripped_trajectories/1hs3_unfolded_stripped.prmtop [trajfoldedParm]
+trajin ../../stripped_trajectories/md1_md5_unfolded1hs3.nc parm [trajfoldedParm]
+
+parm 1hs3_crystal.prmtop [crystal]
+reference 1hs3_crystal.rst7 parm [crystal]
+
+rmsd ToCrystal reference :1-13&!@H= :1-13&!@H= out rmsd_toCrystal.dat
+run
+quit

@@ -79,7 +79,7 @@ class RadiusofGyrationAnalysis:
 class RMSDtoFoldedAnalysis:
     def __init__(self, txt_file_path):
         self.txt_file_path = txt_file_path
-        self.csv_file_path = 'rmsd_toFolded.csv'
+        self.csv_file_path = 'rmsd_toCrystal.csv'
         self.output_file_path = 'AnalysisOutput.txt'
         self.time = time.asctime()
 
@@ -127,7 +127,7 @@ class RMSDtoFoldedAnalysis:
             f"{top_5_smallest[['Frame', 'RMSD']].to_string(index=False)}\n"
         )
 
-        self.append_to_output('------------------- RMSD to Folded ------------------------------  ' + self.time + '\n\n' + output_text + '\n' 
+        self.append_to_output('------------------- RMSD to Crystal ------------------------------  ' + self.time + '\n\n' + output_text + '\n' 
                               + '-------------------------------------------------' + '\n\n')
 
         plt.figure(figsize=(12, 6))
@@ -143,7 +143,7 @@ class RMSDtoFoldedAnalysis:
         ticks = np.linspace(0, time_ns.max(), num=11)
         plt.xticks(ticks=ticks, labels=[f'{tick:.1f}' for tick in ticks])
 
-        plt.savefig('rmsd_toFolded.png')
+        plt.savefig('rmsd_toCrystal.png')
         plt.show()
 
 class RMSDAnalysis:
@@ -527,7 +527,7 @@ print('Radius of Gyration analysis complete')
 # ____________________RMSD to Folded______________________
 # Usage:
 # Initialize the class with the .txt file path
-rmsdtoFoldedAnalysis = RMSDToFoldedAnalysis('rmsd_toFolded.txt')
+rmsdtoFoldedAnalysis = RMSDToFoldedAnalysis('rmsd_toCrystal.txt')
 
 # Convert .txt to .csv 
 rmsdtoFoldedAnalysis.convert_txt_to_csv()
@@ -538,7 +538,7 @@ rmsdtoFoldedAnalysis.scale_x_to_ns(500)
 # Analyze and plot the data
 rmsdtoFoldedAnalysis.analyze_and_plot()
 
-print('RMSD to Folded analysis complete')
+print('RMSD to Crystal analysis complete')
 
 # ____________________RMSD to First______________________
 # Usage:
