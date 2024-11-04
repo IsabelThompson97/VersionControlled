@@ -12,4 +12,4 @@ check mol
 savepdb mol finalggc.pdb
 saveamberparm mol ggc.prmtop ggc.inpcrd
 saveamberparm mol ggc.prmtop ggc.rst7
-quit
+quit 
