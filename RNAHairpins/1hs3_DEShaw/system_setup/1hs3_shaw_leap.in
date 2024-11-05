@@ -1,3 +1,8 @@
+# 1hs3 FOLDED PREP
+# 1hs3.pdb downloaded from PDB 413 atoms
+# pdb4amber -i 1hs3.pdb -o 1hs3_pdb4amber.pdb --reduce --dry
+# Run with tleap -s -f leap.in on CL
+
 DE SHAW RNA Force Field + TIP4P-D Water Model + CHARM22 Ions
 ###################################################
 
