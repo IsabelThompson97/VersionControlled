@@ -1,0 +1,8 @@
+pparm ../../stripped_trajectories/1hs3unfolded_shaw_stripped.prmtop
+trajin ../../stripped_trajectories/md1_md2_unfoldedShaw.nc
+
+autoimage :1-13
+nativecontacts :1@17 :13@401 mindist name mindistDataNucleotideO
+run
+write minDistNucleotideO.dat mindistDataNucleotideO[mindist]
+quit

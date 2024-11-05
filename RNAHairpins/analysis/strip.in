@@ -1,13 +1,17 @@
 parm topology.prmtop
 trajin md*.nc
+
 autoimage
-strip :WAT
+strip :WAT,Na+,Cl- parmout parm_stripped.prmtop
 trajout trajctory_noWater.nc
 run
 
+#################
+
 parmin topology.prmtop
 parm topology.prmtop
-parmstrip :WAT
-parmwrite out topology_noWater.prmtop
+
+parmstrip :WAT,Na+,Cl-
+parmwrite out topology_stripped.prmtop
 run
 quit

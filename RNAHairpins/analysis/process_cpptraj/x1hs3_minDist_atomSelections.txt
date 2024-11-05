@@ -1,0 +1,7 @@
+Ribose O
+O 1:8
+O 13:389
+
+Nucleotide
+O 1:17
+N 13:401
