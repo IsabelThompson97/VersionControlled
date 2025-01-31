@@ -1,0 +1,33 @@
+WESTPA
+- bstates
+	- StructureFiles
+		- struct_n
+			• md4.ncrst
+			• struct.prmtop
+			• struct.rst/.rst7
+			• pcoordreturn.dat
+		• 1hs3foldedDES_stripped.prmtop
+		• 1hs3unfoldedDES.prmtop
+		• closest_averagefoldedDES.rst7
+		• bstates.txt
+		• struct.txt
+		• get_pcoord.cpptraj
+		• get_pcoord.sh
+- common_files
+	• 1hs3foldedDES_stripped.prmtop
+	• 1hs3unfoldedDES.prmtop
+	• closest_averagefoldedDES.rst7	
+	• md4.ncrst
+	• md0.in
+	• md.in
+- westpa_scripts
+	• get_pcoord.cpptraj
+	• get_pcoord.sh
+	• post_iter.sh
+	• runseg.sh
+• env.sh
+• init.sh
+• run.sh
+• west.cfg
+• system.py
+
