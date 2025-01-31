@@ -1,0 +1,17 @@
+parm StructureFiles/struct_INDEX/struct.prmtop
+trajin StructureFiles/struct_INDEX/struct.rst7 
+
+autoimage :1-13
+nativecontacts :1 :13 mindist name mindistData
+run
+
+write StructureFiles/struct_INDEX/mindist.dat mindistData[mindist]
+run
+
+parm 1hs3foldedDES_stripped.prmtop [crystal]
+reference closest_averagefoldedDES.rst7 parm [crystal]
+
+autoimage :1-13
+
+rmsd ToCrystal reference :1-13&!@H= :1-13&!@H= out StructureFiles/struct_INDEX/rmsd_toCrystal.dat
+run
