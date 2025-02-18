@@ -56,6 +56,7 @@ mv $(echo 'traj_'$siter'_'$sseg'_trace.txt') $dir
 mv trajs.h5 $dir
 cd $dir
 
+# Calculate, print wallclock and CPU time
 awk '
 !/^#/ {
     wallclock += $4
