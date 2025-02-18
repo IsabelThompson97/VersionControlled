@@ -1,0 +1,64 @@
+Easy Analysis for WESTPA simulation data
+Use once all full iterations qsubbed have completed
+OR if iterations are running, you can use -W westBackup.h5, USE CAUTION
+
+-----------------------------------------------------------------
+# Bin information for last run
+w_bins info --detail
+
+-----------------------------------------------------------------
+# Create histogram of progress coordinates and probability distribution
+w_pdist
+plothist average pdist.h5 0::'RMSD (Å)' -o avg.pdf
+plothist evolution pdist.h5 0::'RMSD (Å)'
+
+-----------------------------------------------------------------
+# Start interactive python analysis
+w_ipa
+
+-----------------------------------------------------------------
+# Check bin bounds and state labels as defined in west.cfg analysis scheme
+w.bin_labels
+w.state_labels
+
+-----------------------------------------------------------------
+# To identify segments in target bin as defined in west.cfg analysis scheme
+# Change == 0 to == 1 as needed for correct bins
+import numpy as np
+indices = np.where(w.current.bins[:,1] == 0)[0]
+segments_in_bin = w.current.seg_id[indices]
+print(segments_in_bin)
+
+-----------------------------------------------------------------
+# To identify segments that transitioned to target bin in last iteration
+# Change to any direction needed, eg. [(0,1)]
+s=w.current.successful_trajectories
+s[(1,0)]
+
+-----------------------------------------------------------------
+# Direct Rate Evolution
+w.current.direct.rate_evolution
+w.current.direct.rate_evolution.plot(interface='matplotlib')
+
+# Plot direct rate evolution - change 1, 0 to any bin direction as needed
+import matplotlib.pyplot as plt
+plt.plot(w.direct['rate_evolution']['expected'][:, 1, 0], color='black')
+plt.plot(w.direct['rate_evolution']['ci_ubound'][:, 1, 0], color='grey')
+plt.plot(w.direct['rate_evolution']['ci_lbound'][:, 1, 0], color='grey')
+plt.xlabel('Iteration')
+plt.ylabel(u'unfolded → folded rate (1/\u03c4)')
+plt.show()
+
+-----------------------------------------------------------------
+# Target Flux evolution
+w.current.direct.target_flux_evolution.plot(0)
+
+import matplotlib.pyplot as pyplot
+pyplot.plot(w.direct['target_flux_evolution']['expected'][:,0], color='blue')
+pyplot.plot(w.direct['target_flux_evolution']['ci_lbound'][:,0], color='gray')
+pyplot.plot(w.direct['target_flux_evolution']['ci_ubound'][:,0], color='gray')
+pyplot.xlabel('Iteration')
+pyplot.ylabel(u'Mean Flux (1/\u03c4)')
+pyplot.show()
+
+-----------------------------------------------------------------
