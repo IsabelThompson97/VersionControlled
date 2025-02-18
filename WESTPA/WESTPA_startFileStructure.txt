@@ -6,13 +6,13 @@ WESTPA
 			• struct.prmtop
 			• struct.rst/.rst7
 			• pcoordreturn.dat
-		• 1hs3foldedDES_stripped.prmtop
-		• 1hs3unfoldedDES.prmtop
-		• closest_averagefoldedDES.rst7
-		• bstates.txt
-		• struct.txt
-		• get_pcoord.cpptraj
-		• get_pcoord.sh
+	• 1hs3foldedDES_stripped.prmtop
+	• 1hs3unfoldedDES.prmtop
+	• closest_averagefoldedDES.rst7
+	• bstates.txt
+	• struct.txt
+	• get_pcoord.cpptraj
+	• get_pcoord.sh
 - common_files
 	• 1hs3foldedDES_stripped.prmtop
 	• 1hs3unfoldedDES.prmtop
