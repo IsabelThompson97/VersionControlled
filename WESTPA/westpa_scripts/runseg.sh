@@ -55,8 +55,7 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         sed "s/RAND/$WEST_RAND16/g" $WEST_SIM_ROOT/common_files/md0.in > md.in
         ln -sv $WEST_SIM_ROOT/westpa_scripts/get_pcoord.cpptraj ./get_pcoord.cpptraj
         ln -sv $WEST_PARENT_DATA_REF/md4.ncrst ./parent.rst
-        ln -sv $WEST_SIM_ROOT/common_files/md4.ncrst ./parent.rst
-	ln -sv $WEST_PARENT_DATA_REF/struct.prmtop ./struct.prmtop
+	    ln -sv $WEST_PARENT_DATA_REF/struct.prmtop ./struct.prmtop
     ;;
 
     *)
