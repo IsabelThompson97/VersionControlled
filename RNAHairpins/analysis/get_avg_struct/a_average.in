@@ -1,0 +1,11 @@
+parm 1hs3foldedDES_stripped.prmtop
+trajin 1hs3foldedDES_production.nc
+ 
+autoimage
+rms
+average averageFoldedDES.pdb pdb
+run
+
+# Use average pdb to run rms fit to trajectory file with b_rmsdfromAvg.in
+# Find frame of minimum RMSD to average structure with c_average.py
+# Get pdb of closest structure to average with d_getClosestAvg.in

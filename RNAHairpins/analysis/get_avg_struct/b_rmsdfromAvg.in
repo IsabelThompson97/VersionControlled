@@ -1,0 +1,7 @@
+parm 1hs3foldedDES_stripped.prmtop
+trajin 1hs3foldedDES_production.nc
+reference averageFoldedDES.pdb
+autoimage
+rms reference out rmsdfromAvg.out
+run
+ 

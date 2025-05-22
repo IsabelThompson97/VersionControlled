@@ -524,7 +524,7 @@ radGyrAnalysis.analyze_and_plot()
 
 print('Radius of Gyration analysis complete')
 
-# ____________________RMSD to Folded______________________
+# ____________________RMSD to Crystal______________________
 # Usage:
 # Initialize the class with the .txt file path
 rmsdtoFoldedAnalysis = RMSDToFoldedAnalysis('rmsd_toCrystal.txt')
