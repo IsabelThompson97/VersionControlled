@@ -1,0 +1,6 @@
+# 01/23/25 12:24:57
+parm struct.prmtop
+trajin struct.rst7
+trajout md4.ncrst
+run
+quit

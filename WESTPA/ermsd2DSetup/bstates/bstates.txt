@@ -1,0 +1,5 @@
+0 0.2 StructureFiles/struct_0
+1 0.2 StructureFiles/struct_1
+2 0.2 StructureFiles/struct_2
+3 0.2 StructureFiles/struct_3
+4 0.2 StructureFiles/struct_4

@@ -1,0 +1,1 @@
+barnaba ERMSD --ref ../common_files/closest_averagefoldedDES.pdb --trj StructureFiles/struct_INDEX/struct.rst7  --top StructureFiles/struct_INDEX/struct.prmtop -o StructureFiles/struct_INDEX/outfile

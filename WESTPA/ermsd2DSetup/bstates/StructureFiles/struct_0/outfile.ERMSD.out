@@ -1,0 +1,3 @@
+# /afs/crc.nd.edu/user/i/ithomps3/.conda/envs/rna/bin/barnaba ERMSD --ref ../common_files/closest_averagefoldedDES.pdb --trj StructureFiles/struct_0/struct.rst7 --top StructureFiles/struct_0/struct.prmtop -o StructureFiles/struct_0/outfile 
+#     Frame        eRMSD
+          0   1.7545e+00 

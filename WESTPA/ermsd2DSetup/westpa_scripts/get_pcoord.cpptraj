@@ -1,0 +1,8 @@
+parm struct.prmtop 
+trajin parent.rst
+trajin seg.rst
+
+autoimage
+radgyr :1-13&!(@H=) out RoG.dat mass nomax
+run
+quit
