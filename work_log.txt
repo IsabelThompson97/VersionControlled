@@ -1,0 +1,139 @@
+
+---------------------------------------------------------------------------------------------
+27/06/25
+
+- Continue DES 325K and OL3 folded control production runs, plotted mdOut for current progress
+- Continue WE 2D unfolding RMSD_MinDist - Making excellend progress, need to pull structures at 50 iterations to check 
+- Stalling out on Folding RMSD 1D pcoords, folding 2D RMSD_RoG, unfolding 1D RMSD not actually unfolding?
+    - Do I continue pushing these or give up? Not sure how to assess what is worth continuing/wasting space on?
+- Stripped 5 us trajectory KEEP Na+ Cl- ions
+- Worked on organizing thoughts for how to approach DSSR/analyzing eRMSD jump (below) and just setting this thing up 
+
+- Ideas for 5 microsecond DES 300K folded control production run
+    - Steve said to determine structural change that occurs between 1.5 to 2 us, where jump from < 0.7 to > 0.7 eRMSD occurs
+    - Current frames for analysis:
+        - NMR structure from PDB
+        - PDB structure run through pdb4amber cleanup
+        - Frame 0 of folded control production run
+        - Frame 1546000 (eRMSD < 0.7)
+        - Frame 1624000 (eRMSD > 0.7)
+
+    - DSSR to analyze structural details, find differences in structures?
+        - Take averages from 500 ns prior and post jump, and compare average structural features?
+        - How and WHAT to compare between structures to determine main drivers of eRMSD shift? What kinds of plots/visualizations, which datasets to use?
+        - How to use trajectories with DSSR and what are the outputs for this? Can you plot information about conformational parameters as time series?
+        - How to parse/use .json file for max information?
+
+    - DSSR output includes
+        - .json file with all information about every base and it's interactions, classifications, etc. 
+        - Hydrogen bond list with distances
+        - Secondary structures: .ct, .bpseq, .dbn -- what do any of these mean, how to read?
+        - hairpins.pdb, helices.prb, pairs.pdb, splays.pdb, stacks.pdb, stems.pdb: PDBs of elements in analyzed structure
+        - torsions.txt
+            - Main chain conformational parameters
+                        alpha:   O3'(i-1)-P-O5'-C5'
+                        beta:    P-O5'-C5'-C4'
+                        gamma:   O5'-C5'-C4'-C3'
+                        delta:   C5'-C4'-C3'-O3'
+                        epsilon: C4'-C3'-O3'-P(i+1)
+                        zeta:    C3'-O3'-P(i+1)-O5'(i+1)
+                        e-z:     epsilon-zeta (BI/BII backbone classification)
+
+                        chi for pyrimidines(Y): O4'-C1'-N1-C2; purines(R): O4'-C1'-N9-C4
+                            Range [170, -50(310)] is assigned to anti, and [50, 90] to syn
+
+                        phase-angle: the phase angle of pseudorotation and puckering
+                        sugar-type: ~C2'-endo for C2'-endo like conformation, or
+                                    ~C3'-endo for C3'-endo like conformation
+                                    Note the ONE column offset (for easy visual distinction)
+
+                        ssZp: single-stranded Zp, defined as the z-coordinate of the 3' phosphorus atom
+                            (P) expressed in the standard reference frame of the 5' base; the value is
+                            POSITIVE when P lies on the +z-axis side (base in anti conformation);
+                            NEGATIVE if P is on the -z-axis side (base in syn conformation)
+                        Dp: perpendicular distance of the 3' P atom to the glycosidic bond
+                            [Ref: Chen et al. (2010): "MolProbity: all-atom structure
+                                    validation for macromolecular crystallography."
+                                    Acta Crystallogr D Biol Crystallogr, 66(1):12-21]
+                        splay: angle between the bridging P to the two base-origins of a dinucleotide.
+
+            - Virtual eta/theta torsion angles:
+                        eta:    C4'(i-1)-P(i)-C4'(i)-P(i+1)
+                        theta:  P(i)-C4'(i)-P(i+1)-C4'(i+1)
+                            [Ref: Olson (1980): "Configurational statistics of polynucleotide chains.
+                                An updated virtual bond model to treat effects of base stacking."
+                                Macromolecules, 13(3):721-728]
+
+                        eta':   C1'(i-1)-P(i)-C1'(i)-P(i+1)
+                        theta': P(i)-C1'(i)-P(i+1)-C1'(i+1)
+                            [Ref: Keating et al. (2011): "A new way to see RNA." Quarterly Reviews
+                                of Biophysics, 44(4):433-466]
+
+                        eta":   base(i-1)-P(i)-base(i)-P(i+1)
+                        theta": P(i)-base(i)-P(i+1)-base(i+1)
+
+            - Sugar conformational parameters:
+                        v0: C4'-O4'-C1'-C2'
+                        v1: O4'-C1'-C2'-C3'
+                        v2: C1'-C2'-C3'-C4'
+                        v3: C2'-C3'-C4'-O4'
+                        v4: C3'-C4'-O4'-C1'
+
+                        tm: the amplitude of pucker
+                        P:  the phase angle of pseudorotation
+                        Pucker type
+
+            - Assignment of sugar-phosphate backbone suites
+                        bin: name of the 12 bins based on [delta(i-1), delta, gamma], where
+                            delta(i-1) and delta can be either 3 (for C3'-endo sugar) or 2
+                            (for C2'-endo) and gamma can be p/t/m (for gauche+/trans/gauche-
+                            conformations, respectively) (2x2x3=12 combinations: 33p, 33t,
+                            ... 22m); 'inc' refers to incomplete cases (i.e., with missing
+                            torsions), and 'trig' to triages (i.e., with torsion angle
+                            outliers)
+                        cluster: 2-char suite name, for one of 53 reported clusters (46
+                                certain and 7 wannabes), '__' for incomplete cases, and
+                                '!!' for outliers
+                        suiteness: measure of conformer-match quality (low to high in range 0 to 1)
+        - DSSR.out
+            - No. chains, nucleotides, atoms, waters, metals
+            - List of base pairs and classification
+            - List of base paris in helices and helix type
+            - List of base pairs in stem elements
+            - List of base stacks not within a stem
+            - List of nucleotides not involved in stacking interactions
+            - List of nucleotides involved in hairpin loop
+            - List of non-loop single stranded seegments
+            - List of splayed-apart nucleotides and or units with angle, distance, ratio
+            - Secondary structures in dot-bracket notation
+            - Summary of structural features for each nucleotide
+                1. Serial number
+                2. One letter code 
+                3. Dot bracket notation
+                4. id string
+                5. RMSD of base ring atoms fitted against a standard base reference
+                6. Comma separated list of chi classification (syn/anti), sugar pucker, contact type, 
+                   base pairing type, element association, splayness, phosphate interactions, etc. 
+
+    - Nell suggestions: Analyze water shell and ion interactions over trajectory using distances for single atoms or radial distribution function
+        - Radial distribution function and calculating ion density tutorials - AMBERhub --> DO THIS 
+
+----------------------------- TO DO ------------------------------
+- Ongoing: Continue WE and production control runs
+- *** DSSR analysis - work on
+- *** Water and ion analysis - work on
+    - https://amberhub.chpc.utah.edu/using-rdf/ 
+- ** New WE 2D pcoords for folding and unfolding?
+- ** WE how to automate getting and setting up large # of frames?
+- Near future: Analyze production control runs once finished with normal cpptraj analysis
+
+- Literature Reviews    
+    - *** RNA force field accuracy and benchmarking and development
+    - *** Erin paper 1
+    - *** Erin paper 2
+    - *** Barnase and Barstar paper
+    - ** RNA biology as it relates to structure/function/dynamics
+    - Literature related to DEShaw RNA force field accuracy
+    - Examples of DSSR usage to analyze RNA structure in MD trajectories
+
+---------------------------------------------------------------------------------------------
