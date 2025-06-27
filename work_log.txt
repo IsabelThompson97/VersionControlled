@@ -3,7 +3,7 @@
 27/06/25
 
 - Continue DES 325K and OL3 folded control production runs, plotted mdOut for current progress
-- Continue WE 2D unfolding RMSD_MinDist - Making excellend progress, need to pull structures at 50 iterations to check 
+- Continue WE 2D unfolding RMSD_MinDist - Making excellent progress, need to pull structures at 50 iterations to check 
 - Stalling out on Folding RMSD 1D pcoords, folding 2D RMSD_RoG, unfolding 1D RMSD not actually unfolding?
     - Do I continue pushing these or give up? Not sure how to assess what is worth continuing/wasting space on?
 - Stripped 5 us trajectory KEEP Na+ Cl- ions
