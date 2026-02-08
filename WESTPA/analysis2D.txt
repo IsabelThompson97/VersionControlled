@@ -69,11 +69,11 @@ min_pcoord_index2 = np.argmin(final_pcoords2)
 
 # Get the seg_id corresponding to the minimum pcoord
 
-min_pcoord1_seg_id = segments_in_bin[min_pcoord_index1]
-min_pcoord1_value = pcoords[min_pcoord_index1]
+min_pcoord1_seg_id = seg_id[min_pcoord_index1]
+min_pcoord1_value = final_pcoords1[min_pcoord_index1]
 
-min_pcoord2_seg_id = segments_in_bin[min_pcoord_index2]
-min_pcoord2_value = pcoords[min_pcoord_index2]
+min_pcoord2_seg_id = seg_id[min_pcoord_index2]
+min_pcoord2_value = final_pcoords2[min_pcoord_index2]
 
 print(f"Segment ID with minimum 1st pcoord: {min_pcoord1_seg_id}")
 print(f"Minimum 1st pcoord value: {min_pcoord1_value}")
@@ -111,6 +111,8 @@ with open('analysis/w_ipa.log', 'w') as file:
         print('\n')
 
         print('-----------------------------------------------------------------')
+        print('Target bin: ', targetBin)
+        print('\n')
         print('Successful Segments in Target Bin: ' + str(len(data)))
         print('-----------------------------------------------------------------')
         print(data.to_string())

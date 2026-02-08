@@ -86,11 +86,15 @@ with open('analysis/w_ipa.log', 'w') as file:
         print('\n')
         w.state_labels
         print('\n')
+
         print('-----------------------------------------------------------------')
+        print('Target bin: ', targetBin)
+        print('\n')
         print('Successful Segments in Target Bin: ' + str(len(data)))
         print('-----------------------------------------------------------------')
         print(data.to_string())
         print('\n')
+
         print('-----------------------------------------------------------------')
         try:
           result = w.current.successful_trajectories[(1,0)]
@@ -101,11 +105,12 @@ with open('analysis/w_ipa.log', 'w') as file:
           print('No segments transitioned in iteration ' + str(w.iteration))
           print('-----------------------------------------------------------------')
         print('\n')
+
         print('-----------------------------------------------------------------')
         print('Rate Evolution')
         print('-----------------------------------------------------------------')
         print(pretty(w.current.direct.rate_evolution) + '\n')
-        plt.plot(w.direct['rate_evolution']['expected'][:, 1, 0], color='black')
+        plt.plot(w.direct['rate_evolution']['expected'][:, 1, 0], color='purple')
         plt.plot(w.direct['rate_evolution']['ci_ubound'][:, 1, 0], color='grey')
         plt.plot(w.direct['rate_evolution']['ci_lbound'][:, 1, 0], color='grey')
         plt.xlabel('Iteration')
@@ -113,6 +118,7 @@ with open('analysis/w_ipa.log', 'w') as file:
         plt.savefig("analysis/rateevolution.png")
         plt.close()
         print('Rate Evolution plot saved as rateevolution.png \n\n')
+
         print('-----------------------------------------------------------------')
         print('Target Flux Evolution')
         print('-----------------------------------------------------------------')
