@@ -67,7 +67,7 @@ class BinSchemeParser:
                 continue
             
             # Look for variable assignments
-            if '=' in line and any(kw in line.lower() for kw in ['rmsd', 'mindist', 'bins', 'spacing']):
+            if '=' in line and any(kw in line.lower() for kw in ['rmsd', 'mindist', 'bins', 'spacing', 'Quad', 'RMSD', 'MinDist']):
                 # Extract variable name
                 match = re.match(r'\s*(\w+)\s*=\s*(.+)', line)
                 if not match:
