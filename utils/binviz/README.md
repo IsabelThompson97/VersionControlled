@@ -21,7 +21,7 @@ pip install numpy matplotlib
 
 On CRC with following alias in .bashrc
 ```bash
-alias binviz="python3 /users/ithomps3/VersionControlled/utils/binviz/binning_vizualizer.py"
+alias binviz="python3 /users/ithomps3/VersionControlled/utils/binviz/westpa_vizualizer.py"
 ```
 USAGE:
 ```bash
