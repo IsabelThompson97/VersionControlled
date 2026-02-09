@@ -470,8 +470,8 @@ class BinVisualizer:
         # Set plot limits: max_finite + 10 for bins extending to infinity
         max_finite_x = max(finite_x) if finite_x else 10
         max_finite_y = max(finite_y) if finite_y else 10
-        plot_limit_x = max_finite_x + 10
-        plot_limit_y = max_finite_y + 10
+        plot_limit_x = max_finite_x + 5
+        plot_limit_y = max_finite_y + 5
         
         # Plot each bin
         for idx, bin_info in enumerate(sorted_bins):
