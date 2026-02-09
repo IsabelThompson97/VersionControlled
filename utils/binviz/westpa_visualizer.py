@@ -414,7 +414,7 @@ class BinVisualizer:
     
     def plot(self, output_file: Optional[str] = None,
              figsize: Tuple[int, int] = (14, 12),
-             show_labels: bool = True,
+             show_labels: bool = False,
              show_grid: bool = True,
              title: Optional[str] = None,
              xlabel: Optional[str] = None,
