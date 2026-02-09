@@ -701,9 +701,9 @@ Examples:
     )
     
     parser.add_argument(
-        '--no-labels',
+        '--show-labels',
         action='store_true',
-        help='Hide bin index labels'
+        help='Show bin index labels'
     )
     
     parser.add_argument(
@@ -758,7 +758,7 @@ Examples:
     visualizer.plot(
         output_file=args.output,
         figsize=tuple(args.figsize),
-        show_labels=not args.no_labels,
+        show_labels=args.show_labels,
         show_grid=not args.no_grid,
         title=args.title,
         xlabel=args.xlabel,
