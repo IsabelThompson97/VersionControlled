@@ -67,7 +67,7 @@ class BinSchemeParser:
                 continue
             
             # Look for variable assignments
-            if '=' in line and any(kw in line.lower() for kw in ['rmsd', 'mindist', 'bins', 'spacing', 'quad', 'RMSD', 'MinDist','high','low']):
+            if '=' in line and any(kw in line.lower() for kw in ['rmsd', 'mindist', 'bins', 'spacing', 'quad', 'RMSD', 'MinDist','high','low','mapper','boundary','radgyr','stem','loop']):
                 # Extract variable name
                 match = re.match(r'\s*(\w+)\s*=\s*(.+)', line)
                 if not match:
@@ -182,6 +182,11 @@ class BinSchemeParser:
         
         self.bin_data['mapper_to_bounds'] = mapper_to_bounds
         
+        # Find which mapper is the outer mapper (used in RecursiveBinMapper)
+        outer_mapper_match = re.search(r'RecursiveBinMapper\s*\(\s*(\w+)\s*\)', content)
+        if outer_mapper_match:
+            self.bin_data['outer_mapper_name'] = outer_mapper_match.group(1)
+
         # Find RecursiveBinMapper and add_mapper calls
         add_mapper_pattern = r'add_mapper\s*\(\s*(\w+)\s*,\s*\[([\d\.,\s]+)\]\s*\)'
         
@@ -243,31 +248,32 @@ class BinVisualizer:
         print(f"Found {len(boundaries)} boundary definitions")
         print(f"Found {len(nested_mappers)} nested mappers")
         
-        # First, find and create outer mapper bins
-        outer_rmsd = boundaries.get('rmsd_outer')
-        outer_mindist = boundaries.get('mindist_outer')
-        
-        # Try alternate naming patterns for outer boundaries
-        if not outer_rmsd:
-            for key in boundaries.keys():
-                if 'outer' in key.lower() and any(term in key.lower() for term in ['x', 'rmsd', 'coord0', 'pcoord0']):
-                    outer_rmsd = boundaries[key]
-                    break
-        
-        if not outer_mindist:
-            for key in boundaries.keys():
-                if 'outer' in key.lower() and any(term in key.lower() for term in ['y', 'mindist', 'dist', 'coord1', 'pcoord1']):
-                    outer_mindist = boundaries[key]
-                    break
-        
-        if outer_rmsd and outer_mindist:
-            print(f"Creating outer bins: X={outer_rmsd}, Y={outer_mindist}")
-            # Store the outer boundaries for later use in plotting
+        # First, find and create outer mapper bins using position-based lookup:
+        # args[0] of RectilinearBinMapper = pcoord[0] = X axis
+        # args[1] of RectilinearBinMapper = pcoord[1] = Y axis
+        outer_x = None
+        outer_y = None
+        x_var_name = None
+        y_var_name = None
+
+        outer_mapper_name = self.bin_data.get('outer_mapper_name')
+        mapper_to_bounds = self.bin_data.get('mapper_to_bounds', {})
+
+        if outer_mapper_name and outer_mapper_name in mapper_to_bounds:
+            outer_info = mapper_to_bounds[outer_mapper_name]
+            # 'rmsd_var' stores args[0] (pcoord[0]=X), 'mindist_var' stores args[1] (pcoord[1]=Y)
+            x_var_name = outer_info.get('rmsd_var')
+            y_var_name = outer_info.get('mindist_var')
+            outer_x = boundaries.get(x_var_name)
+            outer_y = boundaries.get(y_var_name)
+
+        if outer_x and outer_y:
+            print(f"Creating outer bins: X={outer_x} ({x_var_name}), Y={outer_y} ({y_var_name})")
             self.outer_boundaries = {
-                'x': outer_rmsd,
-                'y': outer_mindist
+                'x': outer_x,
+                'y': outer_y
             }
-            self._create_rectilinear_bins(outer_rmsd, outer_mindist, level=0)
+            self._create_rectilinear_bins(outer_x, outer_y, level=0)
         else:
             print("Warning: Could not find outer mapper boundaries")
         
@@ -457,7 +463,7 @@ class BinVisualizer:
         # Find plotting limits - need to handle infinity
         finite_x = []
         finite_y = []
-        for bin_info in self.bins:
+        for bin_info in self.bins: 
             if not np.isinf(bin_info['x_min']):
                 finite_x.append(bin_info['x_min'])
             if not np.isinf(bin_info['x_max']):
