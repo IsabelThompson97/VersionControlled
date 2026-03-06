@@ -255,10 +255,10 @@ class AgnosticBinVisualizer:
                 self._create_bins(dim0_bounds, dim1_bounds, level=0)
                 
                 # Use variable names as default labels if not provided
-                if not self.dim0_label:
-                    self.dim0_label = outer['vars'][0]
-                if not self.dim1_label:
-                    self.dim1_label = outer['vars'][1]
+                # if not self.dim0_label:
+                #     self.dim0_label = outer['vars'][0]
+                # if not self.dim1_label:
+                #     self.dim1_label = outer['vars'][1]
         
         # Add nested bins
         for nest in nested:
@@ -437,8 +437,8 @@ class AgnosticBinVisualizer:
         max_0 = max(finite_0) if finite_0 else 10
         max_1 = max(finite_1) if finite_1 else 10
         
-        plot_0 = max_0 + 10
-        plot_1 = max_1 + 10
+        plot_0 = max_0 + 5
+        plot_1 = max_1 + 5
         
         # Colors - uniform for all bins
         color = {'face': '#B3D9E6', 'edge': '#1E4D66', 'width': 1.2, 'alpha': 0.7}
