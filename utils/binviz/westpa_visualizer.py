@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-WESTPA Binning Scheme Visualizer (Standalone)
+WESTPA Binning Visualizer - COMPLETELY AGNOSTIC
 
-This tool visualizes binning schemes defined in WESTPA system.py files
-by parsing the file and extracting bin boundary definitions directly,
-without requiring WESTPA to be installed.
+Works with ANY WESTPA system.py file:
+- Finds ALL RectilinearBinMapper calls
+- Uses dimension INDICES (0, 1, 2...) internally
+- No assumptions about variable names or types
+- User provides labels if desired
 """
 
 import numpy as np
@@ -12,764 +14,541 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.patches import Rectangle
 import re
-import ast
 import argparse
 from typing import List, Tuple, Optional, Dict
 
 
-class BinSchemeParser:
-    """Parse binning schemes from system.py files."""
+class AgnosticBinParser:
+    """Parse WESTPA bins using only structure, not names."""
     
     def __init__(self, system_file: str):
-        """Initialize parser with system.py file."""
         self.system_file = system_file
-        self.bin_data = {
-            'outer_mapper': None,
-            'nested_mappers': [],
-            'pcoord_ndim': 2,
-            'target_counts': 8
-        }
+        self.arrays = {}  # All list variables
+        self.mappers = {}  # mapper_name -> [var0, var1, ...]
+        self.outer_mapper = None
+        self.nested_mappers = []
+        self.pcoord_ndim = 2
+        self.target_counts = 8
         
     def parse(self):
-        """Parse the system.py file to extract binning information."""
+        """Parse system.py."""
         with open(self.system_file, 'r') as f:
             content = f.read()
         
-        # Extract pcoord dimension
-        pcoord_match = re.search(r'self\.pcoord_ndim\s*=\s*(\d+)', content)
-        if pcoord_match:
-            self.bin_data['pcoord_ndim'] = int(pcoord_match.group(1))
+        # Get dimensions
+        m = re.search(r'self\.pcoord_ndim\s*=\s*(\d+)', content)
+        if m:
+            self.pcoord_ndim = int(m.group(1))
         
-        # Extract target counts
-        target_match = re.search(r'bin_target_counts.*?(\d+)', content)
-        if target_match:
-            self.bin_data['target_counts'] = int(target_match.group(1))
+        # Get target
+        m = re.search(r'bin_target_counts.*?(\d+)', content)
+        if m:
+            self.target_counts = int(m.group(1))
         
-        # Extract bin boundaries
-        self._extract_boundaries(content)
+        # Extract ALL arrays
+        self._extract_arrays(content)
         
-        # Extract nested mappers
-        self._extract_nested_mappers(content)
+        # Extract ALL mappers
+        self._extract_mappers(content)
         
-        return self.bin_data
+        # Find outer mapper
+        self._find_outer_mapper(content)
+        
+        # Find nested mappers
+        self._find_nested_mappers(content)
+        
+        return {
+            'pcoord_ndim': self.pcoord_ndim,
+            'target_counts': self.target_counts,
+            'arrays': self.arrays,
+            'mappers': self.mappers,
+            'outer_mapper': self.outer_mapper,
+            'nested_mappers': self.nested_mappers
+        }
     
-    def _extract_boundaries(self, content: str):
-        """Extract bin boundaries from variable definitions."""
-        boundaries = {}
-        
-        # Find all lines that define boundary arrays
-        # Match: var_name = [...] or var_name = [...] + [...] + [...]
+    def _extract_arrays(self, content: str):
+        """Extract ALL list/array variables."""
         lines = content.split('\n')
+        i = 0
         
-        for i, line in enumerate(lines):
-            # Skip comments
-            if line.strip().startswith('#'):
+        while i < len(lines):
+            line = lines[i]
+            
+            # Match: name = [...]
+            m = re.match(r'\s*(\w+)\s*=\s*(.+)', line)
+            if m and '[' in m.group(2):
+                name = m.group(1)
+                expr = m.group(2)
+                
+                # Handle multi-line
+                brackets = expr.count('[') - expr.count(']')
+                while brackets > 0 and i + 1 < len(lines):
+                    i += 1
+                    expr += ' ' + lines[i]
+                    brackets = expr.count('[') - expr.count(']')
+                
+                # Evaluate
+                try:
+                    value = self._eval(expr)
+                    if isinstance(value, (list, tuple)) and value:
+                        self.arrays[name] = [float(v) for v in value]
+                except:
+                    pass
+            
+            i += 1
+    
+    def _extract_mappers(self, content: str):
+        """Extract ALL RectilinearBinMapper definitions."""
+        # Pattern: name = RectilinearBinMapper([...])
+        pattern = r'(\w+)\s*=\s*RectilinearBinMapper\s*\(\s*\[([^\]]+)\]\s*\)'
+        
+        lines = content.split('\n')
+        for line in lines:
+            # Skip commented lines
+            stripped = line.strip()
+            if stripped.startswith('#'):
                 continue
             
-            # Look for variable assignments
-            if '=' in line and any(kw in line.lower() for kw in ['rmsd', 'mindist', 'bins', 'spacing', 'quad', 'RMSD', 'MinDist','high','low','mapper','boundary','radgyr','stem','loop']):
-                # Extract variable name
-                match = re.match(r'\s*(\w+)\s*=\s*(.+)', line)
-                if not match:
-                    continue
+            m = re.search(pattern, line)
+            if m:
+                name = m.group(1)
+                args = m.group(2)
                 
-                var_name = match.group(1)
-                expr = match.group(2)
+                # Get variable names
+                vars_list = [v.strip() for v in args.split(',')]
+                self.mappers[name] = vars_list
+    
+    def _find_outer_mapper(self, content: str):
+        """Find RecursiveBinMapper(mapper_name)."""
+        m = re.search(r'RecursiveBinMapper\s*\(\s*(\w+)\s*\)', content)
+        if m:
+            outer_name = m.group(1)
+            if outer_name in self.mappers:
+                vars_list = self.mappers[outer_name]
                 
-                # Continue multiline expressions
-                if '[' in expr and ']' not in expr:
-                    j = i + 1
-                    while j < len(lines) and ']' not in lines[j]:
-                        expr += ' ' + lines[j].strip()
-                        j += 1
-                    if j < len(lines):
-                        expr += ' ' + lines[j].strip()
+                # Get actual arrays
+                bounds = []
+                for var in vars_list:
+                    bounds.append(self.arrays.get(var))
                 
-                # Evaluate the expression
+                self.outer_mapper = {
+                    'name': outer_name,
+                    'vars': vars_list,
+                    'bounds': bounds  # Index 0=dim0, 1=dim1, etc.
+                }
+    
+    def _find_nested_mappers(self, content: str):
+        """Find all add_mapper calls - skip commented lines."""
+        lines = content.split('\n')
+        
+        for line in lines:
+            # Skip commented lines
+            stripped = line.strip()
+            if stripped.startswith('#'):
+                continue
+            
+            # Look for add_mapper
+            m = re.search(r'add_mapper\s*\(\s*(\w+)\s*,\s*\[([^\]]+)\]\s*\)', line)
+            if m:
+                name = m.group(1)
+                coords_str = m.group(2)
+                
                 try:
-                    bounds = self._eval_boundary_expr(expr)
-                    if bounds:
-                        boundaries[var_name] = bounds
-                except Exception as e:
+                    coords = [float(x.strip()) for x in coords_str.split(',')]
+                    
+                    # Get bounds for this mapper
+                    vars_list = self.mappers.get(name, [])
+                    bounds = [self.arrays.get(v) for v in vars_list]
+                    
+                    self.nested_mappers.append({
+                        'name': name,
+                        'coords': coords,
+                        'vars': vars_list,
+                        'bounds': bounds  # Index 0=dim0, 1=dim1, etc.
+                    })
+                except:
                     pass
-        
-        self.bin_data['boundaries'] = boundaries
-        
-    def _eval_boundary_expr(self, expr: str) -> List[float]:
-        """Evaluate a boundary expression that may contain additions and list comprehensions."""
+    
+    def _eval(self, expr: str):
+        """Evaluate Python expression - handles common variations."""
         # Remove comments
         if '#' in expr:
             expr = expr[:expr.index('#')]
         
         expr = expr.strip()
+        expr = re.sub(r'float\s*\(\s*["\']inf["\']\s*\)', 'float("inf")', expr)
         
-        # Replace float("inf") with np.inf
-        expr = re.sub(r'float\(["\']inf["\']\)', 'np.inf', expr)
-        expr = re.sub(r'float\(["\']-inf["\']\)', '-np.inf', expr)
-        expr = re.sub(r'float\(["\']infinity["\']\)', 'np.inf', expr)
-        
-        # Try to evaluate the expression
+        # Try direct eval first
         try:
-            result = eval(expr, {"__builtins__": {}}, {"range": range, "np": np, "float": float})
-            
-            # Convert to list of floats
-            if isinstance(result, (list, tuple)):
-                return [float(x) if not isinstance(x, (float, np.floating)) or 
-                       (not np.isinf(x)) else (np.inf if x > 0 else -np.inf) for x in result]
-            elif isinstance(result, (int, float)):
-                return [float(result)]
-        except:
-            pass
-        
-        return []
-    
-    def _eval_boundary_list(self, expr: str) -> List[float]:
-        """Safely evaluate a boundary list expression."""
-        # Replace common patterns
-        expr = expr.replace('float("inf")', 'np.inf')
-        expr = expr.replace('float("-inf")', '-np.inf')
-        expr = expr.replace('float(\'inf\')', 'np.inf')
-        expr = expr.replace('float(\'-inf\')', '-np.inf')
-        expr = expr.replace('inf', 'np.inf')
-        
-        # Handle list comprehensions
-        if 'for i in' in expr or 'for i in range' in expr:
-            try:
-                result = eval(expr, {"__builtins__": {}}, {"range": range, "np": np})
-                return result if isinstance(result, list) else [result]
-            except:
-                return []
-        
-        # Try to parse as literal
-        try:
-            # Clean the expression
-            expr = expr.strip()
-            result = ast.literal_eval(expr)
-            if isinstance(result, (int, float)):
-                return [float(result)]
-            elif isinstance(result, (list, tuple)):
-                return [float(x) if x not in [float('inf'), float('-inf')] else x 
-                       for x in result]
-        except:
-            # Try eval with limited namespace
-            try:
-                result = eval(expr, {"__builtins__": {}}, {"np": np, "range": range})
-                if isinstance(result, (list, tuple)):
-                    return list(result)
-                return [float(result)]
-            except:
-                pass
-        
-        return []
-    
-    def _extract_nested_mappers(self, content: str):
-        """Extract information about nested mappers and their boundary variables."""
-        # First, map mapper names to their boundary variable names
-        mapper_to_bounds = {}
-        mapper_pattern = r'(\w+)\s*=\s*RectilinearBinMapper\(\[([^\]]+)\]\)'
-        
-        for match in re.finditer(mapper_pattern, content):
-            mapper_name = match.group(1)
-            args_str = match.group(2)
-            
-            # Parse the arguments (should be two variable names)
-            args = [arg.strip() for arg in args_str.split(',')]
-            if len(args) >= 2:
-                mapper_to_bounds[mapper_name] = {
-                    'rmsd_var': args[0],
-                    'mindist_var': args[1]
-                }
-        
-        self.bin_data['mapper_to_bounds'] = mapper_to_bounds
-        
-        # Find which mapper is the outer mapper (used in RecursiveBinMapper)
-        outer_mapper_match = re.search(r'RecursiveBinMapper\s*\(\s*(\w+)\s*\)', content)
-        if outer_mapper_match:
-            self.bin_data['outer_mapper_name'] = outer_mapper_match.group(1)
-
-        # Find RecursiveBinMapper and add_mapper calls
-        add_mapper_pattern = r'add_mapper\s*\(\s*(\w+)\s*,\s*\[([\d\.,\s]+)\]\s*\)'
-        
-        mappers = []
-        matches = re.finditer(add_mapper_pattern, content)
-        
-        for match in matches:
-            mapper_name = match.group(1)
-            coords_str = match.group(2)
-            
-            try:
-                coords = [float(x.strip()) for x in coords_str.split(',')]
-                
-                # Get the boundary variables for this mapper
-                if mapper_name in mapper_to_bounds:
-                    bound_vars = mapper_to_bounds[mapper_name]
-                    mappers.append({
-                        'mapper_name': mapper_name,
-                        'replaces_at': coords,
-                        'rmsd_var': bound_vars['rmsd_var'],
-                        'mindist_var': bound_vars['mindist_var']
-                    })
-                else:
-                    mappers.append({
-                        'mapper_name': mapper_name,
-                        'replaces_at': coords
-                    })
-            except:
-                pass
-        
-        self.bin_data['nested_mappers'] = mappers
+            return eval(expr, {'__builtins__': {}, 'range': range, 'float': float, 'np': np, 'int': int})
+        except SyntaxError:
+            # Common issue: [a, b for i in range(n)] should be [a] + [b for i in range(n)]
+            # Try to fix: look for comma before 'for' keyword inside brackets
+            # Pattern: [values, expr for ... ] -> [values] + [expr for ...]
+            if 'for' in expr and ',' in expr:
+                # Simple heuristic fix
+                parts = expr.split(',', 1)
+                if 'for' in parts[1] and ']' in parts[1]:
+                    # Try: [first_part] + [second_part
+                    try:
+                        fixed = parts[0] + '] + [' + parts[1]
+                        return eval(fixed, {'__builtins__': {}, 'range': range, 'float': float, 'np': np, 'int': int})
+                    except:
+                        pass
+            raise
 
 
-class BinVisualizer:
-    """Visualize WESTPA binning schemes."""
+class AgnosticBinVisualizer:
+    """Visualize bins using dimension indices only."""
     
-    def __init__(self, bin_data: Dict, pcoord_labels: Optional[List[str]] = None):
-        """
-        Initialize visualizer with parsed bin data.
-        
-        Parameters
-        ----------
-        bin_data : dict
-            Parsed binning data from BinSchemeParser
-        pcoord_labels : list of str, optional
-            Custom labels for progress coordinates [x_label, y_label]
-            If None, will attempt to extract from system.py or use defaults
-        """
-        self.bin_data = bin_data
+    def __init__(self, data: Dict, dim0_label: str = None, dim1_label: str = None):
+        self.data = data
+        self.dim0_label = dim0_label
+        self.dim1_label = dim1_label
         self.bins = []
-        self.pcoord_labels = pcoord_labels
-        self.outer_boundaries = None  # Will store outer mapper boundaries
+        self.outer_bounds = None
         
     def generate_bins(self):
-        """Generate bin rectangles from parsed data."""
-        boundaries = self.bin_data.get('boundaries', {})
-        nested_mappers = self.bin_data.get('nested_mappers', [])
+        """Generate bins from parsed data."""
+        outer = self.data.get('outer_mapper')
+        nested = self.data.get('nested_mappers', [])
         
-        print(f"Found {len(boundaries)} boundary definitions")
-        print(f"Found {len(nested_mappers)} nested mappers")
+        # Build comprehensive output
+        output_lines = []
         
-        # First, find and create outer mapper bins using position-based lookup:
-        # args[0] of RectilinearBinMapper = pcoord[0] = X axis
-        # args[1] of RectilinearBinMapper = pcoord[1] = Y axis
-        outer_x = None
-        outer_y = None
-        x_var_name = None
-        y_var_name = None
-
-        outer_mapper_name = self.bin_data.get('outer_mapper_name')
-        mapper_to_bounds = self.bin_data.get('mapper_to_bounds', {})
-
-        if outer_mapper_name and outer_mapper_name in mapper_to_bounds:
-            outer_info = mapper_to_bounds[outer_mapper_name]
-            # 'rmsd_var' stores args[0] (pcoord[0]=X), 'mindist_var' stores args[1] (pcoord[1]=Y)
-            x_var_name = outer_info.get('rmsd_var')
-            y_var_name = outer_info.get('mindist_var')
-            outer_x = boundaries.get(x_var_name)
-            outer_y = boundaries.get(y_var_name)
-
-        if outer_x and outer_y:
-            print(f"Creating outer bins: X={outer_x} ({x_var_name}), Y={outer_y} ({y_var_name})")
-            self.outer_boundaries = {
-                'x': outer_x,
-                'y': outer_y
-            }
-            self._create_rectilinear_bins(outer_x, outer_y, level=0)
-        else:
-            print("Warning: Could not find outer mapper boundaries")
+        output_lines.append("\n" + "="*70)
+        output_lines.append("WESTPA BINNING SCHEME ANALYSIS")
+        output_lines.append("="*70)
         
-        # Now process nested mappers
-        for mapper_info in nested_mappers:
-            mapper_name = mapper_info['mapper_name']
-            coords = mapper_info['replaces_at']
+        # Summary of what was found
+        output_lines.append(f"\nParsed arrays: {len(self.data['arrays'])}")
+        for name in sorted(self.data['arrays'].keys()):
+            arr = self.data['arrays'][name]
+            output_lines.append(f"  {name}")
+        
+        output_lines.append(f"\nDefined mappers: {len(self.data['mappers'])}")
+        for name, vars_list in self.data['mappers'].items():
+            output_lines.append(f"  {name}: [{', '.join(vars_list)}]")
+        
+        output_lines.append(f"\nActive nested mappers: {len(nested)}")
+        for nest in nested:
+            output_lines.append(f"  {nest['name']} at {nest['coords']}")
+        
+        output_lines.append("\n" + "-"*70)
+        output_lines.append("BIN GENERATION")
+        output_lines.append("-"*70)
+        
+        # Create outer bins
+        if outer and outer['bounds']:
+            # Use dimension indices: 0=first, 1=second
+            dim0_bounds = outer['bounds'][0]
+            dim1_bounds = outer['bounds'][1] if len(outer['bounds']) > 1 else None
             
-            print(f"\nProcessing nested mapper: {mapper_name} at {coords}")
-            
-            # Get the boundary variable names for this mapper
-            rmsd_var = mapper_info.get('rmsd_var')
-            mindist_var = mapper_info.get('mindist_var')
-            
-            if rmsd_var and mindist_var:
-                mapper_rmsd = boundaries.get(rmsd_var)
-                mapper_mindist = boundaries.get(mindist_var)
+            if dim0_bounds and dim1_bounds:
+                output_lines.append(f"\nOUTER MAPPER: {outer['name']}")
+                output_lines.append(f"  Variables: [{', '.join(outer['vars'])}]")
+                output_lines.append(f"  Dim 0 ({outer['vars'][0]}): {dim0_bounds}")
+                output_lines.append(f"  Dim 1 ({outer['vars'][1]}): {dim1_bounds}")
+                output_lines.append(f"  Creates: {(len(dim0_bounds)-1) * (len(dim1_bounds)-1)} outer bins")
                 
-                print(f"  X variable: {rmsd_var} = {mapper_rmsd}")
-                print(f"  Y variable: {mindist_var} = {mapper_mindist}")
+                self.outer_bounds = (dim0_bounds, dim1_bounds)
+                self._create_bins(dim0_bounds, dim1_bounds, level=0)
                 
-                if mapper_rmsd and mapper_mindist:
-                    # Find parent bin that contains these coordinates
-                    parent_bin = self._find_parent_bin(coords)
+                # Use variable names as default labels if not provided
+                if not self.dim0_label:
+                    self.dim0_label = outer['vars'][0]
+                if not self.dim1_label:
+                    self.dim1_label = outer['vars'][1]
+        
+        # Add nested bins
+        for nest in nested:
+            output_lines.append(f"\nNESTED MAPPER: {nest['name']}")
+            output_lines.append(f"  Replaces bin at: {nest['coords']}")
+            
+            if nest['vars']:
+                output_lines.append(f"  Variables: [{', '.join(nest['vars'])}]")
+            
+            if nest['bounds'] and len(nest['bounds']) >= 2:
+                dim0_bounds = nest['bounds'][0]
+                dim1_bounds = nest['bounds'][1]
+                
+                if dim0_bounds and dim1_bounds:
+                    output_lines.append(f"  Dim 0 ({nest['vars'][0]}): {dim0_bounds}")
+                    output_lines.append(f"  Dim 1 ({nest['vars'][1]}): {dim1_bounds}")
                     
-                    if parent_bin:
-                        print(f"  Replacing parent bin at ({parent_bin['x_min']}, {parent_bin['x_max']}) x ({parent_bin['y_min']}, {parent_bin['y_max']})")
-                        # Create nested bins
-                        self._create_nested_bins(
-                            mapper_rmsd, mapper_mindist,
-                            parent_bin, level=1
-                        )
+                    num_bins = (len(dim0_bounds)-1) * (len(dim1_bounds)-1)
+                    output_lines.append(f"  Creates: {num_bins} bins")
+                    
+                    parent = self._find_parent(nest['coords'])
+                    if parent:
+                        self._replace_with_nested(parent, dim0_bounds, dim1_bounds)
                     else:
-                        print(f"  Warning: No parent bin found for {coords}")
+                        output_lines.append(f"  WARNING: No parent bin found at {nest['coords']}")
                 else:
-                    print(f"  Warning: Could not find boundaries for variables {rmsd_var}, {mindist_var}")
+                    output_lines.append(f"  WARNING: Missing boundary arrays")
             else:
-                print(f"  Warning: No boundary variables found for {mapper_name}")
+                output_lines.append(f"  WARNING: Mapper not defined or missing boundaries")
         
-        print(f"\nTotal bins created: {len(self.bins)}")
+        output_lines.append("\n" + "="*70)
+        output_lines.append(f"TOTAL BINS: {len(self.bins)}")
+        output_lines.append(f"TARGET WALKERS PER BIN: {self.data['target_counts']}")
+        output_lines.append(f"TOTAL WALKERS: {len(self.bins) * self.data['target_counts']}")
+        output_lines.append("="*70 + "\n")
+        
+        # Store output for potential logging
+        self.output_text = '\n'.join(output_lines)
+        
+        # Print to terminal
+        print(self.output_text)
     
-    def _create_rectilinear_bins(self, x_bounds: List[float], 
-                                  y_bounds: List[float], level: int = 0):
-        """Create bins from rectilinear boundaries."""
-        for i in range(len(x_bounds) - 1):
-            x_min = x_bounds[i]
-            x_max = x_bounds[i + 1]
-            
-            # Handle -inf for min
-            if x_min == float('-inf') or x_min == -np.inf:
-                x_min = 0 if len([b for b in x_bounds if b not in [float('inf'), float('-inf'), np.inf, -np.inf]]) == 0 else \
-                        min(b for b in x_bounds if b not in [float('inf'), float('-inf'), np.inf, -np.inf])
-            
-            # Keep +inf as is for max
-            if x_max == float('inf') or x_max == np.inf:
-                x_max = np.inf
-            
-            for j in range(len(y_bounds) - 1):
-                y_min = y_bounds[j]
-                y_max = y_bounds[j + 1]
-                
-                # Handle -inf for min
-                if y_min == float('-inf') or y_min == -np.inf:
-                    y_min = 0 if len([b for b in y_bounds if b not in [float('inf'), float('-inf'), np.inf, -np.inf]]) == 0 else \
-                            min(b for b in y_bounds if b not in [float('inf'), float('-inf'), np.inf, -np.inf])
-                
-                # Keep +inf as is for max
-                if y_max == float('inf') or y_max == np.inf:
-                    y_max = np.inf
-                
+    def _create_bins(self, dim0: List, dim1: List, level: int = 0):
+        """Create bins from two dimension boundary lists."""
+        for i in range(len(dim0) - 1):
+            for j in range(len(dim1) - 1):
                 self.bins.append({
-                    'x_min': x_min,
-                    'x_max': x_max,
-                    'y_min': y_min,
-                    'y_max': y_max,
+                    'dim0_min': dim0[i],
+                    'dim0_max': dim0[i + 1],
+                    'dim1_min': dim1[j],
+                    'dim1_max': dim1[j + 1],
                     'level': level
                 })
     
-    def _create_nested_bins(self, x_bounds: List[float], y_bounds: List[float],
-                           parent_bin: Dict, level: int = 1):
-        """Create nested bins within a parent bin."""
-        parent_x_min = parent_bin['x_min']
-        parent_x_max = parent_bin['x_max']
-        parent_y_min = parent_bin['y_min']
-        parent_y_max = parent_bin['y_max']
-        
-        # Remove parent bin from list
-        if parent_bin in self.bins:
-            self.bins.remove(parent_bin)
-        
-        # Create nested bins
-        for i in range(len(x_bounds) - 1):
-            x_min = max(x_bounds[i], parent_x_min)
-            x_max = min(x_bounds[i + 1], parent_x_max)
-            
-            # Handle infinity relative to parent
-            if x_bounds[i] == float('-inf') or x_bounds[i] == -np.inf:
-                x_min = parent_x_min
-            if x_bounds[i + 1] == float('inf') or x_bounds[i + 1] == np.inf:
-                x_max = parent_x_max
-            
-            for j in range(len(y_bounds) - 1):
-                y_min = max(y_bounds[j], parent_y_min)
-                y_max = min(y_bounds[j + 1], parent_y_max)
-                
-                # Handle infinity relative to parent
-                if y_bounds[j] == float('-inf') or y_bounds[j] == -np.inf:
-                    y_min = parent_y_min
-                if y_bounds[j + 1] == float('inf') or y_bounds[j + 1] == np.inf:
-                    y_max = parent_y_max
-                
-                self.bins.append({
-                    'x_min': x_min,
-                    'x_max': x_max,
-                    'y_min': y_min,
-                    'y_max': y_max,
-                    'level': level
-                })
-    
-    def _find_parent_bin(self, coords: List[float]) -> Optional[Dict]:
-        """Find the bin containing given coordinates."""
+    def _find_parent(self, coords: List) -> Optional[Dict]:
+        """Find parent bin containing coordinates."""
         if len(coords) < 2:
-            coords = coords + [0] * (2 - len(coords))
+            return None
         
-        x, y = coords[0], coords[1]
+        c0, c1 = coords[0], coords[1]
         
-        for bin_info in self.bins:
-            if bin_info['level'] != 0:
+        for b in self.bins:
+            if b['level'] != 0:
                 continue
-                
-            x_min = bin_info['x_min']
-            x_max = bin_info['x_max']
-            y_min = bin_info['y_min']
-            y_max = bin_info['y_max']
             
-            # Handle infinity: if max is infinity, any coordinate >= min is valid
-            x_in_range = (x_min <= x < x_max) if x_max != np.inf and not np.isinf(x_max) else (x >= x_min)
-            y_in_range = (y_min <= y < y_max) if y_max != np.inf and not np.isinf(y_max) else (y >= y_min)
+            # Check if coords inside this bin
+            d0_ok = (b['dim0_min'] <= c0 < b['dim0_max']) if not np.isinf(b['dim0_max']) else (c0 >= b['dim0_min'])
+            d1_ok = (b['dim1_min'] <= c1 < b['dim1_max']) if not np.isinf(b['dim1_max']) else (c1 >= b['dim1_min'])
             
-            if x_in_range and y_in_range:
-                return bin_info
+            if d0_ok and d1_ok:
+                return b
         
         return None
     
-    def plot(self, output_file: Optional[str] = None,
-             figsize: Tuple[int, int] = (14, 12),
-             show_labels: bool = False,
-             show_grid: bool = True,
-             title: Optional[str] = None,
-             xlabel: Optional[str] = None,
-             ylabel: Optional[str] = None):
-        """
-        Create visualization of the binning scheme.
+    def _replace_with_nested(self, parent: Dict, dim0: List, dim1: List):
+        """Replace parent with nested bins."""
+        if parent in self.bins:
+            self.bins.remove(parent)
         
-        Parameters
-        ----------
-        output_file : str, optional
-            File path to save the figure
-        figsize : tuple, optional
-            Figure size (width, height)
-        show_labels : bool, optional
-            Whether to show bin index labels
-        show_grid : bool, optional
-            Whether to show grid lines
-        title : str, optional
-            Custom plot title
-        xlabel : str, optional
-            Custom x-axis label (overrides auto-detection)
-        ylabel : str, optional
-            Custom y-axis label (overrides auto-detection)
-        """
+        p0_min, p0_max = parent['dim0_min'], parent['dim0_max']
+        p1_min, p1_max = parent['dim1_min'], parent['dim1_max']
+        
+        for i in range(len(dim0) - 1):
+            d0_min = max(dim0[i], p0_min)
+            d0_max = dim0[i + 1]
+            
+            if not np.isinf(p0_max):
+                d0_max = min(d0_max, p0_max)
+            elif np.isinf(dim0[i + 1]):
+                d0_max = p0_max
+            
+            for j in range(len(dim1) - 1):
+                d1_min = max(dim1[j], p1_min)
+                d1_max = dim1[j + 1]
+                
+                if not np.isinf(p1_max):
+                    d1_max = min(d1_max, p1_max)
+                elif np.isinf(dim1[j + 1]):
+                    d1_max = p1_max
+                
+                self.bins.append({
+                    'dim0_min': d0_min,
+                    'dim0_max': d0_max,
+                    'dim1_min': d1_min,
+                    'dim1_max': d1_max,
+                    'level': 1
+                })
+    
+    def print_summary(self, save_file: str = None):
+        """Generate text summary - only save to file if requested."""
+        if not self.bins:
+            self.generate_bins()
+        
+        if not save_file:
+            return  # Don't print bin list to terminal
+        
+        # Generate full summary
+        output = []
+        output.append("\n" + "="*75)
+        output.append("WESTPA BINNING SCHEME SUMMARY".center(75))
+        output.append("="*75)
+        output.append(f"Progress coordinate dimensions: {self.data['pcoord_ndim']}")
+        output.append(f"Total number of bins: {len(self.bins)}")
+        output.append(f"Target walkers per bin: {self.data['target_counts']}")
+        output.append("\nBin definitions:")
+        output.append("-"*75)
+        output.append(f"{'Bin':>5} {'Level':>6} {self.dim0_label + ' Range':>25} {self.dim1_label + ' Range':>25}")
+        output.append("-"*75)
+        
+        for i, b in enumerate(self.bins):
+            d0_range = f"[{b['dim0_min']:6.2f}, {b['dim0_max']:6.2f})"
+            d1_range = f"[{b['dim1_min']:6.2f}, {b['dim1_max']:6.2f})"
+            output.append(f"{i:5d} {b['level']:6d} {d0_range:>25} {d1_range:>25}")
+        
+        output.append("="*75 + "\n")
+        
+        # Save to file
+        with open(save_file, 'w') as f:
+            f.write('\n'.join(output))
+        print(f"✓ Summary saved to: {save_file}")
+    
+    
+    def save_log(self, filename: str = 'binviz.log'):
+        """Save analysis and bin list to log file."""
+        with open(filename, 'w') as f:
+            # Write the analysis output
+            f.write(self.output_text)
+            
+            # Write bin list
+            f.write("\n" + "="*70 + "\n")
+            f.write("BIN LIST\n")
+            f.write("="*70 + "\n")
+            f.write(f"{'Bin':>5}\t\t\t {'Dim0':12}\t {'Dim1':12}\t \n")
+            f.write("-"*70 + "\n")
+            
+            for idx, b in enumerate(self.bins):
+                f.write(f"{idx:5d}\t ({b['dim0_min']}, {b['dim0_max']})\t\t\t "
+                       f"({b['dim1_min']}, {b['dim1_max']}) \n")
+            
+            f.write("="*70 + "\n")
+        
+        print(f"✓ Saved log to: {filename}")
+    
+    def plot(self, output: str = None, figsize: Tuple = (14, 12),
+             show_labels: bool = False, grid: bool = True, title: str = None):
+        """Plot bins."""
         if not self.bins:
             self.generate_bins()
         
         fig, ax = plt.subplots(figsize=figsize)
         
-        # Color schemes for different levels
-        level_colors = {
-            0: {'face': '#E8F4F8', 'edge': '#000000', 'width': 5.0},  # Outer: black, very thick
-            1: {'face': '#B3D9E6', 'edge': '#1E4D66', 'width': 1.2},  # Inner: dark blue, thin
-            2: {'face': '#7EB8D4', 'edge': '#0F3A50', 'width': 1.0}
-        }
+        # Get plot limits
+        finite_0 = [v for b in self.bins for v in [b['dim0_min'], b['dim0_max']] if not np.isinf(v)]
+        finite_1 = [v for b in self.bins for v in [b['dim1_min'], b['dim1_max']] if not np.isinf(v)]
         
-        # Sort bins by level (draw outer bins first)
-        sorted_bins = sorted(self.bins, key=lambda b: b['level'])
+        max_0 = max(finite_0) if finite_0 else 10
+        max_1 = max(finite_1) if finite_1 else 10
         
-        # Find plotting limits - need to handle infinity
-        finite_x = []
-        finite_y = []
-        for bin_info in self.bins: 
-            if not np.isinf(bin_info['x_min']):
-                finite_x.append(bin_info['x_min'])
-            if not np.isinf(bin_info['x_max']):
-                finite_x.append(bin_info['x_max'])
-            if not np.isinf(bin_info['y_min']):
-                finite_y.append(bin_info['y_min'])
-            if not np.isinf(bin_info['y_max']):
-                finite_y.append(bin_info['y_max'])
+        plot_0 = max_0 + 10
+        plot_1 = max_1 + 10
         
-        # Set plot limits: max_finite + 10 for bins extending to infinity
-        max_finite_x = max(finite_x) if finite_x else 10
-        max_finite_y = max(finite_y) if finite_y else 10
-        plot_limit_x = max_finite_x + 5
-        plot_limit_y = max_finite_y + 5
+        # Colors - uniform for all bins
+        color = {'face': '#B3D9E6', 'edge': '#1E4D66', 'width': 1.2, 'alpha': 0.7}
         
-        # Plot each bin
-        for idx, bin_info in enumerate(sorted_bins):
-            x_min = bin_info['x_min']
-            x_max = bin_info['x_max']
-            y_min = bin_info['y_min']
-            y_max = bin_info['y_max']
-            level = bin_info['level']
+        # Draw bins
+        for idx, b in enumerate(self.bins):
+            # Handle inf
+            d0_min = b['dim0_min'] if not np.isinf(b['dim0_min']) else 0
+            d0_max = b['dim0_max'] if not np.isinf(b['dim0_max']) else plot_0
+            d1_min = b['dim1_min'] if not np.isinf(b['dim1_min']) else 0
+            d1_max = b['dim1_max'] if not np.isinf(b['dim1_max']) else plot_1
             
-            # Replace infinity with plot limits for drawing
-            if np.isinf(x_max):
-                x_max = plot_limit_x
-            if np.isinf(y_max):
-                y_max = plot_limit_y
-            if np.isinf(x_min):
-                x_min = 0
-            if np.isinf(y_min):
-                y_min = 0
-            
-            width = x_max - x_min
-            height = y_max - y_min
-            
-            # Get color scheme for this level
-            color_scheme = level_colors.get(level, level_colors[0])
-            
-            # Create rectangle
             rect = Rectangle(
-                (x_min, y_min), width, height,
-                linewidth=color_scheme['width'],
-                edgecolor=color_scheme['edge'],
-                facecolor=color_scheme['face'],
-                alpha=0.5 if level == 0 else 0.7,
-                zorder=level + 1 if level == 0 else level
+                (d0_min, d1_min), d0_max - d0_min, d1_max - d1_min,
+                linewidth=color['width'], edgecolor=color['edge'],
+                facecolor=color['face'], alpha=color['alpha'],
+                zorder=2
             )
             ax.add_patch(rect)
             
-            # Add bin label - only for reasonably sized bins
-            if show_labels and width > 0.5 and height > 0.5 and width < (plot_limit_x * 0.3) and height < (plot_limit_y * 0.3):
-                center_x = x_min + width / 2
-                center_y = y_min + height / 2
-                ax.text(
-                    center_x, center_y, str(idx),
-                    ha='center', va='center',
-                    fontsize=8, fontweight='bold',
-                    color='#0F3A50',
-                    bbox=dict(boxstyle='round,pad=0.3', 
-                             facecolor='white', alpha=0.8, edgecolor='none'),
-                    zorder=100
-                )
+            # Optional labels
+            if show_labels:
+                w, h = d0_max - d0_min, d1_max - d1_min
+                if w > 0.5 and h > 0.5 and w < plot_0 * 0.3 and h < plot_1 * 0.3:
+                    ax.text(d0_min + w/2, d1_min + h/2, str(idx),
+                           ha='center', va='center', fontsize=8, fontweight='bold',
+                           bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8),
+                           zorder=100)
         
-        # Determine axis labels
-        if xlabel is None:
-            xlabel = self._get_pcoord_label(0)
-        if ylabel is None:
-            ylabel = self._get_pcoord_label(1)
+        # Outer boundary lines
+        if self.outer_bounds:
+            dim0_bounds, dim1_bounds = self.outer_bounds
+            
+            for v in dim0_bounds[1:-1]:
+                if not np.isinf(v):
+                    ax.axvline(v, color='#8B0000', linewidth=4, alpha=0.8, zorder=200)
+            
+            for v in dim1_bounds[1:-1]:
+                if not np.isinf(v):
+                    ax.axhline(v, color='#8B0000', linewidth=4, alpha=0.8, zorder=200)
         
-        # Formatting
-        ax.set_xlabel(xlabel, fontsize=13, fontweight='bold')
-        ax.set_ylabel(ylabel, fontsize=13, fontweight='bold')
+        # Labels
+        ax.set_xlabel(self.dim0_label or 'Dimension 0', fontsize=13, fontweight='bold')
+        ax.set_ylabel(self.dim1_label or 'Dimension 1', fontsize=13, fontweight='bold')
+        ax.set_title(title or f'WESTPA Binning Scheme\n{len(self.bins)} bins', 
+                    fontsize=15, fontweight='bold', pad=20)
         
-        if title is None:
-            title = f'WESTPA Binning Scheme\n{len(self.bins)} bins total'
-        ax.set_title(title, fontsize=15, fontweight='bold', pad=20)
+        ax.set_xlim(-0.5, plot_0 + 0.5)
+        ax.set_ylim(-0.5, plot_1 + 0.5)
         
-        # Set limits with small padding
-        ax.set_xlim(-0.5, plot_limit_x + 0.5)
-        ax.set_ylim(-0.5, plot_limit_y + 0.5)
-        
-        # Grid
-        if show_grid:
+        if grid:
             ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, zorder=0)
-        
-        # Add quadrant dividing lines based on detected outer boundaries
-        if self.outer_boundaries:
-            x_bounds = self.outer_boundaries['x']
-            y_bounds = self.outer_boundaries['y']
-            
-            # Draw lines at each finite boundary (excluding 0 and inf)
-            for x_val in x_bounds[1:-1]:  # Skip first (0) and last (inf)
-                if not np.isinf(x_val):
-                    ax.axvline(x=x_val, color='#8B0000', linewidth=4, linestyle='-', 
-                              zorder=200, alpha=0.8)
-            
-            for y_val in y_bounds[1:-1]:  # Skip first (0) and last (inf)
-                if not np.isinf(y_val):
-                    ax.axhline(y=y_val, color='#8B0000', linewidth=4, linestyle='-', 
-                              zorder=200, alpha=0.8)
-            
-            # Create legend label describing the quadrant boundaries
-            x_finite = [x for x in x_bounds if not np.isinf(x) and x > 0]
-            y_finite = [y for y in y_bounds if not np.isinf(y) and y > 0]
-            
-            if x_finite and y_finite:
-                boundary_label = f'Quadrant boundaries ({xlabel}={x_finite}, {ylabel}={y_finite})'
-            else:
-                boundary_label = 'Quadrant boundaries'
-        else:
-            boundary_label = 'Quadrant boundaries'
         
         # Legend
         from matplotlib.lines import Line2D
-        legend_elements = [
-            Line2D([0], [0], color='#8B0000', linewidth=4, 
-                  label=boundary_label),
-            mpatches.Patch(facecolor=level_colors[1]['face'], 
-                          edgecolor=level_colors[1]['edge'],
-                          linewidth=1.5,
-                          label='Nested bins', alpha=0.7)
+        legend = [
+            Line2D([0], [0], color='#8B0000', linewidth=4, label='Outer boundaries'),
+            mpatches.Patch(facecolor='#B3D9E6', edgecolor='#1E4D66', label='Bins', alpha=0.7)
         ]
-        ax.legend(handles=legend_elements, loc='upper right', 
-                 fontsize=11, framealpha=0.95)
+        ax.legend(handles=legend, loc='upper right', fontsize=11, framealpha=0.95)
         
-        # Info box
-        target = self.bin_data.get('target_counts', 'N/A')
-        info_text = f"Total bins: {len(self.bins)}\nWalkers/bin: {target}"
-        ax.text(
-            0.02, 0.98, info_text,
-            transform=ax.transAxes,
-            verticalalignment='top',
-            bbox=dict(boxstyle='round', facecolor='#FFF8DC', 
-                     alpha=0.9, edgecolor='#8B7355', linewidth=1.5),
-            fontsize=10,
-            fontfamily='monospace'
-        )
+        # Info
+        ax.text(0.02, 0.98, f"Bins: {len(self.bins)}\nWalkers/bin: {self.data['target_counts']}",
+               transform=ax.transAxes, va='top',
+               bbox=dict(boxstyle='round', facecolor='#FFF8DC', alpha=0.9),
+               fontsize=10, fontfamily='monospace')
         
         plt.tight_layout()
         
-        if output_file:
-            plt.savefig(output_file, dpi=300, bbox_inches='tight')
-            print(f"✓ Saved visualization to: {output_file}")
+        if output:
+            plt.savefig(output, dpi=300, bbox_inches='tight')
+            print(f"\n✓ Saved: {output}")
         
         return fig, ax
-    
-    
-    def _get_pcoord_label(self, index: int) -> str:
-        """
-        Get the label for a progress coordinate dimension.
-        
-        Parameters
-        ----------
-        index : int
-            Progress coordinate index (0 or 1)
-            
-        Returns
-        -------
-        str
-            Label for the progress coordinate
-        """
-        # Use custom labels if provided
-        if self.pcoord_labels and len(self.pcoord_labels) > index:
-            return self.pcoord_labels[index]
-        
-        # Default labels based on common patterns
-        default_labels = ['Progress Coordinate 0', 'Progress Coordinate 1']
-        return default_labels[index] if index < len(default_labels) else f'pcoord{index}'
-    
-    def print_summary(self):
-        """Print a text summary of the binning scheme."""
-        if not self.bins:
-            self.generate_bins()
-        
-        # Get labels
-        xlabel = self._get_pcoord_label(0)
-        ylabel = self._get_pcoord_label(1)
-        
-        print("\n" + "="*75)
-        print("WESTPA BINNING SCHEME SUMMARY".center(75))
-        print("="*75)
-        print(f"Progress coordinate dimensions: {self.bin_data['pcoord_ndim']}")
-        print(f"Total number of bins: {len(self.bins)}")
-        print(f"Target walkers per bin: {self.bin_data.get('target_counts', 'N/A')}")
-        print("\nBin definitions:")
-        print("-"*75)
-        print(f"{'Bin':>5} {'Level':>6} {xlabel + ' Range':>25} {ylabel + ' Range':>25}")
-        print("-"*75)
-        
-        for i, bin_info in enumerate(self.bins):
-            x_range = f"[{bin_info['x_min']:6.2f}, {bin_info['x_max']:6.2f})"
-            y_range = f"[{bin_info['y_min']:6.2f}, {bin_info['y_max']:6.2f})"
-            print(f"{i:5d} {bin_info['level']:6d} {x_range:>25} {y_range:>25}")
-        
-        print("="*75)
-        
-        # Level statistics
-        level_counts = {}
-        for bin_info in self.bins:
-            level = bin_info['level']
-            level_counts[level] = level_counts.get(level, 0) + 1
-        
-        print("\nBins by nesting level:")
-        for level in sorted(level_counts.keys()):
-            print(f"  Level {level}: {level_counts[level]} bins")
-        print()
 
 
 def main():
-    """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='Visualize WESTPA binning schemes from system.py files',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  %(prog)s system.py                          # Interactive plot
-  %(prog)s system.py -o binning_scheme.png    # Save to PNG
-  %(prog)s system.py --summary                # Print text summary
-  %(prog)s system.py -o scheme.pdf --no-labels --figsize 10 8
-        """
+        description='WESTPA Binning Visualizer - Works with ANY system.py'
     )
     
-    parser.add_argument(
-        'system_file',
-        help='Path to system.py file'
-    )
-    
-    parser.add_argument(
-        '-o', '--output',
-        help='Output file (PNG, PDF, SVG, etc.)'
-    )
-    
-    parser.add_argument(
-        '--figsize',
-        nargs=2,
-        type=float,
-        default=[14, 12],
-        metavar=('WIDTH', 'HEIGHT'),
-        help='Figure size in inches (default: 14 12)'
-    )
-    
-    parser.add_argument(
-        '--show-labels',
-        action='store_true',
-        help='Show bin index labels'
-    )
-    
-    parser.add_argument(
-        '--no-grid',
-        action='store_true',
-        help='Hide grid lines'
-    )
-    
-    parser.add_argument(
-        '--summary',
-        action='store_true',
-        help='Print text summary'
-    )
-    
-    parser.add_argument(
-        '--title',
-        help='Custom plot title'
-    )
-    
-    parser.add_argument(
-        '--xlabel',
-        help='Custom x-axis label (e.g., "Distance (Å)", "Angle (deg)")'
-    )
-    
-    parser.add_argument(
-        '--ylabel',
-        help='Custom y-axis label (e.g., "RMSD (Å)", "Dihedral (deg)")'
-    )
+    parser.add_argument('system', help='system.py file')
+    parser.add_argument('-o', '--output', help='Output file')
+    parser.add_argument('--log', help='Save analysis and bin list to log file (default: binviz.log)', 
+                       nargs='?', const='binviz.log', default=None)
+    parser.add_argument('--figsize', nargs=2, type=float, default=[14, 12])
+    parser.add_argument('--show-labels', action='store_true', help='Show bin numbers')
+    parser.add_argument('--no-grid', action='store_true', help='Hide grid')
+    parser.add_argument('--title', help='Custom title')
+    parser.add_argument('--xlabel', help='Dimension 0 label')
+    parser.add_argument('--ylabel', help='Dimension 1 label')
     
     args = parser.parse_args()
     
-    # Parse system file
-    print(f"Parsing {args.system_file}...")
-    parser = BinSchemeParser(args.system_file)
-    bin_data = parser.parse()
+    print(f"Parsing {args.system}...")
+    p = AgnosticBinParser(args.system)
+    data = p.parse()
     
-    # Create visualizer
-    pcoord_labels = None
-    if args.xlabel or args.ylabel:
-        pcoord_labels = [
-            args.xlabel if args.xlabel else 'Progress Coordinate 0',
-            args.ylabel if args.ylabel else 'Progress Coordinate 1'
-        ]
-    
-    visualizer = BinVisualizer(bin_data, pcoord_labels=pcoord_labels)
-    
-    # Print summary if requested
-    if args.summary:
-        visualizer.print_summary()
-    
-    # Create plot
-    visualizer.plot(
-        output_file=args.output,
+    viz = AgnosticBinVisualizer(data, dim0_label=args.xlabel, dim1_label=args.ylabel)
+    viz.plot(
+        output=args.output,
         figsize=tuple(args.figsize),
         show_labels=args.show_labels,
-        show_grid=not args.no_grid,
-        title=args.title,
-        xlabel=args.xlabel,
-        ylabel=args.ylabel
+        grid=not args.no_grid,
+        title=args.title
     )
+    
+    # Save log if requested
+    if args.log:
+        viz.save_log(args.log)
     
     if not args.output:
         plt.show()
