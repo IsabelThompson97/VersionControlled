@@ -1,0 +1,7 @@
+parm yourparameterfile.prmtop
+trajin yourpdbmodel.nc <startframe> <stopframe>
+
+autoimage
+trajout yourpdb.pdb pdb
+run
+quit
