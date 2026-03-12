@@ -78,11 +78,15 @@ The trajectory and topology files are **not** stored in this directory. They liv
 
 ```
 <simulation_root>/
-├── stripped_trajectories/
-│   ├── <name>_production.nc              # trajectory
-│   └── <name>_stripped.prmtop           # topology (ions/water stripped)
+├── production
+│   ├── <name>_production.nc         # trajectory
+│   └── <name>.prmtop                # topology
+├── stripped_trajectories/                  
+│   ├── <name>_productionStripped.nc        # stripped trajectory
+│   └── <name>_stripped.prmtop              # stripped topology
 └── analysis/
-    └── cpptraj/                          ← you are here
+    ├── mdOut/
+    └── cpptraj/           ← you are here
 ```
 
 ---
