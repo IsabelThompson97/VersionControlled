@@ -69,8 +69,8 @@ In `ERMSD_CONFIG`:
 ```python
 ERMSD_CONFIG = dict(
     native = "your_native.pdb",
-    traj   = "../../your_production.nc",
-    top    = "../../your_stripped.prmtop",
+    traj   = "../../stripped_trajectories/your_production.nc",
+    top    = "../../stripped_trajectories/your_stripped.prmtop",
     ...
 )
 ```
@@ -81,8 +81,8 @@ Update the `parm` and `trajin` lines in each `.in` file to point to your
 topology and trajectory:
 
 ```
-parm ../../your_stripped.prmtop
-trajin ../../your_production.nc
+parm ../../stripped_trajectories/your_stripped.prmtop
+trajin ../../stripped_trajectories/your_production.nc
 ```
 
 For RMSD-to-reference scripts, update the reference parm and rst7:

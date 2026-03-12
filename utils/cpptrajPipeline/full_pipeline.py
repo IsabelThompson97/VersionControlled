@@ -379,8 +379,8 @@ METRICS = [
 
 ERMSD_CONFIG = dict(
     native     = "2KOCFolded_NMR.pdb",
-    traj       = "../../2KOCUnfolded_HRM_production.nc",
-    top        = "../../2KOCUnfolded_HRM_stripped.prmtop",
+    traj       = "../../stripped_trajectories/2KOCUnfolded_HRM_production.nc",
+    top        = "../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop",
     master_csv = "ermsd_metrics.csv",
     extra_columns = [
         # (column name in master CSV,       source CSV,                    source column)

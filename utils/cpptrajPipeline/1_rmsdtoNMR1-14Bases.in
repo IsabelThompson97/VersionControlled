@@ -1,5 +1,5 @@
-parm ../../2KOCUnfolded_HRM_stripped.prmtop [trajfoldedParm]
-trajin ../../2KOCUnfolded_HRM_production.nc parm [trajfoldedParm]
+parm ../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop [trajfoldedParm]
+trajin ../../stripped_trajectories/2KOCUnfolded_HRM_production.nc parm [trajfoldedParm]
 
 
 parm 2KOCFolded_NMR.prmtop [NMR]
