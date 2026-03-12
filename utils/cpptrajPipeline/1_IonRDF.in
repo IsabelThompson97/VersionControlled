@@ -1,0 +1,10 @@
+parm ../../2KOCUnfolded_HRM_stripped.prmtop
+trajin ../../2KOCUnfolded_HRM_production.nc
+
+autoimage
+radial out RDF-K.dat 0.1 20.0 :1-14 :K+
+radial out RDF-Cl.dat 0.1 20.0 :1-14 :Cl-
+
+run
+
+quit
