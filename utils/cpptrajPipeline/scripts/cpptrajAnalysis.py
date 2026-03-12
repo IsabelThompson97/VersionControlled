@@ -1,5 +1,5 @@
 """
-ClaudeCpptrajAnalysis
+cpptrajAnalysis
 =====================
 Generalised utilities for converting, analysing, and plotting cpptraj output
 from AMBER MD simulations.  Works with any trajectory length and any
@@ -29,7 +29,7 @@ Statistics & reporting
 
 Quick-start
 -----------
-    from ClaudeCpptrajAnalysis import (
+    from cpptrajAnalysis import (
         convert_txt_to_csv, scale_x_to_ns, analyze_time_series, plot_2d_suite,
     )
     import pandas as pd
@@ -218,23 +218,49 @@ def analyze_time_series(csv_path, y_column, output_file_path, title_prefix,
     top5_hi   = data.nlargest(5, y_column)
     top5_lo   = data.nsmallest(5, y_column)
 
-    unit_str = f" ({unit})" if unit else ""
-    report = (
-        f"Maximum {title_prefix}{unit_str}: {max_val} (Frame: {max_frame})\n"
-        f"Minimum {title_prefix}{unit_str}: {min_val} (Frame: {min_frame})\n"
-        f"Average {title_prefix}{unit_str}: {average}\n"
-        f"Median  {title_prefix}{unit_str}: {median}\n"
-        f"Std Dev {title_prefix}{unit_str}: {std_dev}\n\n"
-        f"Top 5 largest:\n"
-        f"{top5_hi[[frame_column, y_column]].to_string(index=False)}\n\n"
-        f"Top 5 smallest:\n"
-        f"{top5_lo[[frame_column, y_column]].to_string(index=False)}\n"
+    unit_str  = f" ({unit})" if unit else ""
+    label_w   = max(len(title_prefix) + len(unit_str) + 2, 28)  # min width for alignment
+    val_w     = 10   # right-aligned value field width
+
+    def _fv(v):
+        """Format a float to 4 decimal places."""
+        return f"{v:.4f}"
+
+    stats_block = (
+        f"  {'Maximum':<12}{title_prefix}{unit_str}  =  {_fv(max_val):>{val_w}}    "
+        f"(Frame {int(max_frame):>6})\n"
+        f"  {'Minimum':<12}{title_prefix}{unit_str}  =  {_fv(min_val):>{val_w}}    "
+        f"(Frame {int(min_frame):>6})\n"
+        f"  {'Mean':<12}{title_prefix}{unit_str}  =  {_fv(average):>{val_w}}\n"
+        f"  {'Median':<12}{title_prefix}{unit_str}  =  {_fv(float(median)):>{val_w}}\n"
+        f"  {'Std Dev':<12}{title_prefix}{unit_str}  =  {_fv(float(std_dev)):>{val_w}}\n"
     )
+
+    def _top5_table(df, title_str):
+        col_w = max(12, len(y_column) + 2)
+        sep   = f"  {'─'*8}  {'─'*col_w}"
+        hdr   = f"  {'Frame':>8}  {y_column:<{col_w}}"
+        rows  = "\n".join(
+            f"  {int(r[frame_column]):>8}  {r[y_column]:.4f}"
+            for _, r in df[[frame_column, y_column]].iterrows()
+        )
+        return f"  {title_str}\n{sep}\n{hdr}\n{sep}\n{rows}\n{sep}"
+
+    top5_block = (
+        _top5_table(top5_hi, "Top 5 Largest Frames") + "\n\n"
+        + _top5_table(top5_lo, "Top 5 Smallest Frames")
+    )
+
     ts = _time.asctime()
-    append_to_output(
-        output_file_path,
-        f"{'─'*52}\n{title_prefix}  [{ts}]\n{'─'*52}\n\n{report}"
+    width = 60
+    header = (
+        f"╔{'═'*width}╗\n"
+        f"║  {title_prefix:<{width - 2}}║\n"
+        f"║  {ts:<{width - 2}}║\n"
+        f"╚{'═'*width}╝"
     )
+    report = f"{header}\n\n{stats_block}\n{top5_block}"
+    append_to_output(output_file_path, report)
 
     # ── Time-series line plot ──
     axis_label = y_label if y_label else title_prefix
@@ -326,21 +352,45 @@ def analyze_histogram_only(csv_path, y_column, output_file_path, title_prefix,
     top5_lo   = data.nsmallest(5, y_column)
 
     unit_str = f" ({unit})" if unit else ""
-    report = (
-        f"Maximum {title_prefix}{unit_str}: {max_val} (Frame: {max_frame})\n"
-        f"Minimum {title_prefix}{unit_str}: {min_val} (Frame: {min_frame})\n"
-        f"Average {title_prefix}{unit_str}: {average}\n"
-        f"Std Dev {title_prefix}{unit_str}: {std_dev}\n\n"
-        f"Top 5 largest:\n"
-        f"{top5_hi[[frame_column, y_column]].to_string(index=False)}\n\n"
-        f"Top 5 smallest:\n"
-        f"{top5_lo[[frame_column, y_column]].to_string(index=False)}\n"
+    val_w    = 10
+
+    def _fv(v):
+        return f"{v:.4f}"
+
+    stats_block = (
+        f"  {'Maximum':<12}{title_prefix}{unit_str}  =  {_fv(max_val):>{val_w}}    "
+        f"(Frame {int(max_frame):>6})\n"
+        f"  {'Minimum':<12}{title_prefix}{unit_str}  =  {_fv(min_val):>{val_w}}    "
+        f"(Frame {int(min_frame):>6})\n"
+        f"  {'Mean':<12}{title_prefix}{unit_str}  =  {_fv(average):>{val_w}}\n"
+        f"  {'Std Dev':<12}{title_prefix}{unit_str}  =  {_fv(float(std_dev)):>{val_w}}\n"
     )
+
+    def _top5_table(df, title_str):
+        col_w = max(12, len(y_column) + 2)
+        sep   = f"  {'─'*8}  {'─'*col_w}"
+        hdr   = f"  {'Frame':>8}  {y_column:<{col_w}}"
+        rows  = "\n".join(
+            f"  {int(r[frame_column]):>8}  {r[y_column]:.4f}"
+            for _, r in df[[frame_column, y_column]].iterrows()
+        )
+        return f"  {title_str}\n{sep}\n{hdr}\n{sep}\n{rows}\n{sep}"
+
+    top5_block = (
+        _top5_table(top5_hi, "Top 5 Largest Frames") + "\n\n"
+        + _top5_table(top5_lo, "Top 5 Smallest Frames")
+    )
+
     ts = _time.asctime()
-    append_to_output(
-        output_file_path,
-        f"{'─'*52}\n{title_prefix}  [{ts}]\n{'─'*52}\n\n{report}"
+    width = 60
+    header = (
+        f"╔{'═'*width}╗\n"
+        f"║  {title_prefix:<{width - 2}}║\n"
+        f"║  {ts:<{width - 2}}║\n"
+        f"╚{'═'*width}╝"
     )
+    report = f"{header}\n\n{stats_block}\n{top5_block}"
+    append_to_output(output_file_path, report)
 
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.hist(values, density=density, bins=bins, alpha=0.5,
@@ -404,15 +454,20 @@ def process_rdf(ion1, txt_path1, ion2, txt_path2,
     max1, dist1 = ion1_values.max(), merged.loc[ion1_values.argmax(), "Distance"]
     max2, dist2 = ion2_values.max(), merged.loc[ion2_values.argmax(), "Distance"]
 
-    report = (
-        f"Peak {ion1} g(r): {max1:.4f} at {dist1:.3f} Å\n"
-        f"Peak {ion2} g(r): {max2:.4f} at {dist2:.3f} Å\n"
+    rdf_title = f"Radial Distribution Function: {ion1} / {ion2}"
+    stats_block = (
+        f"  {'Peak ' + ion1 + ' g(r)':<24}  =    {max1:.4f}    at {dist1:.3f} Å\n"
+        f"  {'Peak ' + ion2 + ' g(r)':<24}  =    {max2:.4f}    at {dist2:.3f} Å\n"
     )
     ts = _time.asctime()
-    append_to_output(
-        output_file_path,
-        f"{'─'*52}\nRDF {ion1} / {ion2}  [{ts}]\n{'─'*52}\n\n{report}"
+    width = 60
+    header = (
+        f"╔{'═'*width}╗\n"
+        f"║  {rdf_title:<{width - 2}}║\n"
+        f"║  {ts:<{width - 2}}║\n"
+        f"╚{'═'*width}╝"
     )
+    append_to_output(output_file_path, f"{header}\n\n{stats_block}")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(distance, ion1_values, color=color1, alpha=0.95, label=ion1)
@@ -636,7 +691,7 @@ def plot_2d_suite(x_vals, y_vals, xlabel, ylabel, out_prefix,
     Examples
     --------
     >>> import pandas as pd
-    >>> from ClaudeCpptrajAnalysis import plot_2d_suite
+    >>> from cpptrajAnalysis import plot_2d_suite
     >>> data = pd.read_csv("ermsd_metrics.csv")
     >>> plot_2d_suite(
     ...     data["eRMSD"].values, data["LoopRMSD"].values,

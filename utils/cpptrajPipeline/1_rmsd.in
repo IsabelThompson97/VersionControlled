@@ -1,7 +1,0 @@
-parm ../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop
-trajin ../../stripped_trajectories/2KOCUnfolded_HRM_production.nc
-
-rms first :1-14&!@H= out rmsd.dat
-run
-
-quit

@@ -35,9 +35,9 @@ This pipeline performs end-to-end structural analysis of AMBER molecular dynamic
 | Stage | Tool | What it does |
 |-------|------|-------------|
 | 1 | cpptraj | Computes structural observables (RMSD, R_g, hydrogen bonds, contact distances) from the raw trajectory |
-| 2 | Python / ClaudeCpptrajAnalysis | Converts cpptraj output to CSV, scales frame indices to nanoseconds, computes statistics, and generates time-series and histogram plots |
+| 2 | Python / cpptrajAnalysis | Converts cpptraj output to CSV, scales frame indices to nanoseconds, computes statistics, and generates time-series and histogram plots |
 | 3 | barnaba | Calculates eRMSD and heavy-atom RMSD relative to the native NMR structure; assembles a master CSV combining all Stage 2 metrics |
-| 4 | Python / ClaudeCpptrajAnalysis | Generates cross-metric 2-D scatter, 2-D histogram, and contour plots from the master CSV |
+| 4 | Python / cpptrajAnalysis | Generates cross-metric 2-D scatter, 2-D histogram, and contour plots from the master CSV |
 
 All configuration lives in clearly labelled sections at the top of `full_pipeline.py`. You generally do not need to touch anything below the configuration block.
 
@@ -47,31 +47,35 @@ All configuration lives in clearly labelled sections at the top of `full_pipelin
 
 ```
 cpptraj/
-├── full_pipeline.py              # Main entry point — runs all four stages
-├── pipeline_template.py          # Minimal template for adapting to new simulations
-├── ClaudeCpptrajAnalysis.py       # Shared analysis library (I/O, stats, plotting)
+├── full_pipeline.py               # Main entry point — runs all four stages
+├── pipeline_template.py           # Minimal template for adapting to new simulations
 ├── submit_pipeline.sh             # SGE job submission script (Notre Dame CRC)
 ├── getFrameData.py                # Utility: extract per-frame data from master CSV
 ├── eRMSD_createGIF.py             # Utility: animated eRMSD probability density movie
-├── eRMSD_cumulativeEvolutionGIF.py# Utility: cumulative eRMSD density animation
+├── eRMSD_cumulativeEvolutionGIF.py # Utility: cumulative eRMSD density animation
 │
 ├── 2KOCFolded_NMR.pdb             # Native reference structure (Model 1 of NMR ensemble)
 ├── 2KOCFolded_NMR.prmtop          # AMBER topology for the native reference
 ├── 2KOCFolded_NMR.rst7            # AMBER restart coordinates for the native reference
 │
-├── 1_radiusGyr.in                 # cpptraj: radius of gyration
-├── 1_rmsd.in                      # cpptraj: RMSD to first trajectory frame
-├── 1_rmsdtoNMR.in                 # cpptraj: RMSD to NMR reference (all heavy atoms)
-├── 1_rmsdtoNMRBackbone.in         # cpptraj: RMSD to NMR reference (backbone only)
-├── 1_rmsdtoNMRStem.in             # cpptraj: RMSD to NMR reference (stem residues)
-├── 1_rmsdtoNMRLoop.in             # cpptraj: RMSD to NMR reference (loop residues)
-├── 1_rmsdtoNMR1-14Bases.in        # cpptraj: RMSD to NMR reference (all bases)
-├── 1_minDistEnds.in               # cpptraj: minimum distance between hairpin ends (Res1–Res14)
-├── 1_minDistLoopContacts.in       # cpptraj: specific loop contact distances
-├── 1_hbondFrames.in               # cpptraj: total hydrogen bonds per frame
-├── 1_hbondsLifetime.in            # cpptraj: hbond lifetimes (all residues)
-├── 1_hbondsLifetimeLoop.in        # cpptraj: hbond lifetimes (loop residues 6–9)
-└── 1_IonRDF.in                    # cpptraj: radial distribution function for Na+/Cl- (optional)
+├── USER_GUIDE.md                  # This guide
+├── README_cpptrajAnalysis.md      # cpptrajAnalysis.py function reference
+│
+└── scripts/
+    ├── cpptrajAnalysis.py         # Shared analysis library (I/O, stats, plotting)
+    ├── 1_radiusGyr.in             # cpptraj: radius of gyration
+    ├── 1_rmsd.in                  # cpptraj: RMSD to first trajectory frame
+    ├── 1_rmsdtoNMR.in             # cpptraj: RMSD to NMR reference (all heavy atoms)
+    ├── 1_rmsdtoNMRBackbone.in     # cpptraj: RMSD to NMR reference (backbone only)
+    ├── 1_rmsdtoNMRStem.in         # cpptraj: RMSD to NMR reference (stem residues)
+    ├── 1_rmsdtoNMRLoop.in         # cpptraj: RMSD to NMR reference (loop residues)
+    ├── 1_rmsdtoNMR1-14Bases.in    # cpptraj: RMSD to NMR reference (all bases)
+    ├── 1_minDistEnds.in           # cpptraj: minimum distance between hairpin ends (Res1–Res14)
+    ├── 1_minDistLoopContacts.in   # cpptraj: specific loop contact distances
+    ├── 1_hbondFrames.in           # cpptraj: total hydrogen bonds per frame
+    ├── 1_hbondsLifetime.in        # cpptraj: hbond lifetimes (all residues)
+    ├── 1_hbondsLifetimeLoop.in    # cpptraj: hbond lifetimes (loop residues 6–9)
+    └── 1_IonRDF.in                # cpptraj: radial distribution function for Na+/Cl- (optional)
 ```
 
 The trajectory and topology files are **not** stored in this directory. They live in a `stripped_trajectories/` folder two levels up relative to the `cpptraj/` folder:
@@ -193,11 +197,11 @@ The `autoimage` command recalculates periodic-boundary imaging so that the molec
 Scripts that compute RMSD relative to the NMR reference load two topologies and must label each explicitly to avoid ambiguity:
 
 ```
-parm ../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop [trajfoldedParm]
-trajin ../../stripped_trajectories/2KOCUnfolded_HRM_production.nc parm [trajfoldedParm]
+parm ../../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop [trajfoldedParm]
+trajin ../../../stripped_trajectories/2KOCUnfolded_HRM_production.nc parm [trajfoldedParm]
 
-parm 2KOCFolded_NMR.prmtop [NMR]
-reference 2KOCFolded_NMR.rst7 [NMR] parm [NMR]
+parm ../2KOCFolded_NMR.prmtop [NMR]
+reference ../2KOCFolded_NMR.rst7 [NMR] parm [NMR]
 
 rmsd ToNMR :1-14&!@H= ref [NMR] :1-14&!@H= out rmsd_toNMR.dat
 ```
@@ -449,18 +453,20 @@ CPPTRAJ_EXE = "cpptraj"   # or full path if not on PATH
 
 **3. Write cpptraj `.in` scripts**
 
-Copy the most similar existing `.in` file as a starting point. Adjust:
+Copy the most similar existing `.in` file from `scripts/` as a starting point. Adjust:
 - The topology path (`parm ...`)
 - The trajectory path (`trajin ...`)
 - The residue mask (`:1-14` → whatever your system has)
 - The output filename
+
+Place the new `.in` file in `scripts/`.
 
 **4. Add entries to `CPPTRAJ_JOBS`**
 
 ```python
 CPPTRAJ_JOBS = [
     dict(
-        in_file = "1_myObservable.in",
+        in_file = "scripts/1_myObservable.in",
         copies  = [("myObservable.dat", "myObservable.txt")],
     ),
 ]
@@ -650,8 +656,8 @@ Check that `native` in `ERMSD_CONFIG` points to the correct reference PDB. barna
 barnaba loads the full trajectory into memory. For very long trajectories (> 10⁶ frames), you may need to run barnaba on a subset of frames. One approach is to use cpptraj to write a stride-sampled NetCDF file first:
 
 ```
-parm ../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop
-trajin ../../stripped_trajectories/2KOCUnfolded_HRM_production.nc 1 last 10
+parm ../../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop
+trajin ../../../stripped_trajectories/2KOCUnfolded_HRM_production.nc 1 last 10
 trajout traj_stride10.nc netcdf
 run
 quit

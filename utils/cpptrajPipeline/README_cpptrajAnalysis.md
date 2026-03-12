@@ -1,4 +1,4 @@
-# ClaudeCpptrajAnalysis
+# cpptrajAnalysis
 
 A generalised Python library for post-processing AMBER/cpptraj MD simulation
 output.  Works with any trajectory length and any scalar observable that
@@ -10,17 +10,22 @@ cpptraj writes as a whitespace-delimited text file.
 
 ```
 CpptrajPipeline/
-├── README_ClaudeCpptrajAnalysis.md   ← this file
+├── README_cpptrajAnalysis.md          ← this file
+├── USER_GUIDE.md                      ← full pipeline user guide
 │
-├── ClaudeCpptrajAnalysis.py          ← Python library (required by both pipelines)
-├── full_pipeline.py                  ← end-to-end pipeline: cpptraj → eRMSD → plots
-├── pipeline_template.py              ← Python-only pipeline (cpptraj already ran)
-├── submit_pipeline.sh                ← SGE job script (Notre Dame CRC)
-├── C_get_data.py                     ← utility: look up metrics for specific frames
-├── eRMSD_createGIF.py                ← sliding-window eRMSD/RMSD density animation
-├── eRMSD_cumulativeEvolutionGIF.py   ← cumulative eRMSD/RMSD density animation
+├── full_pipeline.py                   ← end-to-end pipeline: cpptraj → eRMSD → plots
+├── pipeline_template.py               ← Python-only pipeline (cpptraj already ran)
+├── submit_pipeline.sh                 ← SGE job script (Notre Dame CRC)
+├── getFrameData.py                    ← utility: look up metrics for specific frames
+├── eRMSD_createGIF.py                 ← sliding-window eRMSD/RMSD density animation
+├── eRMSD_cumulativeEvolutionGIF.py    ← cumulative eRMSD/RMSD density animation
 │
-└── 1_*.in                            ← cpptraj input scripts (one per observable)
+├── 2KOCFolded_NMR.pdb                 ← native reference structure
+├── 2KOCFolded_NMR.prmtop              ← AMBER topology for native reference
+├── 2KOCFolded_NMR.rst7                ← AMBER coordinates for native reference
+│
+└── scripts/
+    ├── cpptrajAnalysis.py             ← Python library (required by both pipelines)
     ├── 1_radiusGyr.in
     ├── 1_rmsd.in
     ├── 1_rmsdtoNMR.in
@@ -33,7 +38,7 @@ CpptrajPipeline/
     ├── 1_hbondFrames.in
     ├── 1_hbondsLifetime.in
     ├── 1_hbondsLifetimeLoop.in
-    └── 1_IonRDF.in                   (commented out by default — ion RDF)
+    └── 1_IonRDF.in                    (commented out by default — ion RDF)
 ```
 
 > **Not included:** trajectory (`.nc`), topology (`.prmtop`), and reference
@@ -75,20 +80,22 @@ ERMSD_CONFIG = dict(
 )
 ```
 
-### 4. Edit the `1_*.in` scripts
+### 4. Edit the `scripts/1_*.in` scripts
 
-Update the `parm` and `trajin` lines in each `.in` file to point to your
-topology and trajectory:
+The `.in` scripts live in `scripts/` and use paths relative to that folder.
+Update the `parm` and `trajin` lines to point to your topology and trajectory
+(three levels up from `scripts/`):
 
 ```
-parm ../../stripped_trajectories/your_stripped.prmtop
-trajin ../../stripped_trajectories/your_production.nc
+parm ../../../stripped_trajectories/your_stripped.prmtop
+trajin ../../../stripped_trajectories/your_production.nc
 ```
 
-For RMSD-to-reference scripts, update the reference parm and rst7:
+For RMSD-to-reference scripts, the native reference files sit one level up
+in the root of `cpptraj/`:
 ```
-parm your_native.prmtop [NMR]
-reference your_native.rst7 [NMR] parm [NMR]
+parm ../your_native.prmtop [NMR]
+reference ../your_native.rst7 [NMR] parm [NMR]
 ```
 
 Update atom masks to match your residue numbering (e.g. `:1-14` for a
@@ -115,7 +122,7 @@ qsub submit_pipeline.sh
 
 | File | Purpose |
 |---|---|
-| `ClaudeCpptrajAnalysis.py` | Library — all functions documented here |
+| `cpptrajAnalysis.py` | Library — all functions documented here |
 | `full_pipeline.py` | **Recommended** — single end-to-end pipeline (cpptraj → stats → eRMSD → 2-D plots) |
 | `pipeline_template.py` | Python-only pipeline (no cpptraj subprocess, no barnaba); use when cpptraj has already run |
 | `submit_pipeline.sh` | SGE job script for Notre Dame CRC — submits `full_pipeline.py` |
@@ -123,7 +130,7 @@ qsub submit_pipeline.sh
 | `eRMSD_createGIF.py` | Sliding-window animated GIF of eRMSD vs RMSD probability density |
 | `eRMSD_cumulativeEvolutionGIF.py` | Cumulative animated GIF — density builds from frame 0 forward |
 | `1_*.in` | cpptraj input scripts — one per observable |
-| `README_ClaudeCpptrajAnalysis.md` | This file |
+| `README_cpptrajAnalysis.md` | This file |
 
 ---
 
@@ -173,7 +180,7 @@ All are available in the `rna` conda environment
 ### 1. Per-observable workflow
 
 ```python
-from ClaudeCpptrajAnalysis import convert_txt_to_csv, scale_x_to_ns, analyze_time_series
+from cpptrajAnalysis import convert_txt_to_csv, scale_x_to_ns, analyze_time_series
 
 convert_txt_to_csv("radGyr.txt", "radGyr.csv", ["Frame", "RoG"])
 scale_x_to_ns("radGyr.csv", total_ns=1000)
@@ -187,7 +194,7 @@ analyze_time_series(
 
 ```python
 import pandas as pd
-from ClaudeCpptrajAnalysis import plot_2d_suite
+from cpptrajAnalysis import plot_2d_suite
 
 data = pd.read_csv("ermsd_metrics.csv")
 plot_2d_suite(
@@ -472,7 +479,7 @@ Generate all four 2-D plot types in one call.
 **Example**
 ```python
 import pandas as pd
-from ClaudeCpptrajAnalysis import plot_2d_suite
+from cpptrajAnalysis import plot_2d_suite
 
 data = pd.read_csv("ermsd_metrics.csv")
 

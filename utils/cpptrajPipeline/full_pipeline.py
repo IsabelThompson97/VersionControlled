@@ -38,10 +38,12 @@ import subprocess
 import sys
 import time as _time
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "scripts"))
+
 import numpy as np
 import pandas as pd
 
-from ClaudeCpptrajAnalysis import (
+from cpptrajAnalysis import (
     append_to_output,
     convert_txt_to_csv,
     scale_x_to_ns,
@@ -75,71 +77,71 @@ FAIL_FAST   = False                             # True → abort on first cpptra
 CPPTRAJ_JOBS = [
 
     dict(
-        in_file = "1_radiusGyr.in",
-        copies  = [("radGyr.dat", "radGyr.txt")],
+        in_file = "scripts/1_radiusGyr.in",
+        copies  = [("radGyr.dat", "radGyr/radGyr.txt")],
     ),
     dict(
-        in_file = "1_rmsdtoNMR.in",
-        copies  = [("rmsd_toNMR.dat", "rmsd_toNMR.txt")],
+        in_file = "scripts/1_rmsdtoNMR.in",
+        copies  = [("rmsd_toNMR.dat", "rmsd/rmsd_toNMR.txt")],
     ),
     dict(
-        in_file = "1_rmsd.in",
-        copies  = [("rmsd.dat", "rmsd.txt")],
+        in_file = "scripts/1_rmsd.in",
+        copies  = [("rmsd.dat", "rmsd/rmsd.txt")],
     ),
     dict(
-        in_file = "1_minDistEnds.in",
-        copies  = [("minDistEnds.dat", "minDistEnds.txt")],
+        in_file = "scripts/1_minDistEnds.in",
+        copies  = [("minDistEnds.dat", "minDist/minDistEnds.txt")],
     ),
     dict(
-        in_file = "1_minDistLoopContacts.in",
+        in_file = "scripts/1_minDistLoopContacts.in",
         copies  = [
-            ("minDistG9-U6.dat",              "minDistG9-U6.txt"),
-            ("minDistG9-U6sugar-base.dat",    "minDistG9-U6sugar-base.txt"),
-            ("minDistG9-U7sugar-base.dat",    "minDistG9-U7sugar-base.txt"),
-            ("minDistU7-C8base-phosphate.dat","minDistU7-C8base-phosphate.txt"),
+            ("minDistG9-U6.dat",              "minDist/minDistG9-U6.txt"),
+            ("minDistG9-U6sugar-base.dat",    "minDist/minDistG9-U6sugar-base.txt"),
+            ("minDistG9-U7sugar-base.dat",    "minDist/minDistG9-U7sugar-base.txt"),
+            ("minDistU7-C8base-phosphate.dat","minDist/minDistU7-C8base-phosphate.txt"),
         ],
     ),
     dict(
-        in_file = "1_rmsdtoNMRBackbone.in",
-        copies  = [("rmsd_toNMRBackbone.dat", "rmsd_toNMRBackbone.txt")],
+        in_file = "scripts/1_rmsdtoNMRBackbone.in",
+        copies  = [("rmsd_toNMRBackbone.dat", "rmsd/rmsd_toNMRBackbone.txt")],
     ),
     dict(
-        in_file = "1_rmsdtoNMRStem.in",
-        copies  = [("rmsd_toNMRStem.dat", "rmsd_toNMRStem.txt")],
+        in_file = "scripts/1_rmsdtoNMRStem.in",
+        copies  = [("rmsd_toNMRStem.dat", "rmsd/rmsd_toNMRStem.txt")],
     ),
     dict(
-        in_file = "1_rmsdtoNMRLoop.in",
-        copies  = [("rmsd_toNMRLoop.dat", "rmsd_toNMRLoop.txt")],
+        in_file = "scripts/1_rmsdtoNMRLoop.in",
+        copies  = [("rmsd_toNMRLoop.dat", "rmsd/rmsd_toNMRLoop.txt")],
     ),
     dict(
-        in_file = "1_rmsdtoNMR1-14Bases.in",
-        copies  = [("rmsd_toNMR1-14Bases.dat", "rmsd_toNMR1-14Bases.txt")],
+        in_file = "scripts/1_rmsdtoNMR1-14Bases.in",
+        copies  = [("rmsd_toNMR1-14Bases.dat", "rmsd/rmsd_toNMR1-14Bases.txt")],
     ),
     dict(
-        in_file = "1_hbondFrames.in",
-        copies  = [("hbondFrames.dat", "hbondFrames.txt")],
+        in_file = "scripts/1_hbondFrames.in",
+        copies  = [("hbondFrames.dat", "hbonds/hbondFrames.txt")],
     ),
     dict(
-        in_file = "1_hbondsLifetimeLoop.in",
-        copies  = [("hbondLifetimeLoop.dat", "hbondLifetimeLoop.txt")],
+        in_file = "scripts/1_hbondsLifetimeLoop.in",
+        copies  = [("hbondLifetimeLoop.dat", "hbonds/hbondLifetimeLoop.txt")],
     ),
     dict(
-        in_file = "1_hbondsLifetime.in",
+        in_file = "scripts/1_hbondsLifetime.in",
         copies  = [],   # outputs multiple files; no single .dat copy needed
     ),
 
     # ── Template: add new cpptraj jobs here ───────────────────────────────────
     # dict(
-    #     in_file = "1_myNewObs.in",
-    #     copies  = [("myNewObs.dat", "myNewObs.txt")],
+    #     in_file = "scripts/1_myNewObs.in",
+    #     copies  = [("myNewObs.dat", "myNewObs/myNewObs.txt")],
     # ),
 
     # ── Ion RDF (commented out — uncomment if needed) ─────────────────────────
     # dict(
-    #     in_file = "1_IonRDF.in",
+    #     in_file = "scripts/1_IonRDF.in",
     #     copies  = [
-    #         ("RDF-Na.dat", "RDF-Na.txt"),
-    #         ("RDF-Cl.dat", "RDF-Cl.txt"),
+    #         ("RDF-Na.dat", "rdf/RDF-Na.txt"),
+    #         ("RDF-Cl.dat", "rdf/RDF-Cl.txt"),
     #     ],
     # ),
 ]
@@ -164,208 +166,208 @@ METRICS = [
     # ── Radius of Gyration ────────────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "radGyr.txt",
-        csv      = "radGyr.csv",
+        txt      = "radGyr/radGyr.txt",
+        csv      = "radGyr/radGyr.csv",
         columns  = ["Frame", "RadiusofGyration"],
         y_column = "RadiusofGyration",
         title    = "Radius of Gyration",
         unit     = "Å",
-        fig      = "radGyr.png",
+        fig      = "radGyr/radGyr.png",
     ),
 
     # ── RMSD to NMR (all heavy atoms) ─────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "rmsd_toNMR.txt",
-        csv      = "rmsd_toNMR.csv",
+        txt      = "rmsd/rmsd_toNMR.txt",
+        csv      = "rmsd/rmsd_toNMR.csv",
         columns  = ["Frame", "RMSD"],
         y_column = "RMSD",
         title    = "RMSD to NMR",
         unit     = "Å",
-        fig      = "rmsd_toNMR.png",
+        fig      = "rmsd/rmsd_toNMR.png",
         hist     = True,
-        hist_fig = "rmsd_toNMR_Hist.png",
+        hist_fig = "rmsd/rmsd_toNMR_Hist.png",
     ),
 
     # ── RMSD to NMR — backbone ────────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "rmsd_toNMRBackbone.txt",
-        csv      = "rmsd_toNMRBackbone.csv",
+        txt      = "rmsd/rmsd_toNMRBackbone.txt",
+        csv      = "rmsd/rmsd_toNMRBackbone.csv",
         columns  = ["Frame", "RMSD"],
         y_column = "RMSD",
         title    = "RMSD to NMR Backbone",
         unit     = "Å",
-        fig      = "rmsd_toNMRBackbone.png",
+        fig      = "rmsd/rmsd_toNMRBackbone.png",
         hist     = True,
-        hist_fig = "rmsd_toNMRBackbone_Hist.png",
+        hist_fig = "rmsd/rmsd_toNMRBackbone_Hist.png",
     ),
 
     # ── RMSD to NMR — loop ────────────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "rmsd_toNMRLoop.txt",
-        csv      = "rmsd_toNMRLoop.csv",
+        txt      = "rmsd/rmsd_toNMRLoop.txt",
+        csv      = "rmsd/rmsd_toNMRLoop.csv",
         columns  = ["Frame", "RMSD"],
         y_column = "RMSD",
         title    = "RMSD to NMR Loop",
         unit     = "Å",
-        fig      = "rmsd_toNMRLoop.png",
+        fig      = "rmsd/rmsd_toNMRLoop.png",
         hist     = True,
-        hist_fig = "rmsd_toNMRLoop_Hist.png",
+        hist_fig = "rmsd/rmsd_toNMRLoop_Hist.png",
     ),
 
     # ── RMSD to NMR — stem ────────────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "rmsd_toNMRStem.txt",
-        csv      = "rmsd_toNMRStem.csv",
+        txt      = "rmsd/rmsd_toNMRStem.txt",
+        csv      = "rmsd/rmsd_toNMRStem.csv",
         columns  = ["Frame", "RMSD"],
         y_column = "RMSD",
         title    = "RMSD to NMR Stem",
         unit     = "Å",
-        fig      = "rmsd_toNMRStem.png",
+        fig      = "rmsd/rmsd_toNMRStem.png",
         hist     = True,
-        hist_fig = "rmsd_toNMRStem_Hist.png",
+        hist_fig = "rmsd/rmsd_toNMRStem_Hist.png",
     ),
 
     # ── RMSD to NMR — bases 1-14 ──────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "rmsd_toNMR1-14Bases.txt",
-        csv      = "rmsd_toNMR1-14Bases.csv",
+        txt      = "rmsd/rmsd_toNMR1-14Bases.txt",
+        csv      = "rmsd/rmsd_toNMR1-14Bases.csv",
         columns  = ["Frame", "RMSD"],
         y_column = "RMSD",
         title    = "RMSD to NMR Bases",
         unit     = "Å",
-        fig      = "rmsd_toNMR1-14Bases.png",
+        fig      = "rmsd/rmsd_toNMR1-14Bases.png",
         hist     = True,
-        hist_fig = "rmsd_toNMR1-14Bases_Hist.png",
+        hist_fig = "rmsd/rmsd_toNMR1-14Bases_Hist.png",
     ),
 
     # ── RMSD to first frame ───────────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "rmsd.txt",
-        csv      = "rmsd.csv",
+        txt      = "rmsd/rmsd.txt",
+        csv      = "rmsd/rmsd.csv",
         columns  = ["Frame", "RMSD"],
         y_column = "RMSD",
         title    = "RMSD to First Frame",
         unit     = "Å",
-        fig      = "rmsd.png",
+        fig      = "rmsd/rmsd.png",
     ),
 
     # ── Minimum distance — ends (Res1–Res14) ──────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "minDistEnds.txt",
-        csv      = "minDistEnds.csv",
+        txt      = "minDist/minDistEnds.txt",
+        csv      = "minDist/minDistEnds.csv",
         columns  = ["Frame", "MinDist"],
         y_column = "MinDist",
         y_label  = "Minimum Distance",
         title    = "Minimum Distance Res1–Res14",
         unit     = "Å",
-        fig      = "minDist.png",
+        fig      = "minDist/minDist.png",
     ),
 
     # ── Loop contact: G9–U6 ───────────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "minDistG9-U6.txt",
-        csv      = "minDistG9-U6.csv",
+        txt      = "minDist/minDistG9-U6.txt",
+        csv      = "minDist/minDistG9-U6.csv",
         columns  = ["Frame", "MinDist"],
         y_column = "MinDist",
         y_label  = "Minimum Distance",
         title    = "Loop Contact G9–U6",
         unit     = "Å",
-        fig      = "minDistG9-U6.png",
+        fig      = "minDist/minDistG9-U6.png",
     ),
 
     # ── Loop contact: G9–U6 sugar-base ───────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "minDistG9-U6sugar-base.txt",
-        csv      = "minDistG9-U6sugar-base.csv",
+        txt      = "minDist/minDistG9-U6sugar-base.txt",
+        csv      = "minDist/minDistG9-U6sugar-base.csv",
         columns  = ["Frame", "MinDist"],
         y_column = "MinDist",
         y_label  = "Minimum Distance",
         title    = "Loop Contact G9–U6 sugar-base",
         unit     = "Å",
-        fig      = "minDistG9-U6sugar-base.png",
+        fig      = "minDist/minDistG9-U6sugar-base.png",
     ),
 
     # ── Loop contact: G9–U7 sugar-base ───────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "minDistG9-U7sugar-base.txt",
-        csv      = "minDistG9-U7sugar-base.csv",
+        txt      = "minDist/minDistG9-U7sugar-base.txt",
+        csv      = "minDist/minDistG9-U7sugar-base.csv",
         columns  = ["Frame", "MinDist"],
         y_column = "MinDist",
         y_label  = "Minimum Distance",
         title    = "Loop Contact G9–U7 sugar-base",
         unit     = "Å",
-        fig      = "minDistG9-U7sugar-base.png",
+        fig      = "minDist/minDistG9-U7sugar-base.png",
     ),
 
     # ── Loop contact: U7–C8 base-phosphate ───────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "minDistU7-C8base-phosphate.txt",
-        csv      = "minDistU7-C8base-phosphate.csv",
+        txt      = "minDist/minDistU7-C8base-phosphate.txt",
+        csv      = "minDist/minDistU7-C8base-phosphate.csv",
         columns  = ["Frame", "MinDist"],
         y_column = "MinDist",
         y_label  = "Minimum Distance",
         title    = "Loop Contact U7–C8 base-phosphate",
         unit     = "Å",
-        fig      = "minDistU7-C8base-phosphate.png",
+        fig      = "minDist/minDistU7-C8base-phosphate.png",
     ),
 
     # ── Hydrogen bonds per frame ──────────────────────────────────────────────
     dict(
         type     = "time_series",
-        txt      = "hbondFrames.txt",
-        csv      = "hbondFrames.csv",
+        txt      = "hbonds/hbondFrames.txt",
+        csv      = "hbonds/hbondFrames.csv",
         columns  = ["Frame", "HBonds"],
         y_column = "HBonds",
         y_label  = "Number of Hydrogen Bonds",
         title    = "HBonds per Frame",
         unit     = "",
-        fig      = "hbondFrames.png",
+        fig      = "hbonds/hbondFrames.png",
         hist     = True,
-        hist_fig = "hbondFrames_Hist.png",
+        hist_fig = "hbonds/hbondFrames_Hist.png",
     ),
 
     # ── Template: sugar pucker (histogram only) ───────────────────────────────
     # dict(
     #     type     = "histogram_only",
-    #     txt      = "sugarPucker_U7.txt",
-    #     csv      = "sugarPucker_U7.csv",
+    #     txt      = "sugarPucker/sugarPucker_U7.txt",
+    #     csv      = "sugarPucker/sugarPucker_U7.csv",
     #     columns  = ["Frame", "Pucker"],
     #     y_column = "Pucker",
     #     title    = "U7 Sugar Pucker",
     #     unit     = "°",
-    #     fig      = "sugarPucker_U7.png",
+    #     fig      = "sugarPucker/sugarPucker_U7.png",
     # ),
 
     # ── Template: backbone dihedral (histogram only) ──────────────────────────
     # dict(
     #     type     = "histogram_only",
-    #     txt      = "G9_chi.txt",
-    #     csv      = "G9_chi.csv",
+    #     txt      = "dihedrals/G9_chi.txt",
+    #     csv      = "dihedrals/G9_chi.csv",
     #     columns  = ["Frame", "Chi"],
     #     y_column = "Chi",
     #     title    = "G9 Chi Dihedral",
     #     unit     = "°",
-    #     fig      = "G9_chi.png",
+    #     fig      = "dihedrals/G9_chi.png",
     # ),
 
     # ── Template: ion RDF ─────────────────────────────────────────────────────
     # dict(
     #     type = "rdf",
-    #     ion1 = "Na+",  txt1 = "RDF-Na.txt",
-    #     ion2 = "Cl-",  txt2 = "RDF-Cl.txt",
-    #     csv  = "RDF_ions.csv",
-    #     fig  = "RDF_ions.png",
+    #     ion1 = "Na+",  txt1 = "rdf/RDF-Na.txt",
+    #     ion2 = "Cl-",  txt2 = "rdf/RDF-Cl.txt",
+    #     csv  = "rdf/RDF_ions.csv",
+    #     fig  = "rdf/RDF_ions.png",
     # ),
 ]
 
@@ -381,16 +383,16 @@ ERMSD_CONFIG = dict(
     native     = "2KOCFolded_NMR.pdb",
     traj       = "../../stripped_trajectories/2KOCUnfolded_HRM_production.nc",
     top        = "../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop",
-    master_csv = "ermsd_metrics.csv",
+    master_csv = "eRMSD/ermsd_metrics.csv",
     extra_columns = [
-        # (column name in master CSV,       source CSV,                    source column)
-        ("RadiusOfGyration",                "radGyr.csv",                  "RadiusofGyration"),
-        ("MinimumDistanceEnds",             "minDistEnds.csv",             "MinDist"),
-        ("MinimumDistanceG9-U6",            "minDistG9-U6.csv",            "MinDist"),
-        ("MinimumDistanceG9-U6SugarBase",   "minDistG9-U6sugar-base.csv",  "MinDist"),
-        ("MinimumDistanceG9-U7SugarBase",   "minDistG9-U7sugar-base.csv",  "MinDist"),
-        ("MinimumDistanceU7-C8BasePhosphate","minDistU7-C8base-phosphate.csv","MinDist"),
-        ("LoopRMSD",                        "rmsd_toNMRLoop.csv",          "RMSD"),
+        # (column name in master CSV,        source CSV,                            source column)
+        ("RadiusOfGyration",                 "radGyr/radGyr.csv",                   "RadiusofGyration"),
+        ("MinimumDistanceEnds",              "minDist/minDistEnds.csv",             "MinDist"),
+        ("MinimumDistanceG9-U6",             "minDist/minDistG9-U6.csv",            "MinDist"),
+        ("MinimumDistanceG9-U6SugarBase",    "minDist/minDistG9-U6sugar-base.csv",  "MinDist"),
+        ("MinimumDistanceG9-U7SugarBase",    "minDist/minDistG9-U7sugar-base.csv",  "MinDist"),
+        ("MinimumDistanceU7-C8BasePhosphate","minDist/minDistU7-C8base-phosphate.csv","MinDist"),
+        ("LoopRMSD",                         "rmsd/rmsd_toNMRLoop.csv",             "RMSD"),
     ],
 )
 
@@ -403,50 +405,50 @@ ERMSD_CONFIG = dict(
 CROSS_METRIC_PLOTS = [
 
     dict(
-        csv        = "ermsd_metrics.csv",
+        csv        = "eRMSD/ermsd_metrics.csv",
         x_col      = "eRMSD",
         y_col      = "RMSD",
         xlabel     = "eRMSD from native",
         ylabel     = "RMSD from native (nm)",
-        out_prefix = "eRMSD_RMSD",
+        out_prefix = "eRMSD/eRMSD_RMSD",
         vlines     = [0.7],
     ),
     dict(
-        csv        = "ermsd_metrics.csv",
+        csv        = "eRMSD/ermsd_metrics.csv",
         x_col      = "eRMSD",
         y_col      = "RadiusOfGyration",
         xlabel     = "eRMSD from native",
         ylabel     = "Radius of Gyration (Å)",
-        out_prefix = "eRMSD_RoG",
+        out_prefix = "eRMSD/eRMSD_RoG",
         vlines     = [0.7],
     ),
     dict(
-        csv        = "ermsd_metrics.csv",
+        csv        = "eRMSD/ermsd_metrics.csv",
         x_col      = "eRMSD",
         y_col      = "LoopRMSD",
         xlabel     = "eRMSD from native",
         ylabel     = "Loop RMSD (Å)",
-        out_prefix = "eRMSD_LoopRMSD",
+        out_prefix = "eRMSD/eRMSD_LoopRMSD",
         vlines     = [0.7],
     ),
     dict(
-        csv        = "ermsd_metrics.csv",
+        csv        = "eRMSD/ermsd_metrics.csv",
         x_col      = "eRMSD",
         y_col      = "MinimumDistanceEnds",
         xlabel     = "eRMSD from native",
         ylabel     = "Minimum End-to-End Distance (Å)",
-        out_prefix = "eRMSD_MinDist",
+        out_prefix = "eRMSD/eRMSD_MinDist",
         vlines     = [0.7],
     ),
 
     # ── Template: add any column pair from ermsd_metrics.csv ──────────────────
     # dict(
-    #     csv        = "ermsd_metrics.csv",
+    #     csv        = "eRMSD/ermsd_metrics.csv",
     #     x_col      = "eRMSD",
     #     y_col      = "MinimumDistanceG9-U6",
     #     xlabel     = "eRMSD from native",
     #     ylabel     = "G9–U6 Contact Distance (Å)",
-    #     out_prefix = "eRMSD_G9U6",
+    #     out_prefix = "eRMSD/eRMSD_G9U6",
     #     vlines     = [0.7],
     # ),
 ]
@@ -470,6 +472,37 @@ def _warn(msg):
 
 def _err(msg):
     print(f"  [✗] {msg}", file=sys.stderr)
+
+
+# ── Create output subdirectories ──────────────────────────────────────────────
+# Collect every directory referenced by METRICS, ERMSD_CONFIG, and
+# CROSS_METRIC_PLOTS and create them up front so that file writes never fail
+# because the parent directory is missing.
+
+_output_dirs = set()
+
+for _m in METRICS:
+    for _key in ("txt", "csv", "fig", "hist_fig", "txt1", "txt2"):
+        _path = _m.get(_key)
+        if _path:
+            _d = os.path.dirname(_path)
+            if _d:
+                _output_dirs.add(_d)
+
+if ERMSD_CONFIG is not None:
+    _d = os.path.dirname(ERMSD_CONFIG.get("master_csv", ""))
+    if _d:
+        _output_dirs.add(_d)
+
+for _p in CROSS_METRIC_PLOTS:
+    _d = os.path.dirname(_p.get("out_prefix", ""))
+    if _d:
+        _output_dirs.add(_d)
+
+for _d in sorted(_output_dirs):
+    os.makedirs(_d, exist_ok=True)
+
+_ok(f"Output directories ready: {', '.join(sorted(_output_dirs))}")
 
 
 # ── Stage 1: cpptraj ──────────────────────────────────────────────────────────
