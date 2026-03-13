@@ -9,18 +9,21 @@ cd $WEST_SIM_ROOT
 mkdir -pv $WEST_CURRENT_SEG_DATA_REF || exit 1
 cd $WEST_CURRENT_SEG_DATA_REF || exit 1
 
+
 export PMEMD="$(which pmemd.cuda) -O"
 export USE_LOCAL_SCRATCH=1
+
+# module load amber/22.0
+# module load westpa/2022.07
 # module load mpich/3.3/gcc/8.5.0 cuda/10.2 westpa/2022.07
-module load mpich/4.1.2/intel/24.2 westpa/2022.07
-#module load westpa/2.0
+# mpich/4.1.2/intel/24.2
+
+module load mpich westpa/2022.10
+
 export AMBERHOME=/opt/crc/a/amber/22.0/amber22
 export PATH=$AMBERHOME/bin:$PATH
 export LD_LIBRARY_PATH=$AMBERHOME/lib:$LD_LIBRARY_PATH
 
-
-#module load amber/22.0
-#module load westpa/2022.07
 ####========== Making a symbolic link================####
 
 ln -sv $WEST_SIM_ROOT/common_files/{averageFoldedDES.pdb,1hs3foldedDES_stripped.prmtop,closest_avgfoldedDES.rst7} .

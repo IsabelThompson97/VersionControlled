@@ -5,7 +5,6 @@
 # you may need to create this first (see install instructions)
 
 
-# module load mpich/3.3/gcc/8.5.0 cuda/10.2 westpa/2022.07
 module load westpa/2022.10 mpich cuda/10.2
 
 export AMBERHOME=/opt/crc/a/amber/22.0/amber22
@@ -17,4 +16,3 @@ export SIM_NAME=$(basename $WEST_SIM_ROOT)
 
 export AMBER_EXEC=$AMBERHOME/bin/pmemd.cuda
 export CPPTRAJ=$AMBERHOME/bin/cpptraj
-export BARNABA=/afs/crc.nd.edu/user/i/ithomps3/.conda/envs/rna/bin/barnaba
