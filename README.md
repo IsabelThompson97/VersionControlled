@@ -17,7 +17,7 @@ This repository contains comprehensive tools and protocols for conducting molecu
   - Analysis of structural properties post-simulation.
   - Visualization tools integrated for easy interpretation of results.
 
-## WESTPA Binning Visualization
+## WESTPA
 - **What is WESTPA?**: WESTPA is a framework for simulating and analyzing rare events. This section covers the binning and visualization of trajectories.
 - **Usage**:
   - Instructions to configure and run WESTPA for RNA simulations.
