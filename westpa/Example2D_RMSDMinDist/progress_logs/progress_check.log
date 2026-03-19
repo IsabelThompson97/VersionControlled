@@ -1,0 +1,219 @@
+=== WESTPA Progress Report ===
+Simulation:     Trial6_FoldingRMSDMinDist_2KOC
+Generated:      2026-03-17
+Last iteration: 63 of 65  (iter 64 currently running)
+Snapshot:       bins.log = iteration 63 (westBackup.h5, refreshed 2026-03-17)
+                west.log = iteration 63 (last completed); iter 64 in progress
+
+--- Iteration Trend (last 4 completed / 1 running) ---
+Iter | Segs | Bins Occupied    | Dyn Range (bin) kT | Wallclock
+  61 | 1544 | 115/277 (41.52%) |  —                 | 5:46:11  <- restart iter; 516→277 bin change
+  62 |  968 | 121/277 (43.68%) |  —                 | 3:37:33
+  63 |  968 | 121/277 (43.68%) | 72.65              | 3:37:10
+  64 |  992 | 124/277 (44.77%) |  —                 | (running)
+
+Note: Bin count dropped from 516 → 277 between iter 60 and iter 61, reflecting
+a system.py update that coarsened Quad0 (7×1=7 bins), Quad1 (3×1=3 bins), and
+Quad3 (1×2=2 bins) while keeping Quad2 at 53×5=265 bins. Total: 277. Segment
+count dropped from ~1496-1544 to 968 (8/bin × 121 occupied = 968), consistent
+with the reduced bin count.
+
+Walker count stabilized at 968 (iters 62-63), then ticked up slightly to 992
+for iter 64 — suggesting a few new bins were seeded.
+
+--- Progress Toward Target ---
+Basis state:   unfolded @ RMSD=7.0 A, MinDist=5.0 A
+Target state:  folded   @ RMSD=0.5 A, MinDist=0.5 A
+Progress direction: DECREASING in both dimensions.
+
+Dimension 0 -- RMSD (A):
+  Frontier (lowest upper-bound of any occupied bin): 4.5 A
+    -> bin [(4.4, 4.5), (6.0, 8.0)], count=8, weight=2.22e-32
+  Progress: (7.0 - 4.5) / (7.0 - 0.5) x 100 = 38.5% toward target
+  Advance since iter 60: 4.65 -> 4.5 A (~0.08 A/iter over 3 iterations)
+  Remaining to target:   3.9 A at ~0.08 A/iter -> ~49 more iterations needed
+
+Dimension 1 -- MinDist (A):
+  Global frontier (any occupied bin): upper bound = 2.0 A
+    -> bins at RMSD 4.7-7.5 A with MinDist (0.0, 2.0) are occupied
+  Progress: (5.0 - 2.0) / (5.0 - 0.5) x 100 = 66.7% toward target
+  Advance since iter 60: MinDist < 2 A is now reached at RMSD 4.7-4.8 A
+    (previously at RMSD ~5.1-5.2 A) -- notable coupling improvement.
+
+  At the RMSD frontier (bins at RMSD 4.4-4.5 A):
+    MinDist is still 6.0-8.0 A -- above the basis state MinDist of 5.0 A.
+    The walkers that have pushed furthest in RMSD have NOT formed terminal contacts.
+    This decoupling persists from iter 60.
+
+  Best joint progress (low RMSD + low MinDist simultaneously):
+    [(4.6, 4.7), (2.0, 4.0)]  count=8  weight=2.67e-30
+    [(4.6, 4.7), (4.0, 6.0)]  count=8  weight=7.79e-28  <- heaviest near-frontier
+    [(4.7, 4.8), (0.0, 2.0)]  count=8  weight=1.24e-29  <- MinDist<2 now at RMSD 4.7!
+
+--- Top Frontier Bins (lowest-RMSD occupied, iter 63) ---
+  [(4.4, 4.5), (6.0, 8.0)]    count=8  weight=2.22e-32  <- RMSD frontier
+  [(4.5, 4.6), (6.0, 8.0)]    count=8  weight=8.13e-32
+  [(4.6, 4.7), (4.0, 6.0)]    count=8  weight=7.79e-28  <- heaviest at this RMSD
+  [(4.6, 4.7), (2.0, 4.0)]    count=8  weight=2.67e-30
+  [(4.6, 4.7), (6.0, 8.0)]    count=8  weight=2.46e-31
+
+--- Binning Strategy Assessment ---
+Active mappers: Quad0, Quad1, Quad2, Quad3 (all four active)
+bin_target_counts: 8 walkers per bin
+Total bins: 277 (down from 516 at iter 60)
+
+Frontier bin saturation: ALL frontier bins show count=8 (fully saturated at target).
+  -> Resolution is appropriate; walkers are filling available bins.
+
+Frontier bin widths:
+  Dim 0 (RMSD) at frontier:   0.1 A (bins 4.4-4.5, 4.5-4.6, 4.6-4.7 etc.)
+  Dim 1 (MinDist) in Quad2:   2.0 A (5 bins spanning 0-10 A)
+
+Dynamic range: 72.65 kT (bin) at iter 63. Comparable to iter 60 (76.68 kT under
+old 516-bin system). Most probability still concentrated in high-RMSD unfolded bins:
+  [(12, inf), (10, inf)]:  weight=0.793 (bins 276) -- unfolded bulk
+  [(11, 12),  (10, inf)]:  weight=0.192 (bin  275) -- extended unfolded
+  [(10, 11),  (10, inf)]:  weight=0.011 (bin  274)
+
+--- Commented-Out Mappers ---
+PHASE II section (system.py lines 119-126): present but EMPTY -- still no mapper
+  definitions. This remains a placeholder only.
+
+All commented blocks are historical Phase I alternatives. None cover the frontier
+region better than current Quad2 boundaries.
+
+--- Iterations Remaining ---
+** CRITICAL: Only 1-2 iterations remain before max_total_iterations=65 is hit. **
+  Last completed: 63. Currently running: 64. Remaining after 64: iter 65 only.
+  Target is at RMSD=0.5 A, ~49 iterations away at current pace.
+  The run WILL STOP at iter 65 unless max_total_iterations is extended NOW.
+
+--- Recommendations ---
+1. [CRITICAL] EXTEND max_total_iterations IN west.cfg -- the run will hit the wall
+   after iter 65. Given the current advance rate of ~0.08 A/iter in RMSD and the
+   3.9 A remaining, you need at minimum ~50 more iterations. Suggest setting
+   max_total_iterations: 150 (or higher) as a conservative next block.
+   Change in west.cfg: `max_total_iterations: 65` -> `max_total_iterations: 150`
+   This change requires no system restart -- just edit and re-qsub.
+
+2. RMSD/MinDist DECOUPLING PERSISTS. The RMSD frontier (4.4-4.5 A) still has
+   MinDist 6-8 A. However, MinDist < 2 A is now reached at RMSD 4.7-4.8 A
+   (improved from 5.1-5.2 A at iter 60). The decoupling is narrowing as the
+   simulation progresses -- this is a healthy sign.
+
+3. MinDist BINNING IN Quad2 REMAINS COARSE (2 A bins, 5 bins for 0-10 A). As
+   walkers with RMSD < 4 A appear, finer MinDist resolution below 2 A will be
+   needed. Consider a Phase II Quad2 with MinDist bins [0, 0.5, 1, 1.5, 2, 4, 6,
+   8, 10] or similar once RMSD frontier reaches ~3-4 A. No change yet -- assess
+   after extending to 150 iterations.
+
+4. NO PHASE II MAPPER DEFINED. Still a placeholder. No change needed now;
+   define Phase II when RMSD frontier approaches 2-3 A.
+
+5. No changes to system.py were made. All of the above is assessment only.
+
+---
+
+=== WESTPA Progress Report ===
+Simulation:     Trial6_FoldingRMSDMinDist_2KOC
+Generated:      2026-03-15
+Last iteration: 60 of 60  <- RUN COMPLETE (max_total_iterations reached)
+Snapshot:       bins.log = iteration 61 (post-run resampled state after iter 60)
+                west.log = iteration 60 (last completed)
+
+--- Iteration Trend (last 5 completed) ---
+Iter | Segs | Bins Occupied     | Dyn Range (bin) kT | Wallclock
+  56 | 1576 | 145/516 (28.10%) |  62.10             | 5:58:17
+  57 | 1272 | 159/516 (30.81%) |  70.40             | 4:47:48
+  58 | 1352 | 169/516 (32.75%) |  72.53             | 5:06:10
+  59 | 1400 | 175/516 (33.91%) |  74.61             | 5:16:38
+  60 | 1496 | 187/516 (36.24%) |  76.68             | 5:38:04
+  -- | 1544 | 193/516 (37.40%) |  72.55             | (bins.log, iter 61 planned state)
+
+Trend: steady expansion -- ~7-12 new bins occupied per iteration,
+       dynamic range increasing (deeper rare-event sampling). Healthy.
+
+--- Progress Toward Target ---
+Basis state:   unfolded @ RMSD=7.0 A, MinDist=5.0 A
+Target state:  folded   @ RMSD=0.5 A, MinDist=0.5 A
+Progress direction: DECREASING in both dimensions.
+
+Dimension 0 -- RMSD (A):
+  Frontier: upper bound of lowest occupied bin = 4.70 A
+  Progress: (4.70 - 7.0) / (0.5 - 7.0) x 100 = 35.4% of the way to target
+
+Dimension 1 -- MinDist (A):
+  Global frontier (any occupied bin): upper bound = 2.0 A  -> 66.7% progress
+  BUT the MinDist frontier occurs at RMSD ~5.05-5.20 A, not at the RMSD frontier.
+
+  At the RMSD frontier (bins near RMSD 4.65-4.70 A):
+    MinDist is 6.0-8.0 A -- worse than the basis state MinDist of 5.0 A.
+    This means walkers that have pushed furthest in RMSD have high MinDist,
+    suggesting the hairpin termini have not come together in those trajectories.
+
+--- Top Frontier Bins (lowest-RMSD occupied, from bins.log iter 61) ---
+  [(4.65, 4.70), (6.0, 8.0)]     count=8  weight=1.56e-27  <- RMSD frontier
+  [(4.70, 4.75), (6.0, 8.0)]     count=8  weight=8.87e-31
+  [(4.75, 4.80), (6.0, 8.0)]     count=8  weight=1.67e-30
+  [(4.75, 4.80), (8.0, 10)]      count=8  weight=1.33e-30
+  [(4.75, 4.80), (4.0, 6.0)]     count=8  weight=4.18e-31
+
+  Best joint progress bins (low RMSD + low MinDist simultaneously):
+  [(4.85, 4.90), (2.0, 4.0)]     count=8  weight=1.71e-28
+  [(5.05, 5.10), (0.0, 2.0)]     count=8  weight=3.13e-28
+  [(5.10, 5.15), (0.0, 2.0)]     count=8  weight=6.55e-28
+  [(5.15, 5.20), (0.0, 2.0)]     count=8  weight=8.41e-26  <- heaviest MinDist<2
+
+--- Binning Strategy Assessment ---
+Active mappers: Quad0, Quad1, Quad2, Quad3 (all four active)
+bin_target_counts: 8 walkers per bin
+
+Frontier bin saturation: ALL frontier bins show count=8 (fully saturated).
+  -> Resolution is appropriate; walkers are filling available bins.
+
+Frontier bin widths:
+  Dim 0 (RMSD) at frontier:   0.05 A -- fine resolution, well-suited for this region
+  Dim 1 (MinDist) in Quad2:   2.0 A  -- coarser; 5 MinDist bins spanning 0-10 A
+
+Dynamic range of 76.7 kT at iter 60 is very large, reflecting the probability
+gap between heavily populated high-RMSD bins and the rare low-RMSD frontier.
+This is expected for a folding simulation at this stage.
+
+--- Commented-Out Mappers ---
+PHASE II section (lines 119-126 of system.py): present but EMPTY -- no mapper
+  definitions written. This is a placeholder only.
+
+Commented alternative Quad2 boundaries include:
+  - [0,1,1.5] + 0.1 A steps 2-6 A + coarse 6.2-10 (41 intervals vs current 81) -- coarser
+  - [0,1,2,...,10] -- 1 A uniform -- much coarser
+  None of the commented alternatives would improve coverage at the current frontier.
+
+Commented alternative Quad0 options (for MinDist >10 region):
+  - Finer: 0.1 A RMSD steps 2-6 A x 0.5 A MinDist steps 10-20 A -- much denser
+  -> Not yet relevant; very little traffic in Quad0 at RMSD 4.65-5.2 A region
+     because the MinDist frontier at low RMSD is still 6-8 A (Quad2 territory).
+
+--- Iterations Remaining ---
+0 -- run has completed. max_total_iterations=60 has been reached.
+
+--- Recommendations ---
+1. EXTEND max_total_iterations -- The run is done and the target is nowhere near
+   reached. RMSD frontier is ~4.65 A; target is 0.5 A. You are 35% of the way
+   there. Suggest extending to 120-150 as a next block.
+
+2. TWO-DIMENSIONAL DECOUPLING is notable. At the RMSD frontier (~4.65 A),
+   MinDist is 6-8 A -- actually above the basis state value of 5.0 A. The walkers
+   making the most RMSD progress are not simultaneously forming the terminal
+   contact. The best joint progress (both low-RMSD and low-MinDist together) is
+   happening at RMSD ~4.85-5.2 A, MinDist 0-4 A. Watch whether this joint-
+   progress region starts to couple as the run continues.
+
+3. MinDist BINNING IN Quad2 IS COARSE (2 A bins, 5 bins for 0-10 A). As walkers
+   push further into the folding basin and MinDist < 2 A becomes relevant, finer
+   MinDist bins in Quad2 will be needed. This is a natural Phase II change.
+
+4. NO PHASE II MAPPER DEFINED YET -- the PHASE II MAPPERS block in system.py is
+   empty. Once the frontier approaches RMSD ~2-3 A, or when MinDist < 2 A bins
+   fill up, define Phase II boundaries and confirm before applying.
+
+5. No changes to system.py were made. All of the above is assessment only.

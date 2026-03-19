@@ -1,0 +1,16 @@
+System is being built only off of the system driver
+Maximum wallclock time: 15 days, 0:00:00
+
+Wed Mar 18 20:37:18 2026
+Iteration 251 (260 requested)
+Beginning iteration 251
+960 segments remain in iteration 251 (960 total)
+120 of 206 (58.252427%) active bins are populated
+per-bin minimum non-zero probability:       5.0136e-72
+per-bin maximum probability:                1
+per-bin probability dynamic range (kT):     164.174
+per-segment minimum non-zero probability:   6.267e-73
+per-segment maximum non-zero probability:   0.177269
+per-segment probability dynamic range (kT): 164.523
+norm = 1, error in norm = -1.11022e-16 (-0.5*epsilon)
+Waiting for segments to complete...

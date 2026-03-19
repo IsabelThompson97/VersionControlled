@@ -1,0 +1,12 @@
+parm ../../stripped_trajectories/2KOCFolded_HRM_stripped.prmtop
+trajin ../../stripped_trajectories/2KOCFolded_HRM_productionStripped.nc
+
+autoimage
+
+hbond contacts :6-9 avgout hbondLifetimeAvgLoop.dat series uuseries hbondLifetimeLoop.gnu
+run
+
+lifetime contacts[solutehb] out hbondContactsLifetimeLoop.dat
+run
+
+quit

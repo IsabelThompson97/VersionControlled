@@ -1,0 +1,19 @@
+parm struct.prmtop 
+trajin parent.rst
+trajin seg.rst
+
+autoimage :1-14
+
+nativecontacts :1 :14 mindist name mindistData
+run
+
+write mindist.dat mindistData[mindist]
+run
+
+parm 2KOCFolded_NMR.prmtop [NMR]
+reference 2KOCFolded_NMR.rst7 parm [NMR]
+
+autoimage :1-14
+
+rmsd ToNMR reference :1-14&!@H= :1-14&!@H= out rmsd_toNMR.dat
+run

@@ -1,0 +1,7 @@
+parm ../../stripped_trajectories/1hs3foldedDES_stripped.prmtop
+trajin ../../stripped_trajectories/1hs3foldedDES_production.nc
+
+autoimage
+rms first :1-12&!@H= out rmsd1-12.dat
+run
+quit

@@ -1,0 +1,26 @@
+parm ../../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop
+trajin ../../../stripped_trajectories/2KOCUnfolded_HRM_production.nc
+
+autoimage :1-14
+
+# U6-G9 tSW base pair
+nativecontacts :6@184 :9@272,275 mindist name mindistDataG9-U6
+run
+write minDistG9-U6.dat mindistDataG9-U6[mindist]
+
+# U6-G9 sugar-base contact
+nativecontacts :6@189 :9@271 mindist name mindistDataG9-U6sugar-base
+run
+write minDistG9-U6sugar-base.dat mindistDataG9-U6sugar-base[mindist]
+
+# U7-G9 sugar-base contact
+nativecontacts :7@219 :9@271,268 mindist name mindistDataG9-U7sugar-base
+run
+write minDistG9-U7sugar-base.dat mindistDataG9-U7sugar-base[mindist]
+
+# U7-C8 Base-phosphate contact
+nativecontacts :7@194 :8@240 mindist name mindistDataU7-C8base-phosphate
+run
+write minDistU7-C8base-phosphate.dat mindistDataU7-C8base-phosphate[mindist]
+
+quit

@@ -1,0 +1,10 @@
+parm ../../stripped_trajectories/2KOCFolded_HRM_stripped.prmtop
+trajin ../../stripped_trajectories/2KOCFolded_HRM_productionStripped.nc
+
+autoimage :1-14
+
+nativecontacts :1 :14 mindist name mindistData
+run
+write minDistEnds.dat mindistData[mindist]
+
+quit

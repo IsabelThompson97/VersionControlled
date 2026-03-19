@@ -1,0 +1,19 @@
+parm ../../stripped_trajectories/1hs3foldedDES_stripped.prmtop [trajfoldedParm]
+trajin ../../stripped_trajectories/1hs3foldedDES_production.nc parm [trajfoldedParm] FRAME FRAME
+
+autoimage
+trajout FRAME.rst7 rst7
+run
+
+clear all
+
+parm ../../stripped_trajectories/1hs3foldedDES_stripped.prmtop [trajfoldedParm]
+trajin FRAME.rst7 parm [trajfoldedParm]
+
+parm 1hs3_crystal.prmtop [crystal]
+reference 1hs3_crystal.rst7 parm [crystal]
+
+rmsd ToCrystal reference :1-13&!@H= :1-13&!@H= out rmsd_toCrystal_FRAME.dat
+run
+
+quit

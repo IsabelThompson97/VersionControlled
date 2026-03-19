@@ -1,30 +1,67 @@
-# Molecular Dynamics and RNA Simulation Tools
+# RNA Hairpin MD Simulation Repository
 
-## Overview
-This repository contains comprehensive tools and protocols for conducting molecular dynamics simulations, specifically focusing on RNA. The documentation provides detailed information on various aspects, including DNA/RNA protocol templates, RNA hairpin simulations, binning visualization using WESTPA, and analysis utilities.
+Computational research repository for RNA hairpin folding dynamics using classical molecular dynamics and weighted ensemble sampling.
 
-## DNA/RNA Protocol Templates
-- **Purpose**: Templates for setting up molecular simulations for DNA and RNA, ensuring reproducibility and ease of use.
-- **Features**:
-  - Predefined force fields suitable for RNA simulations.
-  - Example configuration files.
-  - Step-by-step guidelines for protocol execution.
+**Systems:** 1hs3 RNA hairpin (DE Shaw and OL3 force fields) and 2KOC UUCG tetraloop variant
+**Methods:** AMBER MD, WESTPA weighted ensemble, cpptraj trajectory analysis, barnaba eRMSD
+**Cluster:** Notre Dame CRC (SGE scheduler, `module load amber/24.0`, `rna` conda environment)
 
-## RNA Hairpin Simulations
-- **Description**: Tools and scripts to simulate RNA hairpin structures.
-- **Key Points**:
-  - Setup instructions for RNA hairpin models.
-  - Analysis of structural properties post-simulation.
-  - Visualization tools integrated for easy interpretation of results.
+---
 
-## WESTPA
-- **What is WESTPA?**: WESTPA is a framework for simulating and analyzing rare events. This section covers the binning and visualization of trajectories.
-- **Usage**:
-  - Instructions to configure and run WESTPA for RNA simulations.
-  - Guidelines on how to create effective visualizations from WESTPA output data.
+## Directory Structure
 
-## Analysis Utilities
-- **Purpose**: A collection of scripts and tools to analyze simulation data.
-- **Features**:
-  - Automation scripts for data extraction and calculation of key metrics.
-  - Visualization capabilities to interpret simulation results.
+```
+md_protocol/       AMBER simulation protocol: tLeap setup, equilibration, production, analysis tools
+simulations/       Active simulation systems — force-field setups, equilibration, production runs
+westpa/            Weighted ensemble (WESTPA) rare-event sampling configurations
+utils/             Miscellaneous repository utilities (archiving, deployment, format conversion)
+```
+
+---
+
+## Simulation Systems
+
+Three active systems in `simulations/`:
+
+| System | Force Field | Water Model | Notes |
+|--------|-------------|-------------|-------|
+| `1hs3_DEShaw/` | DE Shaw RNA | TIP4P-D | System setup only |
+| `1hs3_OL3/` | Amber f99+bsc0+χOL3 | TIP3P | Full min/eq/production |
+| `2KOC_OL3_HRM/` | Amber f99+bsc0+χOL3 | TIP3P | 14-residue UUCG tetraloop; folded + unfolded states |
+
+All production runs: NVT 300 K, Langevin thermostat (γ = 1.0 ps⁻¹), 2 fs timestep, 50 M steps (100 ns) per block. See `simulations/README.md`.
+
+---
+
+## Weighted Ensemble Sampling
+
+| Setup | Pcoord | Notes |
+|-------|--------|-------|
+| `westpa/Example1D_RMSD/` | 1D RMSD | Template/reference (incomplete) |
+| `westpa/Example2D_RMSDMinDist/` | 2D: RMSD × MinDist | Active, 280 bins, recursive mapper |
+
+See `westpa/README.md`.
+
+---
+
+## Running the Analysis Pipeline
+
+```bash
+cd md_protocol/03_analysis/claude_cpptraj_pipeline
+
+# Edit full_pipeline.py: set TOTAL_NS, topology/trajectory paths, metric config
+python full_pipeline.py
+
+# Submit to CRC cluster
+qsub submit_pipeline.sh
+```
+
+Outputs per-observable time-series plots, `ermsd_metrics.csv` (master table with eRMSD, RMSD, RoG, MinDist, LoopRMSD), and all 2D cross-metric plots. See `md_protocol/03_analysis/claude_cpptraj_pipeline/README.md`.
+
+---
+
+## Key Dependencies
+
+- **Python:** `numpy`, `pandas`, `matplotlib`, `barnaba`, `pillow`
+- **AMBER 24.0+:** `cpptraj`, `tleap`, `antechamber`, `parmchk2`
+- On cluster: `module load amber/24.0` → `conda activate rna`

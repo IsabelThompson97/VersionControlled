@@ -1,0 +1,9 @@
+# 09/07/25 13:45:58
+parm 2KOC_13_noTerm5P_NMR.pdb
+trajin 2KOC_13_noTerm5P_NMR.pdb
+autoimage
+trajout 2KOCFolded_noTerm5P_NMR.rst7
+parmwrite 2KOCFolded_noTerm5P_NMR.prmtop
+parmwrite out 2KOCFolded_noTerm5P_NMR.prmtop
+run
+quit

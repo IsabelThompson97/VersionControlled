@@ -1,0 +1,650 @@
+log started: Mon Sep 15 20:34:35 2025
+
+Log file: ./leap.log
+>> # ----- NOTE: this is designed for PDB format 3!
+>> #       Uses ff99bsc0_chiOL3 for RNA
+>> #       	(ff99): Wang et al. J. Comp. Chem. 21: 1049, 2000
+>> #       	(bsc0): Perez et al. Biophys J. 92: 3817, 2007
+>> #       	(chiOL3): Zgarbova et al. JCTC 7: 2886, 2011
+>> #           (note: all of the above are in parm10.dat, loaded below)
+>> #
+>> #	load atom type hybridizations
+>> #
+>> addAtomTypes {
+>> 	{ "H"   "H" "sp3" }
+>> 	{ "HO"  "H" "sp3" }
+>> 	{ "HS"  "H" "sp3" }
+>> 	{ "H1"  "H" "sp3" }
+>> 	{ "H2"  "H" "sp3" }
+>> 	{ "H3"  "H" "sp3" }
+>> 	{ "H4"  "H" "sp3" }
+>> 	{ "H5"  "H" "sp3" }
+>> 	{ "HW"  "H" "sp3" }
+>> 	{ "HC"  "H" "sp3" }
+>> 	{ "HA"  "H" "sp3" }
+>> 	{ "HP"  "H" "sp3" }
+>> 	{ "HZ"  "H" "sp3" }
+>> 	{ "OH"  "O" "sp3" }
+>> 	{ "OS"  "O" "sp3" }
+>> 	{ "O"   "O" "sp2" }
+>> 	{ "O2"  "O" "sp2" }
+>> 	{ "OP"  "O" "sp2" }
+>> 	{ "OW"  "O" "sp3" }
+>> 	{ "CT"  "C" "sp3" }
+>> 	{ "CX"  "C" "sp3" }
+>> 	{ "CS"  "C" "sp2" }
+>> 	{ "C"   "C" "sp2" }
+>> 	{ "C*"  "C" "sp2" }
+>> 	{ "CA"  "C" "sp2" }
+>> 	{ "CB"  "C" "sp2" }
+>> 	{ "CC"  "C" "sp2" }
+>> 	{ "CN"  "C" "sp2" }
+>> 	{ "CM"  "C" "sp2" }
+>> 	{ "CK"  "C" "sp2" }
+>> 	{ "CQ"  "C" "sp2" }
+>> 	{ "CD"  "C" "sp2" }
+>> 	{ "C5"  "C" "sp2" }
+>> 	{ "C4"  "C" "sp2" }
+>> 	{ "CP"  "C" "sp2" }
+>> 	{ "CI"  "C" "sp3" }
+>> 	{ "CW"  "C" "sp2" }
+>> 	{ "CV"  "C" "sp2" }
+>> 	{ "CR"  "C" "sp2" }
+>> 	{ "CY"  "C" "sp2" }
+>> 	{ "C0"  "Ca" "sp3" }
+>> 	{ "MG"  "Mg" "sp3" }
+>> 	{ "N"   "N" "sp2" }
+>> 	{ "NA"  "N" "sp2" }
+>> 	{ "N2"  "N" "sp2" }
+>> 	{ "N*"  "N" "sp2" }
+>> 	{ "NB"  "N" "sp2" }
+>> 	{ "NC"  "N" "sp2" }
+>> 	{ "NT"  "N" "sp3" }
+>> 	{ "NY"  "N" "sp2" }
+>> 	{ "N3"  "N" "sp3" }
+>> 	{ "S"   "S" "sp3" }
+>> 	{ "SH"  "S" "sp3" }
+>> 	{ "P"   "P" "sp3" }
+>> 	{ "LP"  ""  "sp3" }
+>> 	{ "EP"  ""  "sp3" }
+>> 	{ "F"   "F" "sp3" }
+>> 	{ "Cl"  "Cl" "sp3" }
+>> 	{ "Br"  "Br" "sp3" }
+>> 	{ "I"   "I"  "sp3" }
+>> }
+>> #
+>> #	Load the main parameter set.
+>> #
+>> parm10 = loadamberparams parm10.dat
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/parm10.dat
+Reading title:
+PARM99 + frcmod.ff99SB + frcmod.parmbsc0 + OL3 for RNA
+>> #
+>> #	Load main chain and terminating nucleic acids
+>> #
+>> 
+>> loadOff RNA.lib
+Loading library: /software01/a/amber/24.0/dat/leap/lib/RNA.lib
+Loading: A
+Loading: A3
+Loading: A5
+Loading: AN
+Loading: C
+Loading: C3
+Loading: C5
+Loading: CN
+Loading: G
+Loading: G3
+Loading: G5
+Loading: GN
+Loading: OHE
+Loading: U
+Loading: U3
+Loading: U5
+Loading: UN
+>> 
+>> #
+>> #	Define the PDB name map for the nucleic acids
+>> #
+>> addPdbResMap {
+>>   { 0 "G" "G5"  } { 1 "G" "G3"  } 
+>>   { 0 "A" "A5"  } { 1 "A" "A3"  } 
+>>   { 0 "C" "C5"  } { 1 "C" "C3"  } 
+>>   { 0 "U" "U5"  } { 1 "U" "U3"  } 
+>> #  some old Amber residue names for RNA:
+>>   { 0  "RA5" "A5" } { 1 "RA3" "A3"} {"RA" "A" }
+>>   { 0  "RC5" "C5" } { 1 "RC3" "C3"} {"RC" "C" }
+>>   { 0  "RG5" "G5" } { 1 "RG3" "G3"} {"RG" "G" }
+>>   { 0  "RU5" "U5" } { 1 "RU3" "U3"} {"RU" "U" }
+>> #  uncomment out the following if you have this old style RNA files:
+>> # { 0 "GUA" "G5"  } { 1 "GUA" "G3"  } { "GUA" "G" }
+>> # { 0 "ADE" "A5"  } { 1 "ADE" "A3"  } { "ADE" "A" }
+>> # { 0 "CYT" "C5"  } { 1 "CYT" "C3"  } { "CYT" "C" }
+>> # { 0 "URA" "R5"  } { 1 "URA" "R3"  } { "URA" "R" }
+>> 
+>> }
+>> 
+>> #  try to be good about reading in really old atom names as well:
+>> addPdbAtomMap {
+>>   { "O5*" "O5'" }
+>>   { "C5*" "C5'" }
+>>   { "C4*" "C4'" }
+>>   { "O4*" "O4'" }
+>>   { "C3*" "C3'" }
+>>   { "O3*" "O3'" }
+>>   { "C2*" "C2'" }
+>>   { "O2*" "O2'" }
+>>   { "C1*" "C1'" }
+>>   { "C5M" "C7"  }
+>>   { "H1*" "H1'" }
+>>   { "H2*1" "H2'" }
+>>   { "H2*2" "H2''" }
+>>   { "H2'1" "H2'" }
+>>   { "H2'2" "H2''" }
+>>   { "H3*" "H3'" }
+>>   { "H4*" "H4'" }
+>>   { "H5*1" "H5'" }
+>>   { "H5*2" "H5''" }
+>>   { "H5'1" "H5'" }
+>>   { "H5'2" "H5''" }
+>>   { "HO'2" "HO2'" }
+>>   { "H5T"  "HO5'" }
+>>   { "H3T"  "HO3'" }
+>>   { "O1'" "O4'" }
+>>   { "OA"  "OP1" }
+>>   { "OB"  "OP2" }
+>>   { "O1P" "OP1" }
+>>   { "O2P" "OP2" }
+>>   { "O3P" "OP3" }
+>> }
+>> 
+> 
+> source leaprc.water.OPC
+
+Error: Could not open file leaprc.water.OPC: not found
+> source leaprc.water.opc
+----- Source: /software01/a/amber/24.0/dat/leap/cmd/leaprc.water.opc
+----- Source of /software01/a/amber/24.0/dat/leap/cmd/leaprc.water.opc done
+>> #
+>> #  Load OPC water model and ions for OPC + Li/Merz ion parameters
+>> #  (-1 to +4, 12-6 normal usage set)
+>> # 
+>> addAtomTypes {
+>> 	{ "F-"   "F" "sp3" }
+>> 	{ "Cl-"  "Cl" "sp3" }
+>> 	{ "Br-"  "Br" "sp3" }
+>> 	{ "I-"   "I"  "sp3" }
+>> 	{ "Li+"  "Li"  "sp3" }
+>> 	{ "Na+"  "Na"  "sp3" }
+>> 	{ "K+"  "K"  "sp3" }
+>> 	{ "Rb+"  "Rb"  "sp3" }
+>> 	{ "Cs+"  "Cs"  "sp3" }
+>> 	{ "Mg+"  "Mg"  "sp3" }
+>>     { "Tl+"  "Tl"  "sp3" }
+>>     { "Cu+"  "Cu"  "sp3" }
+>>     { "Ag+"  "Ag"  "sp3" }
+>>     { "Be2+" "Be"  "sp3" }
+>>     { "Cu2+" "Cu"  "sp3" }
+>>     { "Ni2+" "Ni"  "sp3" }
+>>     { "Pt2+" "Pt"  "sp3" }
+>>     { "Zn2+" "Zn"  "sp3" }
+>>     { "Co2+" "Co"  "sp3" }
+>>     { "Pd2+" "Pd"  "sp3" }
+>>     { "Ag2+" "Ag"  "sp3" }
+>>     { "Cr2+" "Cr"  "sp3" }
+>>     { "Fe2+" "Fe"  "sp3" }
+>>     { "Mg2+" "Mg"  "sp3" }
+>>     { "V2+"  "V"   "sp3" }
+>>     { "Mn2+" "Mn"  "sp3" }
+>>     { "Hg2+" "Hg"  "sp3" }
+>>     { "Cd2+" "Cd"  "sp3" }
+>>     { "Yb2+" "Yb"  "sp3" }
+>>     { "Ca2+" "Ca"  "sp3" }
+>>     { "Sn2+" "Sn"  "sp3" }
+>>     { "Pb2+" "Pb"  "sp3" }
+>>     { "Eu2+" "Eu"  "sp3" }
+>>     { "Sr2+" "Sr"  "sp3" }
+>>     { "Sm2+" "Sm"  "sp3" }
+>>     { "Ba2+" "Ba"  "sp3" }
+>>     { "Ra2+" "Ra"  "sp3" }
+>>     { "Al3+" "Al"  "sp3" }
+>>     { "Fe3+" "Fe"  "sp3" }
+>>     { "Cr3+" "Cr"  "sp3" }
+>>     { "In3+" "In"  "sp3" }
+>>     { "Tl3+" "Tl"  "sp3" }
+>>     { "Y3+"  "Y"   "sp3" }
+>>     { "La3+" "La"  "sp3" }
+>>     { "Ce3+" "Ce"  "sp3" }
+>>     { "Pr3+" "Pr"  "sp3" }
+>>     { "Nd3+" "Nd"  "sp3" }
+>>     { "Sm3+" "Sm"  "sp3" }
+>>     { "Eu3+" "Eu"  "sp3" }
+>>     { "Gd3+" "Gd"  "sp3" }
+>>     { "Tb3+" "Tb"  "sp3" }
+>>     { "Dy3+" "Dy"  "sp3" }
+>>     { "Er3+" "Er"  "sp3" }
+>>     { "Tm3+" "Tm"  "sp3" }
+>>     { "Lu3+" "Lu"  "sp3" }
+>>     { "Hf4+" "Hf"  "sp3" }
+>>     { "Zr4+" "Zr"  "sp3" }
+>>     { "Ce4+" "Ce"  "sp3" }
+>>     { "U4+"  "U"   "sp3" }
+>>     { "Pu4+" "Pu"  "sp3" }
+>>     { "Th4+" "Th"  "sp3" }
+>>     { "OW"   "O"   "sp3" }
+>>     { "HW"   "H"   "sp3" }
+>>     { "EP"   ""    "sp3" }
+>> }
+>> loadOff atomic_ions.lib
+Loading library: /software01/a/amber/24.0/dat/leap/lib/atomic_ions.lib
+Loading: AG
+Loading: AL
+Loading: Ag
+Loading: BA
+Loading: BR
+Loading: Be
+Loading: CA
+Loading: CD
+Loading: CE
+Loading: CL
+Loading: CO
+Loading: CR
+Loading: CS
+Loading: CU
+Loading: CU1
+Loading: Ce
+Loading: Cl-
+Loading: Cr
+Loading: Dy
+Loading: EU
+Loading: EU3
+Loading: Er
+Loading: F
+Loading: FE
+Loading: FE2
+Loading: GD3
+Loading: H3O+
+Loading: HE+
+Loading: HG
+Loading: HZ+
+Loading: Hf
+Loading: IN
+Loading: IOD
+Loading: K
+Loading: K+
+Loading: LA
+Loading: LI
+Loading: LU
+Loading: MG
+Loading: MN
+Loading: NA
+Loading: NH4
+Loading: NI
+Loading: Na+
+Loading: Nd
+Loading: PB
+Loading: PD
+Loading: PR
+Loading: PT
+Loading: Pu
+Loading: RB
+Loading: Ra
+Loading: SM
+Loading: SR
+Loading: Sm
+Loading: Sn
+Loading: TB
+Loading: TL
+Loading: Th
+Loading: Tl
+Loading: Tm
+Loading: U4+
+Loading: V2+
+Loading: Y
+Loading: YB2
+Loading: ZN
+Loading: Zr
+>> loadOff solvents.lib
+Loading library: /software01/a/amber/24.0/dat/leap/lib/solvents.lib
+Loading: CHCL3BOX
+Loading: DC4
+Loading: FB3
+Loading: FB3BOX
+Loading: FB4
+Loading: FB4BOX
+Loading: MEOHBOX
+Loading: NMABOX
+Loading: O3P
+Loading: OP3
+Loading: OPC
+Loading: OPC3BOX
+Loading: OPC3POLBOX
+Loading: OPCBOX
+Loading: PL3
+Loading: POL3BOX
+Loading: QSPCFWBOX
+Loading: SPC
+Loading: SPCBOX
+Loading: SPCFWBOX
+Loading: SPF
+Loading: SPG
+Loading: T4E
+Loading: TIP3PBOX
+Loading: TIP3PFBOX
+Loading: TIP4PBOX
+Loading: TIP4PEWBOX
+Loading: TIP5PBOX
+Loading: TP3
+Loading: TP4
+Loading: TP5
+Loading: TPF
+>> HOH = OPC
+>> WAT = OPC
+>> loadAmberParams frcmod.opc
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/frcmod.opc
+Reading force field modification type file (frcmod)
+Reading title:
+Parameters for OPC water (JPCL, 2014, 5 (21), pp 3863-3871)
+(UNKNOWN ATOM TYPE: EP)
+>> loadAmberParams frcmod.ionslm_126_opc
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/frcmod.ionslm_126_opc
+Reading force field modification type file (frcmod)
+Reading title:
+Li/Merz ion parameters of atomic ions for the OPC water model (12-6 set)
+>> 
+> 
+> mol = loadpdb 2KOC_Unfolded_pdb4amber.pdb
+Loading PDB file: ./2KOC_Unfolded_pdb4amber.pdb
+Matching PDB residue names to LEaP variables.
+Mapped residue G, term: Terminal/beginning, seq. number: 0 to: G5.
+Mapped residue C, term: Terminal/last, seq. number: 13 to: C3.
+  total atoms in file: 447
+> addions mol K+ 0
+13 K+ ions required to neutralize.
+Adding 13 counter ions to "mol" using 1A grid
+Total solute charge:  -13.00  Max atom radius:   2.10
+Grid extends from solute vdw + 4.10  to  10.20
+Box:
+   enclosing:  11.68 -65.49 -60.96   77.30 48.13 -14.04
+   sized:			      139.68 62.51 67.04
+   edge:        128.00
+Resolution:      1.00 Angstrom.
+Tree depth: 7
+Volume =  2.03% of box, grid points 42655
+ (no solvent present)
+Calculating grid charges
+Placed K+ in mol at (35.68, 0.51, -43.96).
+Placed K+ in mol at (57.68, -26.49, -47.96).
+Placed K+ in mol at (35.68, 24.51, -35.96).
+Placed K+ in mol at (32.68, 9.51, -42.96).
+Placed K+ in mol at (45.68, -11.49, -47.96).
+Placed K+ in mol at (61.68, -40.49, -53.96).
+Placed K+ in mol at (53.68, -23.49, -37.96).
+Placed K+ in mol at (32.68, 21.51, -25.96).
+Placed K+ in mol at (39.68, -26.49, -40.96).
+Placed K+ in mol at (66.68, -39.49, -43.96).
+Placed K+ in mol at (45.68, 0.51, -37.96).
+Placed K+ in mol at (27.68, 20.51, -38.96).
+Placed K+ in mol at (20.68, 27.51, -25.96).
+
+Done adding ions.
+> solvateOct mol OPCBOX 12.0
+  Solute vdw bounding box:              22.655 105.478 17.081
+  Total bounding box for atom centers:  129.478 129.478 129.478
+      (box expansion for 'iso' is 774.7%)
+  Solvent unit box:                     18.865 18.478 19.006
+The number of boxes:  x= 7  y= 8  z= 7
+  Volume: 1110656.591 A^3 (oct)
+  Total mass 621638.660 amu,  Density 0.929 g/cc
+  Added 34231 residues.
+> addionsrand mol K+ 92 Cl- 92
+Adding 184 counter ions to "mol". 34047 solvent molecules will remain.
+0: Placed K+ in mol at (32.98, -10.93, -23.74).
+Placed Cl- in mol at (37.08, 10.33, -5.54).
+0: Placed K+ in mol at (-46.18, -29.10, -27.48).
+Placed Cl- in mol at (-1.94, 23.45, -39.93).
+0: Placed K+ in mol at (-47.34, -9.22, 7.66).
+Placed Cl- in mol at (39.48, -7.83, 1.83).
+0: Placed K+ in mol at (10.50, -31.76, -30.12).
+Placed Cl- in mol at (-44.95, -34.08, 0.43).
+0: Placed K+ in mol at (2.96, 19.72, -54.59).
+Placed Cl- in mol at (-37.75, -44.34, -13.27).
+0: Placed K+ in mol at (9.14, 9.28, 45.23).
+Placed Cl- in mol at (-21.33, 4.20, -50.69).
+0: Placed K+ in mol at (4.84, -16.53, -55.80).
+Placed Cl- in mol at (32.15, -32.33, 45.70).
+0: Placed K+ in mol at (-6.37, -38.17, 43.08).
+Placed Cl- in mol at (-27.93, -22.93, 42.80).
+0: Placed K+ in mol at (-2.37, -33.57, -0.62).
+Placed Cl- in mol at (-19.42, -26.44, -21.30).
+0: Placed K+ in mol at (5.96, 19.06, 37.33).
+Placed Cl- in mol at (3.89, -16.82, 5.81).
+0: Placed K+ in mol at (9.26, 38.81, -13.53).
+Placed Cl- in mol at (52.95, -10.20, 14.31).
+0: Placed K+ in mol at (10.26, -19.24, 59.60).
+Placed Cl- in mol at (32.56, -3.12, -31.54).
+0: Placed K+ in mol at (-22.94, 20.64, -48.48).
+Placed Cl- in mol at (53.00, -36.91, 0.05).
+0: Placed K+ in mol at (-39.98, -34.61, 26.70).
+Placed Cl- in mol at (-28.13, 24.13, -33.90).
+0: Placed K+ in mol at (22.53, 5.48, 22.99).
+Placed Cl- in mol at (11.19, -2.07, -39.44).
+0: Placed K+ in mol at (-15.77, 26.09, -3.24).
+Placed Cl- in mol at (14.25, -47.43, -20.32).
+0: Placed K+ in mol at (-4.63, 34.28, 41.59).
+Placed Cl- in mol at (-31.53, -42.90, 15.62).
+0: Placed K+ in mol at (-37.33, -4.87, 5.61).
+Placed Cl- in mol at (12.75, 21.74, 43.10).
+0: Placed K+ in mol at (0.02, -40.04, -16.96).
+Placed Cl- in mol at (7.21, -46.09, 29.24).
+0: Placed K+ in mol at (-14.95, 21.12, 43.12).
+Placed Cl- in mol at (-18.95, -32.30, -4.47).
+0: Placed K+ in mol at (13.43, 2.41, 3.98).
+Placed Cl- in mol at (-22.33, 27.09, 6.24).
+0: Placed K+ in mol at (-5.30, -38.75, 28.07).
+Placed Cl- in mol at (54.13, 2.32, -14.86).
+0: Placed K+ in mol at (21.03, 42.61, -8.72).
+Placed Cl- in mol at (-0.29, -24.28, -46.91).
+0: Placed K+ in mol at (-22.84, 43.39, -26.25).
+Placed Cl- in mol at (-53.69, -1.09, -45.15).
+0: Placed K+ in mol at (0.16, -24.59, 5.90).
+Placed Cl- in mol at (28.97, 32.26, 9.90).
+0: Placed K+ in mol at (-1.44, -28.56, 21.41).
+Placed Cl- in mol at (-18.35, -6.22, 1.32).
+0: Placed K+ in mol at (1.20, -50.93, -10.36).
+Placed Cl- in mol at (30.37, 32.14, -14.12).
+0: Placed K+ in mol at (12.38, -13.56, 24.36).
+Placed Cl- in mol at (-3.24, -12.18, -38.56).
+0: Placed K+ in mol at (28.44, -0.71, -32.35).
+Placed Cl- in mol at (-21.82, 2.41, -41.13).
+0: Placed K+ in mol at (-24.64, 7.78, -30.16).
+Placed Cl- in mol at (10.25, 11.22, 11.88).
+0: Placed K+ in mol at (-28.87, 28.27, 14.62).
+Placed Cl- in mol at (-38.04, -10.33, 30.38).
+0: Placed K+ in mol at (-54.34, -15.43, -9.88).
+Placed Cl- in mol at (-27.57, -3.22, 20.34).
+0: Placed K+ in mol at (36.13, 25.09, 1.60).
+Placed Cl- in mol at (23.27, -21.27, 37.70).
+0: Placed K+ in mol at (50.07, 14.85, 5.43).
+Placed Cl- in mol at (-3.19, -35.53, -17.33).
+0: Placed K+ in mol at (12.41, 49.66, 16.62).
+Placed Cl- in mol at (-47.56, -9.06, -18.75).
+0: Placed K+ in mol at (-24.58, 6.90, -17.62).
+Placed Cl- in mol at (28.04, -39.41, 18.77).
+0: Placed K+ in mol at (44.02, 21.26, -26.10).
+Placed Cl- in mol at (9.74, 44.62, 11.41).
+0: Placed K+ in mol at (30.13, -37.52, 25.90).
+Placed Cl- in mol at (-50.00, -16.02, -5.89).
+0: Placed K+ in mol at (-1.40, -45.14, 36.39).
+Placed Cl- in mol at (-3.88, 11.83, -38.79).
+0: Placed K+ in mol at (-53.11, -6.19, -31.49).
+Placed Cl- in mol at (32.75, -33.51, 24.62).
+0: Placed K+ in mol at (4.02, -54.21, 8.00).
+Placed Cl- in mol at (14.08, -50.46, 8.60).
+0: Placed K+ in mol at (-50.91, 34.53, -28.73).
+Placed Cl- in mol at (-29.86, 36.36, 43.08).
+0: Placed K+ in mol at (28.56, 23.34, -21.96).
+Placed Cl- in mol at (-2.59, 9.91, -40.54).
+0: Placed K+ in mol at (-15.00, -39.14, 1.56).
+Placed Cl- in mol at (21.55, 1.26, -48.72).
+0: Placed K+ in mol at (2.94, -54.09, -30.54).
+Placed Cl- in mol at (-8.18, 21.28, 27.38).
+0: Placed K+ in mol at (26.63, 30.68, -14.43).
+Placed Cl- in mol at (29.14, -4.84, -9.77).
+0: Placed K+ in mol at (15.90, 40.34, -20.85).
+Placed Cl- in mol at (13.64, -40.98, -21.26).
+0: Placed K+ in mol at (4.24, 8.72, -3.33).
+Placed Cl- in mol at (-24.11, 30.69, 9.31).
+0: Placed K+ in mol at (47.80, -30.85, -13.88).
+Placed Cl- in mol at (14.08, -41.30, 31.55).
+0: Placed K+ in mol at (-52.51, -19.77, 33.66).
+Placed Cl- in mol at (-1.30, -34.71, -8.45).
+0: Placed K+ in mol at (-21.07, 25.16, 24.74).
+Placed Cl- in mol at (20.82, 57.43, 15.57).
+0: Placed K+ in mol at (-47.02, 9.35, -36.29).
+Placed Cl- in mol at (16.76, 8.96, 41.15).
+0: Placed K+ in mol at (-40.03, 14.93, 22.02).
+Placed Cl- in mol at (6.37, -51.14, -21.84).
+0: Placed K+ in mol at (-48.23, -1.90, -23.03).
+Placed Cl- in mol at (39.33, 41.82, -15.94).
+0: Placed K+ in mol at (43.13, -20.76, 40.92).
+Placed Cl- in mol at (0.05, -7.34, 3.73).
+0: Placed K+ in mol at (8.12, -53.62, 37.17).
+Placed Cl- in mol at (-32.17, -25.67, -3.69).
+0: Placed K+ in mol at (37.02, 35.43, 13.27).
+Placed Cl- in mol at (31.42, 47.19, 20.92).
+0: Placed K+ in mol at (-25.26, -1.15, -26.59).
+Placed Cl- in mol at (54.05, -27.96, -13.91).
+0: Placed K+ in mol at (9.39, 10.77, 49.06).
+Placed Cl- in mol at (-8.03, -7.70, -17.18).
+0: Placed K+ in mol at (22.87, -34.81, 29.23).
+Placed Cl- in mol at (4.40, 24.40, -33.63).
+0: Placed K+ in mol at (28.78, 23.19, 4.45).
+Placed Cl- in mol at (11.57, -51.93, -30.67).
+0: Placed K+ in mol at (48.33, 36.22, -18.85).
+Placed Cl- in mol at (20.13, -39.07, -4.98).
+0: Placed K+ in mol at (31.32, -43.19, -26.01).
+Placed Cl- in mol at (22.95, -1.54, 21.52).
+0: Placed K+ in mol at (3.72, -19.01, 50.29).
+Placed Cl- in mol at (16.08, -37.34, -2.24).
+0: Placed K+ in mol at (2.74, -54.22, 30.29).
+Placed Cl- in mol at (3.64, -1.85, 42.06).
+0: Placed K+ in mol at (0.23, -21.36, 9.69).
+Placed Cl- in mol at (0.63, 38.05, -27.53).
+0: Placed K+ in mol at (-37.75, -15.80, 14.46).
+Placed Cl- in mol at (-4.12, 44.52, -30.18).
+0: Placed K+ in mol at (36.72, 6.52, 19.15).
+Placed Cl- in mol at (-28.93, 44.59, 21.39).
+0: Placed K+ in mol at (-47.10, -13.87, -22.95).
+Placed Cl- in mol at (43.95, 37.70, 9.35).
+0: Placed K+ in mol at (7.44, -29.16, 30.40).
+Placed Cl- in mol at (19.12, 31.71, -29.25).
+0: Placed K+ in mol at (9.42, -28.98, 16.20).
+Placed Cl- in mol at (-11.53, 45.31, 0.72).
+0: Placed K+ in mol at (-9.59, 14.50, -35.76).
+Placed Cl- in mol at (33.47, 7.11, -4.86).
+0: Placed K+ in mol at (19.98, 11.47, -32.98).
+Placed Cl- in mol at (-7.22, -44.20, -19.22).
+0: Placed K+ in mol at (2.24, 1.28, -35.59).
+Placed Cl- in mol at (-0.44, -52.21, -1.79).
+0: Placed K+ in mol at (-25.38, 30.89, -51.25).
+Placed Cl- in mol at (-45.70, 1.50, -21.19).
+0: Placed K+ in mol at (-13.86, -27.98, -4.27).
+Placed Cl- in mol at (46.19, 8.17, -22.53).
+0: Placed K+ in mol at (-6.77, 42.95, 5.21).
+Placed Cl- in mol at (38.67, 18.01, -13.00).
+0: Placed K+ in mol at (-14.34, -0.19, 1.84).
+Placed Cl- in mol at (-28.74, -34.46, -0.07).
+0: Placed K+ in mol at (-34.92, 31.75, -41.07).
+Placed Cl- in mol at (23.75, 13.28, -42.53).
+0: Placed K+ in mol at (45.62, -14.27, 20.30).
+Placed Cl- in mol at (4.47, 8.56, 23.08).
+0: Placed K+ in mol at (33.07, 1.97, 23.02).
+Placed Cl- in mol at (24.09, -10.65, -21.03).
+0: Placed K+ in mol at (-23.83, 19.82, 18.52).
+Placed Cl- in mol at (29.47, 25.10, 17.07).
+0: Placed K+ in mol at (1.59, -21.31, -40.92).
+Placed Cl- in mol at (43.72, -28.91, 3.40).
+0: Placed K+ in mol at (15.55, 2.30, 47.82).
+Placed Cl- in mol at (9.97, -52.39, -20.75).
+0: Placed K+ in mol at (-30.86, 1.64, -54.53).
+Placed Cl- in mol at (9.66, -25.69, 4.88).
+0: Placed K+ in mol at (40.20, 2.69, -33.69).
+Placed Cl- in mol at (25.91, -14.36, 9.29).
+0: Placed K+ in mol at (21.96, 29.82, -33.85).
+Placed Cl- in mol at (38.65, -9.99, 51.83).
+0: Placed K+ in mol at (-22.93, -33.12, -27.93).
+Placed Cl- in mol at (26.00, -41.10, -18.58).
+0: Placed K+ in mol at (39.24, -18.66, -38.25).
+Placed Cl- in mol at (21.97, 27.65, -31.81).
+0: Placed K+ in mol at (28.50, -37.25, 23.51).
+Placed Cl- in mol at (23.09, 52.76, 15.90).
+0: Placed K+ in mol at (42.20, 40.96, -23.54).
+Placed Cl- in mol at (-13.09, 4.70, 23.08).
+0: Placed K+ in mol at (-13.42, -19.54, 28.96).
+Placed Cl- in mol at (-16.30, 40.62, 25.00).
+> check mol
+Checking 'mol'....
+Checking parameters for unit 'mol'.
+Checking for bond parameters.
+Checking for angle parameters.
+check:  Warnings: 102141
+Unit is OK.
+> savepdb mol 2KOCUnfolded_OL3.pdb
+Writing pdb file: 2KOCUnfolded_OL3.pdb
+   printing CRYST1 record to PDB file with box info
+> saveamberparm mol 2KOCUnfolded_OL3.prmtop 2KOCUnfolded_OL3.inpcrd
+Checking Unit.
+
+Note: Ignoring the warnings from Unit Checking.
+
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+ total 95 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+ (no restraints)
+> saveamberparm mol 2KOCUnfolded_OL3.prmtop 2KOCUnfolded_OL3.rst7
+Checking Unit.
+
+Note: Ignoring the warnings from Unit Checking.
+
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+ total 95 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+ (no restraints)
+> saveamberparm mol 2KOCUnfolded_OL3.prmtop 2KOCUnfolded_OL3.parm7
+Checking Unit.
+
+Note: Ignoring the warnings from Unit Checking.
+
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+ total 95 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+ (no restraints)
+> quit
+	Quit
+
+Exiting LEaP: Errors = 1; Warnings = 0; Notes = 3.

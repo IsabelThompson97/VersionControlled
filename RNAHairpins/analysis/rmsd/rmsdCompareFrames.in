@@ -1,8 +1,0 @@
-parm ../../stripped_trajectories/1hs3foldedDES_stripped.prmtop [trajfoldedParm]
-trajin FRAME.rst7 parm [trajfoldedParm]
-
-reference REF.rst7 parm [trajfoldedParm]
-
-rmsd ToFrame reference :1-13&!@H= :1-13&!@H= out rmsdCompare_REF.FRAME.dat 
-run
-quit

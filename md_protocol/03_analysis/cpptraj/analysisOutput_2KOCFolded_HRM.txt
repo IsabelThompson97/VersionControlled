@@ -1,0 +1,542 @@
+Data successfully converted to radGyr.csv
+
+Data scaled to 1000 ns and saved to radGyr.csv
+
+------------------- Radius of Gyration ------------------------------  Thu Sep 25 15:12:52 2025
+
+Maximum Radius of Gyration (Å): 11.1285 (Frame: 75472)
+Minimum Radius of Gyration (Å): 9.1724 (Frame: 114404)
+Average Radius of Gyration (Å): 9.969952720900002
+Radius of Gyration Standard Deviation (Å): 0.1965902188018286
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  RadiusofGyration
+ 75472           11.1285
+ 75478           11.0620
+ 75468           11.0460
+ 75490           11.0340
+ 75470           11.0325
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  RadiusofGyration
+114404            9.1724
+287800            9.2033
+232124            9.2113
+232121            9.2230
+287813            9.2248
+
+-------------------------------------------------
+
+
+
+Data successfully converted to rmsd_toNMR.csv
+
+Data scaled to 1000 ns and saved to rmsd_toNMR.csv
+
+------------------- RMSD to NMR ------------------------------  rmsd_toNMR.csv  Thu Sep 25 15:12:56 2025
+
+Maximum RMSD (Å): 3.4207 (Frame: 790551)
+Minimum RMSD (Å): 0.7102 (Frame: 306308)
+Average RMSD (Å): 1.4489236695000005
+RMSD Standard Deviation (Å): 0.26418388673250076
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   RMSD
+790551 3.4207
+790575 3.4152
+790556 3.3958
+790554 3.3874
+790552 3.3867
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame   RMSD
+306308 0.7102
+918498 0.7473
+307694 0.7589
+997775 0.7624
+775579 0.7657
+
+-------------------------------------------------
+
+
+
+Data successfully converted to rmsd_toNMRBackbone.csv
+
+Data scaled to 1000 ns and saved to rmsd_toNMRBackbone.csv
+
+------------------- RMSD to NMR ------------------------------  rmsd_toNMRBackbone.csv  Thu Sep 25 15:12:59 2025
+
+Maximum RMSD (Å): 3.6664 (Frame: 790556)
+Minimum RMSD (Å): 0.6908 (Frame: 306308)
+Average RMSD (Å): 1.507448986899999
+RMSD Standard Deviation (Å): 0.29254536984048657
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   RMSD
+790556 3.6664
+790551 3.6638
+790575 3.6356
+790554 3.6245
+790552 3.5835
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame   RMSD
+306308 0.6908
+684842 0.7185
+ 63221 0.7235
+461660 0.7248
+290888 0.7361
+
+-------------------------------------------------
+
+
+
+Data successfully converted to rmsd_toNMRLoop.csv
+
+Data scaled to 1000 ns and saved to rmsd_toNMRLoop.csv
+
+------------------- RMSD to NMR ------------------------------  rmsd_toNMRLoop.csv  Thu Sep 25 15:13:02 2025
+
+Maximum RMSD (Å): 1.7565 (Frame: 344608)
+Minimum RMSD (Å): 0.2237 (Frame: 570291)
+Average RMSD (Å): 0.5747618081999998
+RMSD Standard Deviation (Å): 0.16893569651460869
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   RMSD
+344608 1.7565
+ 99940 1.7559
+344594 1.7462
+344593 1.7362
+ 99841 1.7339
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame   RMSD
+570291 0.2237
+164947 0.2305
+ 36354 0.2326
+109703 0.2337
+405647 0.2337
+
+-------------------------------------------------
+
+
+
+Data successfully converted to rmsd_toNMRStem.csv
+
+Data scaled to 1000 ns and saved to rmsd_toNMRStem.csv
+
+------------------- RMSD to NMR ------------------------------  rmsd_toNMRStem.csv  Thu Sep 25 15:13:05 2025
+
+Maximum RMSD (Å): 2.4315 (Frame: 75472)
+Minimum RMSD (Å): 0.6467 (Frame: 517456)
+Average RMSD (Å): 1.1863632829000001
+RMSD Standard Deviation (Å): 0.17758884335431055
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   RMSD
+ 75472 2.4315
+881129 2.4207
+356345 2.3780
+356338 2.3757
+956150 2.3619
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame   RMSD
+517456 0.6467
+677446 0.6549
+128993 0.6666
+585520 0.6668
+517455 0.6679
+
+-------------------------------------------------
+
+
+
+Data successfully converted to rmsd_toNMR1-14Bases.csv
+
+Data scaled to 1000 ns and saved to rmsd_toNMR1-14Bases.csv
+
+------------------- RMSD to NMR ------------------------------  rmsd_toNMR1-14Bases.csv  Thu Sep 25 15:13:08 2025
+
+Maximum RMSD (Å): 3.0239 (Frame: 790575)
+Minimum RMSD (Å): 0.6448 (Frame: 918498)
+Average RMSD (Å): 1.3230816842999995
+RMSD Standard Deviation (Å): 0.2375921448740518
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   RMSD
+790575 3.0239
+790552 2.9772
+790574 2.9601
+790550 2.9584
+790551 2.9464
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame   RMSD
+918498 0.6448
+953116 0.6576
+608258 0.6681
+249733 0.6708
+641935 0.6746
+
+-------------------------------------------------
+
+
+
+Data successfully converted to rmsd.csv
+
+Data scaled to 1000 ns and saved to rmsd.csv
+
+------------------- RMSD to First------------------------------  Thu Sep 25 15:13:12 2025
+
+Maximum RMSD (Å): 3.6891 (Frame: 75472)
+Minimum RMSD (Å): 0.0 (Frame: 1)
+Average RMSD (Å): 1.3086927824999997
+RMSD Standard Deviation (Å): 0.34220082205135083
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   RMSD
+ 75472 3.6891
+ 75473 3.5716
+ 75471 3.5223
+ 75480 3.5174
+ 75470 3.4903
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame   RMSD
+     1 0.0000
+     2 0.4366
+     3 0.4544
+     5 0.4754
+     6 0.4920
+
+-------------------------------------------------
+
+
+
+Data successfully converted to minDistEnds.csv
+
+Data scaled to 1000 ns and saved to minDistEnds.csv
+
+------------------- Minimum Distance Res1 - Res14 ------------------------------  Thu Sep 25 15:13:15 2025
+
+Maximum Distance (Å): 7.1895 (Frame: 553031)
+Minimum Distance (Å): 1.4355 (Frame: 266645)
+Average Distance (Å): 1.8824191977999998
+Distance Standard Deviation (Å): 0.24485208472363038
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  MinDist
+553031   7.1895
+553032   6.8260
+553591   6.8144
+553590   6.7454
+956142   6.6918
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  MinDist
+266645   1.4355
+975943   1.4454
+959490   1.4634
+513551   1.4705
+508092   1.5093
+
+-------------------------------------------------
+
+
+
+Data successfully converted to minDistG7-8base-phosphate.csv
+
+Data scaled to 1000 ns and saved to minDistG7-8base-phosphate.csv
+
+------------------- Minimum Distance Loop Contacts -minDistG7-8base-phosphate------------------------------  Thu Sep 25 15:13:18 2025
+
+Maximum Distance (Å): 7.0762 (Frame: 578137)
+Minimum Distance (Å): 2.5056 (Frame: 30820)
+Average Distance (Å): 2.9295779184999984
+Distance Standard Deviation (Å): 0.2593219952741275
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  MinDist
+578137   7.0762
+414696   6.7638
+414697   6.6984
+836716   6.5346
+578138   6.5283
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  MinDist
+ 30820   2.5056
+ 62382   2.5098
+ 28780   2.5159
+354682   2.5191
+272609   2.5212
+
+-------------------------------------------------
+
+
+
+Data successfully converted to minDistG9-6.csv
+
+Data scaled to 1000 ns and saved to minDistG9-6.csv
+
+------------------- Minimum Distance Loop Contacts -minDistG9-6------------------------------  Thu Sep 25 15:13:21 2025
+
+Maximum Distance (Å): 6.12 (Frame: 147585)
+Minimum Distance (Å): 2.4905 (Frame: 190434)
+Average Distance (Å): 2.8488999683000014
+Distance Standard Deviation (Å): 0.15127873076412088
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  MinDist
+147585   6.1200
+848373   6.1098
+147521   5.9991
+147607   5.9707
+848378   5.9557
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  MinDist
+190434   2.4905
+ 56958   2.5064
+576919   2.5074
+ 50567   2.5103
+ 24924   2.5140
+
+-------------------------------------------------
+
+
+
+Data successfully converted to minDistG9-6sugar-base.csv
+
+Data scaled to 1000 ns and saved to minDistG9-6sugar-base.csv
+
+------------------- Minimum Distance Loop Contacts -minDistG9-6sugar-base------------------------------  Thu Sep 25 15:13:25 2025
+
+Maximum Distance (Å): 6.0529 (Frame: 147561)
+Minimum Distance (Å): 2.3455 (Frame: 364836)
+Average Distance (Å): 2.7419747702999984
+Distance Standard Deviation (Å): 0.20765327449152987
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  MinDist
+147561   6.0529
+147505   6.0118
+147521   5.8171
+147760   5.7958
+147747   5.7949
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  MinDist
+364836   2.3455
+546441   2.3486
+150767   2.3519
+397779   2.3557
+390206   2.3617
+
+-------------------------------------------------
+
+
+
+Data successfully converted to minDistG9-7sugar-base.csv
+
+Data scaled to 1000 ns and saved to minDistG9-7sugar-base.csv
+
+------------------- Minimum Distance Loop Contacts -minDistG9-7sugar-base------------------------------  Thu Sep 25 15:13:28 2025
+
+Maximum Distance (Å): 7.0383 (Frame: 790723)
+Minimum Distance (Å): 2.3975 (Frame: 668986)
+Average Distance (Å): 2.9596222574000013
+Distance Standard Deviation (Å): 0.26776242609273043
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  MinDist
+790723   7.0383
+790324   6.9517
+790351   6.8338
+790643   6.5664
+790348   6.5363
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  MinDist
+668986   2.3975
+752192   2.4275
+809121   2.4291
+  2398   2.4298
+238849   2.4393
+
+-------------------------------------------------
+
+
+
+Data successfully converted to hbondFrames.csv
+
+Data scaled to 1000 ns and saved to hbondFrames.csv
+
+------------------- HBonds per Frame ------------------------------  Sat Sep 27 15:44:49 2025
+
+Maximum Number of HBonds: 22 (Frame: 99378)
+Minimum Number of HBonds: 3 (Frame: 356320)
+Average Number of HBonds: 13.926051
+Number of HBonds Standard Deviation: 2.0583874228040218
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  HBonds
+ 99378      22
+660973      22
+ 45276      21
+ 59478      21
+227915      21
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  HBonds
+356320       3
+179869       4
+182025       4
+335097       4
+393787       4
+
+-------------------------------------------------
+
+Data successfully converted to G9_dihedral.csv
+
+Data scaled to 1000 ns and saved to G9_dihedral.csv
+
+------------------- G9-Dihedral ------------------------------  Mon Oct 13 18:26:42 2025
+
+Maximum Angle (°): 129.2348 (Frame: 598965)
+Minimum Angle (°): -17.0086 (Frame: 631480)
+Average Angle (°): 62.35079053420001
+Dihedral Standard Deviation (°): 14.610081440414943
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame  G9_Dihedral
+598965     129.2348
+884326     126.5378
+442502     125.3301
+597543     123.2458
+773182     123.1587
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  G9_Dihedral
+631480     -17.0086
+ 55153     -11.4242
+631482      -8.1573
+631477      -6.4005
+221026      -4.6721
+
+-------------------------------------------------
+
+
+__________________________________________________________________
+
+STATISTICS G9_dihedral
+   AVERAGE:  62.3508 (14.6101 stddev)
+   INITIAL:  62.6136
+   FINAL:    49.9881
+
+               g+       a+       t        a-       g-       c      
+           -------------------------------------------------------
+ %occupied |   95.5 |    3.6 |        |        |        |    0.9 |
+ average   |   61.5 |   95.7 |        |        |        |   25.9 |
+ stddev    |   12.9 |    4.9 |        |        |        |    3.9 |
+           -------------------------------------------------------
+ CHI                         <-------- anti ------->  <--syn---
+
+   O4'-C1'-NX-CX, SNB range is 200-300
+   *** CHI flips; > 5% out of range populations detected (see table below)Data successfully converted to U7sugarPucker.csv
+
+
+
+-------------------U7sugarPucker.png------------------------------  Wed Nov  5 13:20:35 2025
+
+Maximum Angle (°): 359.9955 (Frame: 134379)
+Minimum Angle (°): 0.0254 (Frame: 858364)
+Average Angle (°): 174.16009089079998
+Pucker Standard Deviation (°): 33.95478717186188
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   Pucker
+134379 359.9955
+863258 359.9804
+292083 359.9741
+861830 359.9700
+291910 359.9667
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  Pucker
+858364  0.0254
+862840  0.0261
+134619  0.0316
+863322  0.0322
+309840  0.0374
+
+-------------------------------------------------
+U7sugarPucker_stats.dat
+__________________________________________________________________
+
+STATISTICS     U7
+   AVERAGE:  51.1542 (149.8092 stddev)
+   INITIAL: 170.7648
+   FINAL:   176.5466
+
+   This is marked as a nucleic acid sugar pucker phase
+
+            C3'-endo C4'-exo  O4'-endo C1'-exo  C2'-endo C3'-exo  C4'-endo O4'-exo  C1'-endo C2'-exo 
+           -------------------------------------------------------------------------------------------
+ %occupied |    0.3 |    0.1 |    0.6 |   10.8 |   54.0 |   26.9 |    3.7 |    2.3 |    0.8 |    0.6 |
+ average   |   12.7 |   54.9 |   97.2 |  132.9 |  164.2 |  191.6 |  232.4 |  267.0 |  303.6 |  343.2 |
+ stddev    |    9.7 |   10.6 |    9.0 |    8.7 |    9.7 |    8.9 |   10.8 |    9.9 |   10.3 |   10.4 |
+           -------------------------------------------------------------------------------------------
+
+
+
+Data successfully converted to C8sugarPucker.csv
+
+Data scaled to 1000 ns and saved to C8sugarPucker.csv
+
+-------------------C8sugarPucker.png------------------------------  Wed Nov  5 13:20:38 2025
+
+Maximum Angle (°): 359.1127 (Frame: 27610)
+Minimum Angle (°): 0.4362 (Frame: 737889)
+Average Angle (°): 168.73731420250007
+Pucker Standard Deviation (°): 12.59409697003819
+
+Top 5 Largest Values and Corresponding Frames:
+ Frame   Pucker
+ 27610 359.1127
+ 27613 358.6536
+129091 358.5218
+911424 357.0839
+129100 356.6290
+
+Top 5 Smallest Values and Corresponding Frames:
+ Frame  Pucker
+737889  0.4362
+ 27584  1.9226
+ 27611  2.0767
+911426  2.1481
+ 27614  2.2762
+
+-------------------------------------------------
+   STATISTICS     C8
+   AVERAGE: 105.9144 (128.8060 stddev)
+   INITIAL: 161.2173
+   FINAL:   157.6114
+
+   This is marked as a nucleic acid sugar pucker phase
+
+            C3'-endo C4'-exo  O4'-endo C1'-exo  C2'-endo C3'-exo  C4'-endo O4'-exo  C1'-endo C2'-exo 
+           -------------------------------------------------------------------------------------------
+ %occupied |    0.0 |    0.0 |    0.0 |    2.7 |   79.8 |   17.4 |    0.0 |    0.0 |    0.0 |    0.0 |
+ average   |   16.4 |   54.5 |   97.7 |  137.0 |  166.0 |  186.5 |  221.9 |  270.4 |  309.0 |  347.5 |
+ stddev    |   10.3 |   10.8 |    8.9 |    6.8 |    8.5 |    5.6 |    6.7 |   10.3 |   11.6 |   10.1 |
+           -------------------------------------------------------------------------------------------
+
+Data successfully converted to G9_dihedral.csv
+
+Data scaled to 1000 ns and saved to G9_dihedral.csv
+
+
+

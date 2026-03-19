@@ -1,0 +1,9 @@
+parm ../../stripped_trajectories/2KOCFolded_HRM_stripped.prmtop
+trajin ../../stripped_trajectories/2KOCFolded_HRM_productionStripped.nc
+
+autoimage
+
+radgyr :1-14&!(@H=) out radGyr.dat mass nomax
+run
+
+quit

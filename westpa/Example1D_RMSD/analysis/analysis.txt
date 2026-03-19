@@ -1,0 +1,230 @@
+Easy Analysis for WESTPA simulation data
+Use once all full iterations qsubbed have completed
+OR if iterations are running, you can use -W westBackup.h5, USE CAUTION
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+# Bin information for last run
+
+w_bins info --detail # > bins.log
+w_bins info --detail --bins-from-system > bins.log
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+# Create histogram of progress coordinates and probability distribution
+
+w_pdist -W ../west.h5
+plothist average pdist.h5 0::'RMSD (Å)' -o avg.pdf
+plothist evolution pdist.h5 0::'RMSD (Å)' -o histRMSD.pdf
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+# Start interactive python analysis
+
+w_ipa
+import contextlib
+from IPython.lib.pretty import pretty
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+# ----------------------------------------------------------------------------------------------------------------------------------
+
+# Check bin bounds and state labels as defined in west.cfg analysis scheme
+
+w.bin_labels
+w.state_labels
+
+# ----------------------------------------------------------------------------------------------------------------------------------
+
+# To identify segments in target bin as defined in west.cfg analysis scheme
+# Change == 0 to == 1 as needed for correct bins
+
+targetBin = 0
+indices = np.where(w.current.bins[:,1] == targetBin)[0]
+print('Num. segments in bin:', len(indices))
+print('Indecies of occupied bins:', indices,'\n')
+
+seg_id = w.current.seg_id[indices]
+print('SegIDs in bin:', seg_id,'\n')
+
+seg_pcoords = w.current.pcoord[indices]
+seg_final_pcoord = seg_pcoords[:,1,0]
+data = {
+  "SegID": list(seg_id),
+  "Pcoord": list(seg_final_pcoord)
+}
+
+data = pd.DataFrame(data)
+data = data.sort_values('Pcoord')
+data.index = list(range(1,len(data)+1))
+print(data)
+
+# ----------------------------------------------------------------------------------------------------------------------------------
+
+# To identify segments that transitioned to target bin in last iteration
+# Change to any direction needed, eg. [(0,1)]
+
+try:
+  result = w.current.successful_trajectories[(1,0)]
+  print('Segments transitioned to target bin in iteration '+ str(w.iteration))
+  print('-----------------------------------------------------------------')
+  print(result)
+except KeyError:
+  print('No segments transitioned in iteration ' + str(w.iteration))
+
+# ----------------------------------------------------------------------------------------------------------------------------------
+
+# Write bin, state labels, segIDs + pcoords, rate evolution, and target flux evolution logfile
+
+with open('analysis/w_ipa.log', 'w') as file:
+  with contextlib.redirect_stdout(file):
+        print('-----------------------------------------------------------------')
+        print('Bin and State Labels')
+        print('-----------------------------------------------------------------')
+        w.bin_labels
+        print('\n')
+        w.state_labels
+        print('\n')
+
+        print('-----------------------------------------------------------------')
+        print('Target bin: ', targetBin)
+        print('\n')
+        print('Successful Segments in Target Bin: ' + str(len(data)))
+        print('-----------------------------------------------------------------')
+        print(data.to_string())
+        print('\n')
+
+        print('-----------------------------------------------------------------')
+        try:
+          result = w.current.successful_trajectories[(1,0)]
+          print('Segments transitioned to target bin in iteration '+ str(w.iteration))
+          print('-----------------------------------------------------------------')
+          print(result)
+        except KeyError:
+          print('No segments transitioned in iteration ' + str(w.iteration))
+          print('-----------------------------------------------------------------')
+        print('\n')
+
+        print('-----------------------------------------------------------------')
+        print('Rate Evolution')
+        print('-----------------------------------------------------------------')
+        print(pretty(w.current.direct.rate_evolution) + '\n')
+        plt.plot(w.direct['rate_evolution']['expected'][:, 1, 0], color='purple')
+        plt.plot(w.direct['rate_evolution']['ci_ubound'][:, 1, 0], color='grey')
+        plt.plot(w.direct['rate_evolution']['ci_lbound'][:, 1, 0], color='grey')
+        plt.xlabel('Iteration')
+        plt.ylabel(u'unfolded → folded rate (1/\u03c4)')
+        plt.savefig("analysis/rateevolution.png")
+        plt.close()
+        print('Rate Evolution plot saved as rateevolution.png \n\n')
+        
+        print('-----------------------------------------------------------------')
+        print('Target Flux Evolution')
+        print('-----------------------------------------------------------------')
+        print(pretty(w.current.direct.target_flux_evolution) + '\n')
+        plt.plot(w.direct['target_flux_evolution']['expected'][:,0], color='blue')
+        plt.plot(w.direct['target_flux_evolution']['ci_lbound'][:,0], color='gray')
+        plt.plot(w.direct['target_flux_evolution']['ci_ubound'][:,0], color='gray')
+        plt.xlabel('Iteration')
+        plt.ylabel(u'Mean Flux into Folded (1/\u03c4)')
+        plt.savefig("analysis/fluxevolution.png")
+        plt.close()
+        print('Target Flux Evolution plot saved as fluxevolution.png\n\n')
+        print('-----------------------------------------------------------------')
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+# Direct Rate Evolution
+
+w.current.direct.rate_evolution
+w.current.direct.rate_evolution.plot(interface='matplotlib')
+
+# Plot direct rate evolution - change 1, 0 to any bin direction as needed
+
+import matplotlib.pyplot as plt
+plt.plot(w.direct['rate_evolution']['expected'][:, 1, 0], color='black')
+plt.plot(w.direct['rate_evolution']['ci_ubound'][:, 1, 0], color='grey')
+plt.plot(w.direct['rate_evolution']['ci_lbound'][:, 1, 0], color='grey')
+plt.xlabel('Iteration')
+plt.ylabel(u'unfolded → folded rate (1/\u03c4)')
+plt.show()
+plt.savefig("analysis/rateevolution.png")
+plt.close()
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+# Target Flux evolution
+
+w.current.direct.target_flux_evolution.plot(0)
+
+# Plot target flux evolution - change 1, 0 to any bin direction as needed
+
+import matplotlib.pyplot as plt
+plt.plot(w.direct['target_flux_evolution']['expected'][:,0], color='blue')
+plt.plot(w.direct['target_flux_evolution']['ci_lbound'][:,0], color='gray')
+plt.plot(w.direct['target_flux_evolution']['ci_ubound'][:,0], color='gray')
+plt.xlabel('Iteration')
+plt.ylabel(u'Mean Flux into Folded (1/\u03c4)')
+plt.show()
+plt.savefig("analysis/fluxevolution.png")
+plt.close()
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+w_ipa data scheme
+
+w.current
+ |      walkers, summary, states, seg_id, weights, parents, kinavg, pcoord, bins, populations, and auxdata, if it exists.
+ |
+ |  In addition, the function w.trace(seg_id) will run a trace over a seg_id in the current iteration and return a dictionary
+ |  containing all pertinent information about that seg_id's history.  It's best to store this, as the trace can be expensive.
+ |
+
+      The following give raw access to the h5 files associated with the current scheme
+
+        w.west
+        w.assign
+        w.direct
+        w.reweight
+
+        OTHER:
+
+        w.bin_labels
+        w.current
+        w.future
+        w.iteration
+        w.list_schemes
+        w.niters
+        w.past
+        w.scheme
+        w.state_labels
+        w.trace
+        w.west
+
+                w.past, w.current, w.future:
+
+            aggregate_walkers auxdata bins color_prob_evolution conditional_flux_evolution direct 
+            instant_matrix iteration matrix maxweight minweight parent parents pcoord rate_evolution 
+            raw reweight seg_id state_pop_evolution states successful_trajectories summary 
+            target_flux_evolution total_fluxes walkers weights
+
+
+ tf = w.current.direct.target_flux_evolution
+        print(tf['raw'])
+        print(f"""\n target_flux_evolution data:
+        b'folded': mean={tf['raw'][0][2]} CI=({tf['raw'][0][3]}, {tf['raw'][0][4]}) * tau^-1
+        b'unfolded': mean={tf['raw'][1][2]} CI=({tf['raw'][1][3]}, {tf['raw'][1][4]}) * tau^-1""")
+
+
+
+ re = w.current.direct.rate_evolution
+        print(re['raw'])
+        print(f"""\n rate_evolution data:
+        b'folded' -> b'unfolded': mean={re['raw'][0][1][2]} CI=({re['raw'][0][1][3]}, {re['raw'][0][1][4]}) * tau^-1
+        b'unfolded' -> b'folded': mean={re['raw'][1][0][2]} CI=({re['raw'][1][0][3]}, {re['raw'][1][0][4]}) * tau^-1""")
+        print('\n')

@@ -1,0 +1,9 @@
+#### In the md.in files, make sure your atom mask is correct for your restraints. I have 18 residues in my system, so my solute restraints are :1-18. If you have 12 residues in your system, your solute restraints will be :1-12
+
+### In the md.sh files, just make sure you switch out my email address for yours so you'll known when your jobs start/end/have errors. 
+
+### The -N flag in the .sh file is just the job name (name these so they make sense to you)
+
+### feel free to adjust the "smp 24" flag to 1,4,8,16,24,48 etc. Pretty much what works best for you. Having more processors doesn't necessarily mean your job will run faster, its how things scale on the processors. 
+
+Any other questions please feel free to let me know and ask!

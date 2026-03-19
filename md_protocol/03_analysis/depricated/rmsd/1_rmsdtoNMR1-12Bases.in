@@ -1,0 +1,10 @@
+parm ../../stripped_trajectories/1hs3foldedDES_stripped.prmtop [trajfoldedParm]
+trajin ../../stripped_trajectories/1hs3foldedDES_production.nc parm [trajfoldedParm]
+
+parm 1hs3_crystal.prmtop [crystal]
+reference 1hs3_crystal.rst7 parm [crystal]
+
+autoimage
+rmsd ToCrystal reference :1-12&!@P,OP1,OP2,O5',C5',C4',C3',O3',O4',C1',C2',O2'=&!@H= :1-12&!@P,OP1,OP2,O5',C5',C4',C3',O3',O4',C1',C2',O2'=&!@H= out rmsd_toNMR1-12Bases.dat
+run
+quit

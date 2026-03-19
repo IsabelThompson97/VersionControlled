@@ -1,0 +1,9 @@
+parm ../../../stripped_trajectories/2KOCUnfolded_HRM_stripped.prmtop
+trajin ../../../stripped_trajectories/2KOCUnfolded_HRM_production.nc
+
+autoimage :1-14
+
+hbond hbonds out hbondFrames.dat
+run
+
+quit

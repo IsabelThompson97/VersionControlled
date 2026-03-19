@@ -1,0 +1,635 @@
+log started: Fri Sep  5 17:26:14 2025
+
+Log file: ./leap.log
+>> # ----- NOTE: this is designed for PDB format 3!
+>> #       Uses ff99bsc0_chiOL3 for RNA
+>> #       	(ff99): Wang et al. J. Comp. Chem. 21: 1049, 2000
+>> #       	(bsc0): Perez et al. Biophys J. 92: 3817, 2007
+>> #       	(chiOL3): Zgarbova et al. JCTC 7: 2886, 2011
+>> #           (note: all of the above are in parm10.dat, loaded below)
+>> #
+>> #	load atom type hybridizations
+>> #
+>> addAtomTypes {
+>> 	{ "H"   "H" "sp3" }
+>> 	{ "HO"  "H" "sp3" }
+>> 	{ "HS"  "H" "sp3" }
+>> 	{ "H1"  "H" "sp3" }
+>> 	{ "H2"  "H" "sp3" }
+>> 	{ "H3"  "H" "sp3" }
+>> 	{ "H4"  "H" "sp3" }
+>> 	{ "H5"  "H" "sp3" }
+>> 	{ "HW"  "H" "sp3" }
+>> 	{ "HC"  "H" "sp3" }
+>> 	{ "HA"  "H" "sp3" }
+>> 	{ "HP"  "H" "sp3" }
+>> 	{ "HZ"  "H" "sp3" }
+>> 	{ "OH"  "O" "sp3" }
+>> 	{ "OS"  "O" "sp3" }
+>> 	{ "O"   "O" "sp2" }
+>> 	{ "O2"  "O" "sp2" }
+>> 	{ "OP"  "O" "sp2" }
+>> 	{ "OW"  "O" "sp3" }
+>> 	{ "CT"  "C" "sp3" }
+>> 	{ "CX"  "C" "sp3" }
+>> 	{ "CS"  "C" "sp2" }
+>> 	{ "C"   "C" "sp2" }
+>> 	{ "C*"  "C" "sp2" }
+>> 	{ "CA"  "C" "sp2" }
+>> 	{ "CB"  "C" "sp2" }
+>> 	{ "CC"  "C" "sp2" }
+>> 	{ "CN"  "C" "sp2" }
+>> 	{ "CM"  "C" "sp2" }
+>> 	{ "CK"  "C" "sp2" }
+>> 	{ "CQ"  "C" "sp2" }
+>> 	{ "CD"  "C" "sp2" }
+>> 	{ "C5"  "C" "sp2" }
+>> 	{ "C4"  "C" "sp2" }
+>> 	{ "CP"  "C" "sp2" }
+>> 	{ "CI"  "C" "sp3" }
+>> 	{ "CW"  "C" "sp2" }
+>> 	{ "CV"  "C" "sp2" }
+>> 	{ "CR"  "C" "sp2" }
+>> 	{ "CY"  "C" "sp2" }
+>> 	{ "C0"  "Ca" "sp3" }
+>> 	{ "MG"  "Mg" "sp3" }
+>> 	{ "N"   "N" "sp2" }
+>> 	{ "NA"  "N" "sp2" }
+>> 	{ "N2"  "N" "sp2" }
+>> 	{ "N*"  "N" "sp2" }
+>> 	{ "NB"  "N" "sp2" }
+>> 	{ "NC"  "N" "sp2" }
+>> 	{ "NT"  "N" "sp3" }
+>> 	{ "NY"  "N" "sp2" }
+>> 	{ "N3"  "N" "sp3" }
+>> 	{ "S"   "S" "sp3" }
+>> 	{ "SH"  "S" "sp3" }
+>> 	{ "P"   "P" "sp3" }
+>> 	{ "LP"  ""  "sp3" }
+>> 	{ "EP"  ""  "sp3" }
+>> 	{ "F"   "F" "sp3" }
+>> 	{ "Cl"  "Cl" "sp3" }
+>> 	{ "Br"  "Br" "sp3" }
+>> 	{ "I"   "I"  "sp3" }
+>> }
+>> #
+>> #	Load the main parameter set.
+>> #
+>> parm10 = loadamberparams parm10.dat
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/parm10.dat
+Reading title:
+PARM99 + frcmod.ff99SB + frcmod.parmbsc0 + OL3 for RNA
+>> #
+>> #	Load main chain and terminating nucleic acids
+>> #
+>> 
+>> loadOff RNA.lib
+Loading library: /software01/a/amber/24.0/dat/leap/lib/RNA.lib
+Loading: A
+Loading: A3
+Loading: A5
+Loading: AN
+Loading: C
+Loading: C3
+Loading: C5
+Loading: CN
+Loading: G
+Loading: G3
+Loading: G5
+Loading: GN
+Loading: OHE
+Loading: U
+Loading: U3
+Loading: U5
+Loading: UN
+>> 
+>> #
+>> #	Define the PDB name map for the nucleic acids
+>> #
+>> addPdbResMap {
+>>   { 0 "G" "G5"  } { 1 "G" "G3"  } 
+>>   { 0 "A" "A5"  } { 1 "A" "A3"  } 
+>>   { 0 "C" "C5"  } { 1 "C" "C3"  } 
+>>   { 0 "U" "U5"  } { 1 "U" "U3"  } 
+>> #  some old Amber residue names for RNA:
+>>   { 0  "RA5" "A5" } { 1 "RA3" "A3"} {"RA" "A" }
+>>   { 0  "RC5" "C5" } { 1 "RC3" "C3"} {"RC" "C" }
+>>   { 0  "RG5" "G5" } { 1 "RG3" "G3"} {"RG" "G" }
+>>   { 0  "RU5" "U5" } { 1 "RU3" "U3"} {"RU" "U" }
+>> #  uncomment out the following if you have this old style RNA files:
+>> # { 0 "GUA" "G5"  } { 1 "GUA" "G3"  } { "GUA" "G" }
+>> # { 0 "ADE" "A5"  } { 1 "ADE" "A3"  } { "ADE" "A" }
+>> # { 0 "CYT" "C5"  } { 1 "CYT" "C3"  } { "CYT" "C" }
+>> # { 0 "URA" "R5"  } { 1 "URA" "R3"  } { "URA" "R" }
+>> 
+>> }
+>> 
+>> #  try to be good about reading in really old atom names as well:
+>> addPdbAtomMap {
+>>   { "O5*" "O5'" }
+>>   { "C5*" "C5'" }
+>>   { "C4*" "C4'" }
+>>   { "O4*" "O4'" }
+>>   { "C3*" "C3'" }
+>>   { "O3*" "O3'" }
+>>   { "C2*" "C2'" }
+>>   { "O2*" "O2'" }
+>>   { "C1*" "C1'" }
+>>   { "C5M" "C7"  }
+>>   { "H1*" "H1'" }
+>>   { "H2*1" "H2'" }
+>>   { "H2*2" "H2''" }
+>>   { "H2'1" "H2'" }
+>>   { "H2'2" "H2''" }
+>>   { "H3*" "H3'" }
+>>   { "H4*" "H4'" }
+>>   { "H5*1" "H5'" }
+>>   { "H5*2" "H5''" }
+>>   { "H5'1" "H5'" }
+>>   { "H5'2" "H5''" }
+>>   { "HO'2" "HO2'" }
+>>   { "H5T"  "HO5'" }
+>>   { "H3T"  "HO3'" }
+>>   { "O1'" "O4'" }
+>>   { "OA"  "OP1" }
+>>   { "OB"  "OP2" }
+>>   { "O1P" "OP1" }
+>>   { "O2P" "OP2" }
+>>   { "O3P" "OP3" }
+>> }
+>> 
+> 
+> source leaprc.water.OPC
+
+Error: Could not open file leaprc.water.OPC: not found
+> source leaprc.water.opc
+----- Source: /software01/a/amber/24.0/dat/leap/cmd/leaprc.water.opc
+----- Source of /software01/a/amber/24.0/dat/leap/cmd/leaprc.water.opc done
+>> #
+>> #  Load OPC water model and ions for OPC + Li/Merz ion parameters
+>> #  (-1 to +4, 12-6 normal usage set)
+>> # 
+>> addAtomTypes {
+>> 	{ "F-"   "F" "sp3" }
+>> 	{ "Cl-"  "Cl" "sp3" }
+>> 	{ "Br-"  "Br" "sp3" }
+>> 	{ "I-"   "I"  "sp3" }
+>> 	{ "Li+"  "Li"  "sp3" }
+>> 	{ "Na+"  "Na"  "sp3" }
+>> 	{ "K+"  "K"  "sp3" }
+>> 	{ "Rb+"  "Rb"  "sp3" }
+>> 	{ "Cs+"  "Cs"  "sp3" }
+>> 	{ "Mg+"  "Mg"  "sp3" }
+>>     { "Tl+"  "Tl"  "sp3" }
+>>     { "Cu+"  "Cu"  "sp3" }
+>>     { "Ag+"  "Ag"  "sp3" }
+>>     { "Be2+" "Be"  "sp3" }
+>>     { "Cu2+" "Cu"  "sp3" }
+>>     { "Ni2+" "Ni"  "sp3" }
+>>     { "Pt2+" "Pt"  "sp3" }
+>>     { "Zn2+" "Zn"  "sp3" }
+>>     { "Co2+" "Co"  "sp3" }
+>>     { "Pd2+" "Pd"  "sp3" }
+>>     { "Ag2+" "Ag"  "sp3" }
+>>     { "Cr2+" "Cr"  "sp3" }
+>>     { "Fe2+" "Fe"  "sp3" }
+>>     { "Mg2+" "Mg"  "sp3" }
+>>     { "V2+"  "V"   "sp3" }
+>>     { "Mn2+" "Mn"  "sp3" }
+>>     { "Hg2+" "Hg"  "sp3" }
+>>     { "Cd2+" "Cd"  "sp3" }
+>>     { "Yb2+" "Yb"  "sp3" }
+>>     { "Ca2+" "Ca"  "sp3" }
+>>     { "Sn2+" "Sn"  "sp3" }
+>>     { "Pb2+" "Pb"  "sp3" }
+>>     { "Eu2+" "Eu"  "sp3" }
+>>     { "Sr2+" "Sr"  "sp3" }
+>>     { "Sm2+" "Sm"  "sp3" }
+>>     { "Ba2+" "Ba"  "sp3" }
+>>     { "Ra2+" "Ra"  "sp3" }
+>>     { "Al3+" "Al"  "sp3" }
+>>     { "Fe3+" "Fe"  "sp3" }
+>>     { "Cr3+" "Cr"  "sp3" }
+>>     { "In3+" "In"  "sp3" }
+>>     { "Tl3+" "Tl"  "sp3" }
+>>     { "Y3+"  "Y"   "sp3" }
+>>     { "La3+" "La"  "sp3" }
+>>     { "Ce3+" "Ce"  "sp3" }
+>>     { "Pr3+" "Pr"  "sp3" }
+>>     { "Nd3+" "Nd"  "sp3" }
+>>     { "Sm3+" "Sm"  "sp3" }
+>>     { "Eu3+" "Eu"  "sp3" }
+>>     { "Gd3+" "Gd"  "sp3" }
+>>     { "Tb3+" "Tb"  "sp3" }
+>>     { "Dy3+" "Dy"  "sp3" }
+>>     { "Er3+" "Er"  "sp3" }
+>>     { "Tm3+" "Tm"  "sp3" }
+>>     { "Lu3+" "Lu"  "sp3" }
+>>     { "Hf4+" "Hf"  "sp3" }
+>>     { "Zr4+" "Zr"  "sp3" }
+>>     { "Ce4+" "Ce"  "sp3" }
+>>     { "U4+"  "U"   "sp3" }
+>>     { "Pu4+" "Pu"  "sp3" }
+>>     { "Th4+" "Th"  "sp3" }
+>>     { "OW"   "O"   "sp3" }
+>>     { "HW"   "H"   "sp3" }
+>>     { "EP"   ""    "sp3" }
+>> }
+>> loadOff atomic_ions.lib
+Loading library: /software01/a/amber/24.0/dat/leap/lib/atomic_ions.lib
+Loading: AG
+Loading: AL
+Loading: Ag
+Loading: BA
+Loading: BR
+Loading: Be
+Loading: CA
+Loading: CD
+Loading: CE
+Loading: CL
+Loading: CO
+Loading: CR
+Loading: CS
+Loading: CU
+Loading: CU1
+Loading: Ce
+Loading: Cl-
+Loading: Cr
+Loading: Dy
+Loading: EU
+Loading: EU3
+Loading: Er
+Loading: F
+Loading: FE
+Loading: FE2
+Loading: GD3
+Loading: H3O+
+Loading: HE+
+Loading: HG
+Loading: HZ+
+Loading: Hf
+Loading: IN
+Loading: IOD
+Loading: K
+Loading: K+
+Loading: LA
+Loading: LI
+Loading: LU
+Loading: MG
+Loading: MN
+Loading: NA
+Loading: NH4
+Loading: NI
+Loading: Na+
+Loading: Nd
+Loading: PB
+Loading: PD
+Loading: PR
+Loading: PT
+Loading: Pu
+Loading: RB
+Loading: Ra
+Loading: SM
+Loading: SR
+Loading: Sm
+Loading: Sn
+Loading: TB
+Loading: TL
+Loading: Th
+Loading: Tl
+Loading: Tm
+Loading: U4+
+Loading: V2+
+Loading: Y
+Loading: YB2
+Loading: ZN
+Loading: Zr
+>> loadOff solvents.lib
+Loading library: /software01/a/amber/24.0/dat/leap/lib/solvents.lib
+Loading: CHCL3BOX
+Loading: DC4
+Loading: FB3
+Loading: FB3BOX
+Loading: FB4
+Loading: FB4BOX
+Loading: MEOHBOX
+Loading: NMABOX
+Loading: O3P
+Loading: OP3
+Loading: OPC
+Loading: OPC3BOX
+Loading: OPC3POLBOX
+Loading: OPCBOX
+Loading: PL3
+Loading: POL3BOX
+Loading: QSPCFWBOX
+Loading: SPC
+Loading: SPCBOX
+Loading: SPCFWBOX
+Loading: SPF
+Loading: SPG
+Loading: T4E
+Loading: TIP3PBOX
+Loading: TIP3PFBOX
+Loading: TIP4PBOX
+Loading: TIP4PEWBOX
+Loading: TIP5PBOX
+Loading: TP3
+Loading: TP4
+Loading: TP5
+Loading: TPF
+>> HOH = OPC
+>> WAT = OPC
+>> loadAmberParams frcmod.opc
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/frcmod.opc
+Reading force field modification type file (frcmod)
+Reading title:
+Parameters for OPC water (JPCL, 2014, 5 (21), pp 3863-3871)
+(UNKNOWN ATOM TYPE: EP)
+>> loadAmberParams frcmod.ionslm_126_opc
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/frcmod.ionslm_126_opc
+Reading force field modification type file (frcmod)
+Reading title:
+Li/Merz ion parameters of atomic ions for the OPC water model (12-6 set)
+>> 
+> 
+> loadAmberParams frcmod.ionslm_126_opc
+Loading parameters: /software01/a/amber/24.0/dat/leap/parm/frcmod.ionslm_126_opc
+Reading force field modification type file (frcmod)
+Reading title:
+Li/Merz ion parameters of atomic ions for the OPC water model (12-6 set)
+> mol = loadpdb 2KOC_pdb4amber.pdb
+Loading PDB file: ./2KOC_pdb4amber.pdb
+Matching PDB residue names to LEaP variables.
+Mapped residue G, term: Terminal/beginning, seq. number: 0 to: G5.
+Mapped residue C, term: Terminal/last, seq. number: 13 to: C3.
+  total atoms in file: 447
+> addions mol K+ 0
+13 K+ ions required to neutralize.
+Adding 13 counter ions to "mol" using 1A grid
+Total solute charge:  -13.00  Max atom radius:   2.10
+Grid extends from solute vdw + 4.10  to  10.20
+Box:
+   enclosing:  -25.66 -20.00 -19.87   26.12 20.61 20.24
+   sized:			      38.34 44.00 44.13
+   edge:        64.00
+Resolution:      1.00 Angstrom.
+Tree depth: 6
+Volume =  8.89% of box, grid points 23313
+ (no solvent present)
+Calculating grid charges
+Placed K+ in mol at (-0.66, -3.00, 7.13).
+Placed K+ in mol at (-0.66, -10.00, 0.13).
+Placed K+ in mol at (-3.66, 5.00, 7.13).
+Placed K+ in mol at (7.34, -9.00, -7.87).
+Placed K+ in mol at (2.34, 6.00, -6.87).
+Placed K+ in mol at (18.34, -7.00, 4.13).
+Placed K+ in mol at (-3.66, 14.00, 3.13).
+Placed K+ in mol at (17.34, 4.00, 5.13).
+Placed K+ in mol at (-6.66, -14.00, 3.13).
+Placed K+ in mol at (-9.66, 14.00, -3.87).
+Placed K+ in mol at (14.34, 2.00, -9.87).
+Placed K+ in mol at (7.34, -4.00, 14.13).
+Placed K+ in mol at (-0.66, -10.00, -11.87).
+
+Done adding ions.
+> solvateOct mol OPCBOX 12.0
+Scaling up box by a factor of 1.257029 to meet diagonal cut criterion
+  Solute vdw bounding box:              37.548 31.968 29.371
+  Total bounding box for atom centers:  67.717 67.717 67.717
+      (box expansion for 'iso' is  23.9%)
+  Solvent unit box:                     18.865 18.478 19.006
+The number of boxes:  x= 4  y= 4  z= 4
+  Volume: 162238.257 A^3 (oct)
+  Total mass 85698.692 amu,  Density 0.877 g/cc
+  Added 4483 residues.
+> addionsrand mol K+ 12.0 Cl- 12.0
+Adding 24 counter ions to "mol". 4459 solvent molecules will remain.
+0: Placed K+ in mol at (16.62, -6.74, -18.33).
+Placed Cl- in mol at (6.99, -14.80, 21.59).
+0: Placed K+ in mol at (14.32, 17.08, 4.32).
+Placed Cl- in mol at (27.71, -15.89, -13.58).
+0: Placed K+ in mol at (-13.38, -26.72, 3.82).
+Placed Cl- in mol at (-4.30, 3.40, 31.93).
+0: Placed K+ in mol at (12.53, -0.69, -30.37).
+Placed Cl- in mol at (20.88, 1.27, 15.75).
+0: Placed K+ in mol at (11.40, -17.57, 16.35).
+Placed Cl- in mol at (-3.02, 17.16, -22.88).
+0: Placed K+ in mol at (0.77, 21.41, 18.35).
+Placed Cl- in mol at (-13.15, -10.54, 18.79).
+0: Placed K+ in mol at (16.71, 5.38, 1.85).
+Placed Cl- in mol at (7.34, 10.37, 14.60).
+0: Placed K+ in mol at (-6.29, 7.92, 19.66).
+Placed Cl- in mol at (22.51, 24.56, -0.80).
+0: Placed K+ in mol at (3.43, 31.95, -1.46).
+Placed Cl- in mol at (0.88, 24.00, 17.40).
+0: Placed K+ in mol at (-2.38, -30.21, 12.39).
+Placed Cl- in mol at (-5.93, 5.88, 13.92).
+0: Placed K+ in mol at (28.02, 7.18, -0.51).
+Placed Cl- in mol at (19.47, 12.95, 5.72).
+0: Placed K+ in mol at (-3.32, 13.42, -29.35).
+Placed Cl- in mol at (-22.44, -7.70, -0.16).
+> check mol
+Checking 'mol'....
+Checking parameters for unit 'mol'.
+Checking for bond parameters.
+Checking for angle parameters.
+check:  Warnings: 13377
+Unit is OK.
+> verbosity level 2
+
+Error: verbosity: Improper number of arguments!
+usage:  verbosity <level>
+> verbosity 2
+Verbosity level: 2
+> check mol
+Checking 'mol'....
+Checking parameters for unit 'mol'.
+Checking for bond parameters.
+Checking for angle parameters.
+check:  Warnings: 13377
+Unit is OK.
+> savepdb mol 2KOCFolded_OL3.pdb
+Writing pdb file: 2KOCFolded_OL3.pdb
+   printing CRYST1 record to PDB file with box info
+> saveamberparm mol 2KOCFolded_OL3.prmtop 2KOCFolded_OL3.inpcrd
+Checking Unit.
+
+Note: Ignoring the warnings from Unit Checking.
+
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+--Impropers:
+  1	C1'<A> - C8<A> - N9<A> - C4<A>
+  1	C1'<C3> - C6<C3> - N1<C3> - C2<C3>
+  4	C1'<C> - C6<C> - N1<C> - C2<C>
+  1	C1'<G5> - C8<G5> - N9<G5> - C4<G5>
+  4	C1'<G> - C8<G> - N9<G> - C4<G>
+  3	C1'<U> - C6<U> - N1<U> - C2<U>
+  1	C2<G5> - H21<G5> - N2<G5> - H22<G5>
+  4	C2<G> - H21<G> - N2<G> - H22<G>
+  1	C4<C3> - H41<C3> - N4<C3> - H42<C3>
+  4	C4<C> - H41<C> - N4<C> - H42<C>
+  3	C4<U> - H3<U> - N3<U> - C2<U>
+  1	C5<A> - N6<A> - C6<A> - N1<A>
+  1	C5<C3> - N4<C3> - C4<C3> - N3<C3>
+  4	C5<C> - N4<C> - C4<C> - N3<C>
+  1	C5<G5> - O6<G5> - C6<G5> - N1<G5>
+  4	C5<G> - O6<G> - C6<G> - N1<G>
+  3	C5<U> - O4<U> - C4<U> - N3<U>
+  1	C6<A> - H61<A> - N6<A> - H62<A>
+  1	C6<C3> - H5<C3> - C5<C3> - C4<C3>
+  4	C6<C> - H5<C> - C5<C> - C4<C>
+  1	C6<G5> - H1<G5> - N1<G5> - C2<G5>
+  4	C6<G> - H1<G> - N1<G> - C2<G>
+  3	C6<U> - H5<U> - C5<U> - C4<U>
+  1	N1<A> - H2<A> - C2<A> - N3<A>
+  1	N1<C3> - H6<C3> - C6<C3> - C5<C3>
+  1	N1<C3> - N3<C3> - C2<C3> - O2<C3>
+  4	N1<C> - H6<C> - C6<C> - C5<C>
+  4	N1<C> - N3<C> - C2<C> - O2<C>
+  1	N1<G5> - N2<G5> - C2<G5> - N3<G5>
+  4	N1<G> - N2<G> - C2<G> - N3<G>
+  3	N1<U> - H6<U> - C6<U> - C5<U>
+  3	N1<U> - N3<U> - C2<U> - O2<U>
+  1	N7<A> - C6<A> - C5<A> - C4<A>
+  1	N7<G5> - C6<G5> - C5<G5> - C4<G5>
+  4	N7<G> - C6<G> - C5<G> - C4<G>
+  1	N9<A> - C5<A> - C4<A> - N3<A>
+  1	N9<A> - H8<A> - C8<A> - N7<A>
+  1	N9<G5> - C5<G5> - C4<G5> - N3<G5>
+  1	N9<G5> - H8<G5> - C8<G5> - N7<G5>
+  4	N9<G> - C5<G> - C4<G> - N3<G>
+  4	N9<G> - H8<G> - C8<G> - N7<G>
+ total 95 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+ (no restraints)
+> saveamberparm mol 2KOCFolded_OL3.prmtop 2KOCFolded_OL3.rst7
+Checking Unit.
+
+Note: Ignoring the warnings from Unit Checking.
+
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+--Impropers:
+  1	C1'<A> - C8<A> - N9<A> - C4<A>
+  1	C1'<C3> - C6<C3> - N1<C3> - C2<C3>
+  4	C1'<C> - C6<C> - N1<C> - C2<C>
+  1	C1'<G5> - C8<G5> - N9<G5> - C4<G5>
+  4	C1'<G> - C8<G> - N9<G> - C4<G>
+  3	C1'<U> - C6<U> - N1<U> - C2<U>
+  1	C2<G5> - H21<G5> - N2<G5> - H22<G5>
+  4	C2<G> - H21<G> - N2<G> - H22<G>
+  1	C4<C3> - H41<C3> - N4<C3> - H42<C3>
+  4	C4<C> - H41<C> - N4<C> - H42<C>
+  3	C4<U> - H3<U> - N3<U> - C2<U>
+  1	C5<A> - N6<A> - C6<A> - N1<A>
+  1	C5<C3> - N4<C3> - C4<C3> - N3<C3>
+  4	C5<C> - N4<C> - C4<C> - N3<C>
+  1	C5<G5> - O6<G5> - C6<G5> - N1<G5>
+  4	C5<G> - O6<G> - C6<G> - N1<G>
+  3	C5<U> - O4<U> - C4<U> - N3<U>
+  1	C6<A> - H61<A> - N6<A> - H62<A>
+  1	C6<C3> - H5<C3> - C5<C3> - C4<C3>
+  4	C6<C> - H5<C> - C5<C> - C4<C>
+  1	C6<G5> - H1<G5> - N1<G5> - C2<G5>
+  4	C6<G> - H1<G> - N1<G> - C2<G>
+  3	C6<U> - H5<U> - C5<U> - C4<U>
+  1	N1<A> - H2<A> - C2<A> - N3<A>
+  1	N1<C3> - H6<C3> - C6<C3> - C5<C3>
+  1	N1<C3> - N3<C3> - C2<C3> - O2<C3>
+  4	N1<C> - H6<C> - C6<C> - C5<C>
+  4	N1<C> - N3<C> - C2<C> - O2<C>
+  1	N1<G5> - N2<G5> - C2<G5> - N3<G5>
+  4	N1<G> - N2<G> - C2<G> - N3<G>
+  3	N1<U> - H6<U> - C6<U> - C5<U>
+  3	N1<U> - N3<U> - C2<U> - O2<U>
+  1	N7<A> - C6<A> - C5<A> - C4<A>
+  1	N7<G5> - C6<G5> - C5<G5> - C4<G5>
+  4	N7<G> - C6<G> - C5<G> - C4<G>
+  1	N9<A> - C5<A> - C4<A> - N3<A>
+  1	N9<A> - H8<A> - C8<A> - N7<A>
+  1	N9<G5> - C5<G5> - C4<G5> - N3<G5>
+  1	N9<G5> - H8<G5> - C8<G5> - N7<G5>
+  4	N9<G> - C5<G> - C4<G> - N3<G>
+  4	N9<G> - H8<G> - C8<G> - N7<G>
+ total 95 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+ (no restraints)
+> saveamberparm mol 2KOCFolded_OL3.prmtop 2KOCFolded_OL3.parm7
+Checking Unit.
+
+Note: Ignoring the warnings from Unit Checking.
+
+Building topology.
+Building atom parameters.
+Building bond parameters.
+Building angle parameters.
+Building proper torsion parameters.
+Building improper torsion parameters.
+--Impropers:
+  1	C1'<A> - C8<A> - N9<A> - C4<A>
+  1	C1'<C3> - C6<C3> - N1<C3> - C2<C3>
+  4	C1'<C> - C6<C> - N1<C> - C2<C>
+  1	C1'<G5> - C8<G5> - N9<G5> - C4<G5>
+  4	C1'<G> - C8<G> - N9<G> - C4<G>
+  3	C1'<U> - C6<U> - N1<U> - C2<U>
+  1	C2<G5> - H21<G5> - N2<G5> - H22<G5>
+  4	C2<G> - H21<G> - N2<G> - H22<G>
+  1	C4<C3> - H41<C3> - N4<C3> - H42<C3>
+  4	C4<C> - H41<C> - N4<C> - H42<C>
+  3	C4<U> - H3<U> - N3<U> - C2<U>
+  1	C5<A> - N6<A> - C6<A> - N1<A>
+  1	C5<C3> - N4<C3> - C4<C3> - N3<C3>
+  4	C5<C> - N4<C> - C4<C> - N3<C>
+  1	C5<G5> - O6<G5> - C6<G5> - N1<G5>
+  4	C5<G> - O6<G> - C6<G> - N1<G>
+  3	C5<U> - O4<U> - C4<U> - N3<U>
+  1	C6<A> - H61<A> - N6<A> - H62<A>
+  1	C6<C3> - H5<C3> - C5<C3> - C4<C3>
+  4	C6<C> - H5<C> - C5<C> - C4<C>
+  1	C6<G5> - H1<G5> - N1<G5> - C2<G5>
+  4	C6<G> - H1<G> - N1<G> - C2<G>
+  3	C6<U> - H5<U> - C5<U> - C4<U>
+  1	N1<A> - H2<A> - C2<A> - N3<A>
+  1	N1<C3> - H6<C3> - C6<C3> - C5<C3>
+  1	N1<C3> - N3<C3> - C2<C3> - O2<C3>
+  4	N1<C> - H6<C> - C6<C> - C5<C>
+  4	N1<C> - N3<C> - C2<C> - O2<C>
+  1	N1<G5> - N2<G5> - C2<G5> - N3<G5>
+  4	N1<G> - N2<G> - C2<G> - N3<G>
+  3	N1<U> - H6<U> - C6<U> - C5<U>
+  3	N1<U> - N3<U> - C2<U> - O2<U>
+  1	N7<A> - C6<A> - C5<A> - C4<A>
+  1	N7<G5> - C6<G5> - C5<G5> - C4<G5>
+  4	N7<G> - C6<G> - C5<G> - C4<G>
+  1	N9<A> - C5<A> - C4<A> - N3<A>
+  1	N9<A> - H8<A> - C8<A> - N7<A>
+  1	N9<G5> - C5<G5> - C4<G5> - N3<G5>
+  1	N9<G5> - H8<G5> - C8<G5> - N7<G5>
+  4	N9<G> - C5<G> - C4<G> - N3<G>
+  4	N9<G> - H8<G> - C8<G> - N7<G>
+ total 95 improper torsions applied
+Building H-Bond parameters.
+Incorporating Non-Bonded adjustments.
+Not Marking per-residue atom chain types.
+Marking per-residue atom chain types.
+ (no restraints)
+> quit
+	Quit
+
+Exiting LEaP: Errors = 2; Warnings = 0; Notes = 3.

@@ -1,0 +1,5 @@
+parm 1hs3foldedDES_stripped.prmtop 
+trajin 1hs3foldedDES_production.nc 324638 324638 1
+trajout closest_averagefoldedDES.pdb pdb
+trajout closest_averagefoldedDES.rst7
+run

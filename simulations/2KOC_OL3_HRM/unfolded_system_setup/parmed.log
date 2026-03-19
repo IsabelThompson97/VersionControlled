@@ -1,0 +1,34 @@
+# USAGE:: parmed -i parmed_hr.in -p 2KOCUnfolded_OL3.prmtop -c 2KOCUnfolded_OL3.inpcrd --o
+
+                                  _____
+                         __...---'-----`---...__
+                   _===============================
+   ______________,/'      `---..._______...---'
+  (______________). .    ,--'                            
+   /    /.---'       `. /                  
+  '--------_  - - - - _/         P A R M E D
+            `~~~~~~~~'
+
+ParmEd: a Parameter file Editor
+
+
+Loaded Amber topology file 2KOCUnfolded_OL3.prmtop with coordinates from 2KOCUnfolded_OL3.inpcrd
+
+['parmed_hr.in']
+Reading actions from parmed_hr.in
+
+Making atoms :C,C5,C3,U,U5,U3@H6 into a new LJ atom type
+Setting LJ :C,C5,C3,U,U5,U3@H6-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ :C,C5,C3,U,U5,U3@H6-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Making atoms :A,A5,A3,G,G5,G3@H8 into a new LJ atom type
+Setting LJ :A,A5,A3,G,G5,G3@H8-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ :A,A5,A3,G,G5,G3@H8-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Making atoms :C,C5,C3,U,U5,U3@H5 into a new LJ atom type
+Setting LJ :C,C5,C3,U,U5,U3@H5-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ :C,C5,C3,U,U5,U3@H5-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ @%H1-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05166
+Setting LJ @%H1-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05166
+Outputting Amber topology file 2KOCUnfolded_HRM_FINAL.parm7 and restart 2KOCUnfolded_HRM_FINAL.inpcrd
+Outputting Amber topology file 2KOCUnfolded_HRM_FINAL.prmtop and restart 2KOCUnfolded_HRM_FINAL.rst7
+Writing PDB file 2KOCUnfolded_HRM_FINAL.pdb renumbering atoms and residues
+Done!

@@ -1,0 +1,51 @@
+# USAGE:: $$ parmed -i parmed_hr.in -p 2KOCFolded_OL3.prmtop -c 2KOCFolded_OL3.inpcrd --o
+ 
+.     .       .  .   . .   .   . .    +  .
+  .     .  :     .    .. :. .___---------___.
+       .  .   .    .  :.:. _".^ .^ ^.  '.. :"-_. .
+    .  :       .  .  .:../:            . .^  :.:\.
+        .   . :: +. :.:/: .   .    .        . . .:\
+ .  :    .     . _ :::/:               .  ^ .  . .:\
+  .. . .   . - : :.:./.                        .  .:\
+  .      .     . :..|:                    .  .  ^. .:|
+    .       . : : ..||        .                . . !:|
+  .     . . . ::. ::\(                           . :)/
+ .   .     : . : .:.|. ######              .#######::|
+  :.. .  :-  : .:  ::|.#######           ..########:|
+ .  .  .  ..  .  .. :\ ########          :######## :/
+  .        .+ :: : -.:\ ########       . ########.:/
+    .  .+   . . . . :.:\. #######       #######..:/
+      :: . . . . ::.:..:.\           .   .   ..:/
+   .   .   .  .. :  -::::.\.       | |     . .:/
+      .  :  .  .  .-:.":.::.\             ..:/ .~~~~~~~~~~~.
+ .      -.   . . . .: .:::.:.\.           .:/,: Prepare to  \
+.   .   .  :      : ....::_:..:\   ___.  :/ .       be       |
+   .   .  .   .:. .. .  .: :.:.:\       :/   \  P A R M E D |
+     +   .   .   : . ::. :.:. .:.|\  .:/|      \~~~~~~~~~~~'
+     .         +   .  .  ...:: ..|  --.:|
+.      . . .   .  .  . ... :..:.."(  ..)"
+ .   .       .      :  .   .: ::/  .  .::\
+
+ParmEd: a Parameter file Editor
+
+
+Loaded Amber topology file 2KOCFolded_OL3.prmtop with coordinates from 2KOCFolded_OL3.inpcrd
+
+['parmed_hr.in']
+Reading actions from parmed_hr.in
+
+Making atoms :C,C5,C3,U,U5,U3@H6 into a new LJ atom type
+Setting LJ :C,C5,C3,U,U5,U3@H6-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ :C,C5,C3,U,U5,U3@H6-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Making atoms :A,A5,A3,G,G5,G3@H8 into a new LJ atom type
+Setting LJ :A,A5,A3,G,G5,G3@H8-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ :A,A5,A3,G,G5,G3@H8-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Making atoms :C,C5,C3,U,U5,U3@H5 into a new LJ atom type
+Setting LJ :C,C5,C3,U,U5,U3@H5-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ :C,C5,C3,U,U5,U3@H5-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05050
+Setting LJ @%H1-@%OS pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05166
+Setting LJ @%H1-@%O2 pairwise interaction to have Rmin =          2.70000 and Epsilon =          0.05166
+Outputting Amber topology file 2KOCFolded_HRM.parm7 and restart 2KOCFolded_HRM.inpcrd
+Outputting Amber topology file 2KOCFolded_HRM.prmtop and restart 2KOCFolded_HRM.rst7
+Writing PDB file 2KOCFolded_HRM.pdb renumbering atoms and residues
+Done!

@@ -1,0 +1,57 @@
+-----------------------------------------------------------------
+Bin and State Labels
+-----------------------------------------------------------------
+Bin definitions! 
+0: b'[(0.0, 2.7)]'
+1: b'[(2.7, inf)]'
+
+
+State labels and definitions!
+0: b'folded'
+1: b'unfolded'
+2: Unknown
+
+
+-----------------------------------------------------------------
+Target bin:  0
+
+
+Successful Segments in Target Bin: 3
+-----------------------------------------------------------------
+   SegID  Pcoord
+1      4  2.6698
+2     30  2.6751
+3     32  2.6790
+
+
+-----------------------------------------------------------------
+Segments transitioned to target bin in iteration 224
+-----------------------------------------------------------------
+[30, 32]
+
+
+-----------------------------------------------------------------
+Rate Evolution
+-----------------------------------------------------------------
+rate_evolution data:
+b'folded' -> b'unfolded': mean=9.804129396522964e-01 CI=(2.242228357552494e-01, 1.733137890140046e+00) * tau^-1
+b'unfolded' -> b'folded': mean=1.184472004230476e-50 CI=(7.974093058672812e-52, 2.784359320710606e-50) * tau^-1
+To access data, index via the following names:
+['ci_lbound', 'ci_ubound', 'corr_len', 'error', 'expected', 'iter_start', 'iter_stop', 'name', 'plot', 'raw', 'sterr']
+
+Rate Evolution plot saved as rateevolution.png 
+
+
+-----------------------------------------------------------------
+Target Flux Evolution
+-----------------------------------------------------------------
+target_flux_evolution data:
+b'folded': mean=1.184472004230476e-50 CI=(7.336978288525002e-52, 2.661865327250701e-50) * tau^-1
+b'unfolded': mean=1.184472004127831e-50 CI=(9.882116250584541e-52, 2.789642278929406e-50) * tau^-1
+To access data, index via the following names:
+['ci_lbound', 'ci_ubound', 'corr_len', 'error', 'expected', 'iter_start', 'iter_stop', 'name', 'plot', 'raw', 'sterr']
+
+Target Flux Evolution plot saved as fluxevolution.png
+
+
+-----------------------------------------------------------------
