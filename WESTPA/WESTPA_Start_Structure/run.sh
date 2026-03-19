@@ -1,8 +1,8 @@
 #!/bin/bash 
-#$ -pe smp 1 
+#$ -pe smp 8 
 #$ -m bea
 #$ -M ithomps3@nd.edu
-#$ -N folding2
+#$ -N fRMSDMinDist_2KOC
 #$ -q gpu
 #$ -l gpu_card=1
 
@@ -11,8 +11,8 @@
 #module rm python/intel-3.6
 
 
-module load mpich/4.1.2/intel/24.2 westpa/2022.07
-#module load mpich/3.3/gcc/8.5.0 cuda/10.2 westpa/2022.07
+module load mpich westpa/2022.10 cuda/10.2
+
 export AMBERHOME=/opt/crc/a/amber/22.0/amber22
 export PATH=$AMBERHOME/bin:$PATH
 export LD_LIBRARY_PATH=$AMBERHOME/lib:$LD_LIBRARY_PATH
