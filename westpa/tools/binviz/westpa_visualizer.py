@@ -669,11 +669,20 @@ class AgnosticBinVisualizer:
         finite_0 = [v for b in self.bins for v in [b['dim0_min'], b['dim0_max']] if not np.isinf(v)]
         finite_1 = [v for b in self.bins for v in [b['dim1_min'], b['dim1_max']] if not np.isinf(v)]
 
+        min_0 = min(finite_0) if finite_0 else 0
+        min_1 = min(finite_1) if finite_1 else 0
         max_0 = max(finite_0) if finite_0 else 10
         max_1 = max(finite_1) if finite_1 else 10
 
-        plot_0 = max_0 + 5
-        plot_1 = max_1 + 5
+        has_inf_max_0 = any(np.isinf(b['dim0_max']) for b in self.bins)
+        has_inf_max_1 = any(np.isinf(b['dim1_max']) for b in self.bins)
+        has_inf_min_0 = any(np.isinf(b['dim0_min']) for b in self.bins)
+        has_inf_min_1 = any(np.isinf(b['dim1_min']) for b in self.bins)
+
+        plot_max_0 = max_0 + 5 if has_inf_max_0 else max_0
+        plot_max_1 = max_1 + 5 if has_inf_max_1 else max_1
+        plot_min_0 = min_0 - 5 if has_inf_min_0 else min_0
+        plot_min_1 = min_1 - 5 if has_inf_min_1 else min_1
 
         # Colors - uniform for all bins
         color = {'face': '#B3D9E6', 'edge': '#1E4D66', 'width': 1.2, 'alpha': 0.7}
@@ -681,10 +690,10 @@ class AgnosticBinVisualizer:
         # Draw bins
         for idx, b in enumerate(self.bins):
             # Handle inf
-            d0_min = b['dim0_min'] if not np.isinf(b['dim0_min']) else 0
-            d0_max = b['dim0_max'] if not np.isinf(b['dim0_max']) else plot_0
-            d1_min = b['dim1_min'] if not np.isinf(b['dim1_min']) else 0
-            d1_max = b['dim1_max'] if not np.isinf(b['dim1_max']) else plot_1
+            d0_min = b['dim0_min'] if not np.isinf(b['dim0_min']) else plot_min_0
+            d0_max = b['dim0_max'] if not np.isinf(b['dim0_max']) else plot_max_0
+            d1_min = b['dim1_min'] if not np.isinf(b['dim1_min']) else plot_min_1
+            d1_max = b['dim1_max'] if not np.isinf(b['dim1_max']) else plot_max_1
 
             rect = Rectangle(
                 (d0_min, d1_min), d0_max - d0_min, d1_max - d1_min,
@@ -697,7 +706,9 @@ class AgnosticBinVisualizer:
             # Optional labels
             if show_labels:
                 w, h = d0_max - d0_min, d1_max - d1_min
-                if w > 0.5 and h > 0.5 and w < plot_0 * 0.3 and h < plot_1 * 0.3:
+                span_0 = plot_max_0 - plot_min_0
+                span_1 = plot_max_1 - plot_min_1
+                if w > 0.5 and h > 0.5 and w < span_0 * 0.3 and h < span_1 * 0.3:
                     ax.text(d0_min + w/2, d1_min + h/2, str(idx),
                            ha='center', va='center', fontsize=8, fontweight='bold',
                            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8),
@@ -721,8 +732,10 @@ class AgnosticBinVisualizer:
         ax.set_title(title or f'WESTPA Binning Scheme\n{len(self.bins)} bins',
                     fontsize=15, fontweight='bold', pad=20)
 
-        ax.set_xlim(-0.5, plot_0 + 0.5)
-        ax.set_ylim(-0.5, plot_1 + 0.5)
+        pad_0 = (plot_max_0 - plot_min_0) * 0.02
+        pad_1 = (plot_max_1 - plot_min_1) * 0.02
+        ax.set_xlim(plot_min_0 - pad_0, plot_max_0 + pad_0)
+        ax.set_ylim(plot_min_1 - pad_1, plot_max_1 + pad_1)
 
         if grid:
             ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, zorder=0)
