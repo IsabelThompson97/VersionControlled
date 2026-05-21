@@ -1,0 +1,30 @@
+# =============================================================================
+# Bstate -> Structure Mapping
+# Generated: Wed Apr  8 04:14:46 PM EDT 2026
+#
+# This file records the correspondence between the original bstate IDs
+# (from 01_prep_all_bstates.sh) and the final struct_X directories used
+# by WESTPA. Each structure was extracted as the last frame of md4.
+#
+# Columns: struct_index  bstate_id  source_directory  equilibration_directory
+# =============================================================================
+struct_0    folded_01    ./01_bstate_setup/folded_01    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_01
+struct_1    folded_02    ./01_bstate_setup/folded_02    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_02
+struct_2    folded_03    ./01_bstate_setup/folded_03    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_03
+struct_3    folded_04    ./01_bstate_setup/folded_04    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_04
+struct_4    folded_05    ./01_bstate_setup/folded_05    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_05
+struct_5    folded_06    ./01_bstate_setup/folded_06    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_06
+struct_6    folded_07    ./01_bstate_setup/folded_07    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_07
+struct_7    folded_08    ./01_bstate_setup/folded_08    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_08
+struct_8    folded_09    ./01_bstate_setup/folded_09    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_09
+struct_9    folded_10    ./01_bstate_setup/folded_10    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/folded_10
+struct_10    unfolded_01    ./01_bstate_setup/unfolded_01    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_01
+struct_11    unfolded_02    ./01_bstate_setup/unfolded_02    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_02
+struct_12    unfolded_03    ./01_bstate_setup/unfolded_03    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_03
+struct_13    unfolded_04    ./01_bstate_setup/unfolded_04    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_04
+struct_14    unfolded_05    ./01_bstate_setup/unfolded_05    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_05
+struct_15    unfolded_06    ./01_bstate_setup/unfolded_06    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_06
+struct_16    unfolded_07    ./01_bstate_setup/unfolded_07    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_07
+struct_17    unfolded_08    ./01_bstate_setup/unfolded_08    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_08
+struct_18    unfolded_09    ./01_bstate_setup/unfolded_09    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_09
+struct_19    unfolded_10    ./01_bstate_setup/unfolded_10    /scratch365/ithomps3/rnaHairpins/2KOC_OL3_HRM/bstates/02_bstate_equilibrationtest/unfolded_10
