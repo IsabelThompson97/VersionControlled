@@ -31,3 +31,77 @@ WESTPA
 • west.cfg
 • system.py
 
+
+-------
+EXAMPLE WORKING DIRECTORY
+-------
+
+ 2DUnfoldingRMSDMinDistPhased_2KOC/
+ ├── CLAUDE.md
+ ├── analysis/
+ │   ├── amberTraj.sh
+ │   ├── analysis2D.txt
+ │   ├── avg.pdf, fluxevolution.png, histMinDist.pdf, histRMSD.pdf, rateevolution.png
+ │   ├── pdist.h5
+ │   ├── TEST/{assign.h5, direct.h5}
+ │   ├── trajAnalysis/{cpptraj.in, traj.log}
+ │   └── w_ipa.log
+ ├── bstates/
+ │   ├── 2KOCFolded_NMR.{pdb,prmtop,rst7}
+ │   ├── bstates.txt               ← "0 1 StructureFiles/struct_0"
+ │   ├── get_pcoord.{cpptraj,sh}
+ │   ├── struct.txt
+ │   └── StructureFiles/struct_0/
+ │       ├── md4.ncrst
+ │       ├── mindist.dat, rmsd_toNMR.dat
+ │       ├── pcoordreturn.dat      ← "1.3756\t1.9776"  (rmsd<TAB>mindist)
+ │       ├── struct.prmtop
+ │       ├── struct.rst
+ │       └── struct.rst7
+ ├── common_files/
+ │   ├── 2KOCFolded_NMR.{pdb,prmtop,rst7}
+ │   ├── 2KOCUnfolded_HRM.prmtop
+ │   ├── md.in, md0.in
+ │   └── struct.prmtop
+ ├── env.sh
+ ├── init.sh, run.sh
+ ├── postiter.out
+ ├── progress_logs/{bins.log,newbins.log,PROJECT_LOG.md,*.png}
+ ├── seg_logs/                      ← DO NOT TRAVERSE
+ ├── system.py
+ ├── trajAnalysis/{cpptraj.in,struct.prmtop,trace_235-462.nc,traj_235_462_trace.txt,traj.log}
+ ├── traj_segs/  [iter_000001..iter_000250]
+ │   └── iter_XXXXXX/seg_XXXXXX/
+ │       ├── checkpcoord.dat        ← "rmsd mindist" pairs
+ │       ├── mindist.dat, rmsd_toNMR.dat
+ │       ├── seg.nc, seg.out, seg.rst
+ │       └── struct.prmtop          ← symlink chain (real copy every 35 iters)
+ ├── uPhasedRMSDMinDist_2KOC.o799066
+ ├── west.cfg, west.h5, west.log
+ ├── west2.h5, westBackup.h5, westBackup-backup.h5
+ └── westpa_scripts/
+     ├── get_pcoord.cpptraj
+     ├── get_pcoord.sh
+     ├── post_iter.sh
+     └── runseg.sh
+
+
+---
+ Output Structure for extracing bstates from trajsegs
+---
+
+ extracted_bstates/
+ ├── manifest.txt            ← tab-separated: idx  iter  seg  rmsd  mindist
+ ├── bstates.txt             ← ready for west.cfg: "N  prob  StructureFiles/struct_NN"
+ └── StructureFiles/
+     ├── struct_00/
+     │   ├── struct.prmtop   ← real file (cp -L, dereferences symlink chain)
+     │   ├── struct.rst      ← seg.rst endpoint from traj_segs
+     │   ├── struct.pdb      ← stripped RNA only (:1-14), ready for 00_bstate_pdbs/
+     │   └── pcoordreturn.dat← "rmsd<TAB>mindist" endpoint values
+     ├── struct_01/
+     │   └── ...
+     ...
+     └── struct_49/
+         └── ...
+
