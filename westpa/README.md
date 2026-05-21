@@ -36,47 +36,66 @@ Rare-event sampling using the [WESTPA](https://westpa.github.io/westpa/) framewo
 
 ### Runtime data structure (created during execution)
 
-WESTPA generates and organizes simulation data hierarchically by iteration and segment:
+WESTPA creates `seg_logs/` and `traj_segs/` directories at the root level to organize simulation data:
 
 ```
-west_data/
-├── 00000001/               Iteration 1
-│   ├── seg_logs/           Per-segment execution logs
-│   │   ├── 00000001.log    Segment 1 stderr/stdout output from runseg.sh
-│   │   ├── 00000002.log    Segment 2 stderr/stdout output from runseg.sh
-│   │   └── ...
-│   └── traj_seg/           Per-segment trajectory data
-│       ├── 00000001/       Segment 1 trajectory directory
-│       │   ├── md4.ncrst   Initial state (amber restart)
-│       │   ├── md5.nc      Production trajectory (amber netCDF)
-│       │   └── md5.log     Amber MD logfile
-│       ├── 00000002/       Segment 2 trajectory directory
-│       │   ├── md4.ncrst
-│       │   ├── md5.nc
-│       │   └── md5.log
-│       └── ...
-├── 00000002/               Iteration 2
-│   ├── seg_logs/
-│   │   ├── 00000001.log    (reseeded from iter 1, recycles segment ID)
-│   │   ├── 00000002.log
-│   │   ├── 00000003.log    (new segments from splits)
-│   │   └── ...
-│   └── traj_seg/
-│       ├── 00000001/
-│       ├── 00000002/
-│       ├── 00000003/
-│       └── ...
-├── 00000003/
-│   └── ...
-└── ...
+<setup>/
+├── seg_logs/             Per-segment execution logs (flat directory)
+│   ├── 00000001.log      Segment 1 log from iteration 1
+│   ├── 00000002.log      Segment 2 log from iteration 1
+│   ├── 00000003.log      Segment 1 log from iteration 2 (reseeded)
+│   ├── 00000004.log      Segment 2 log from iteration 2 (reseeded)
+│   ├── 00000005.log      Segment 3 log from iteration 2 (new from split)
+│   └── ...               (logs accumulate flat, one per segment execution)
+│
+└── traj_segs/            Trajectory data organized by iteration
+    ├── 00000001/         Iteration 1 directory
+    │   ├── 00000001/     Segment 1 trajectory data
+    │   │   ├── struct.prmtop       AMBER topology/parameter file
+    │   │   ├── md4.ncrst           Initial state (AMBER restart from bstate)
+    │   │   ├── seg.out             AMBER MD output summary
+    │   │   ├── seg.rst             AMBER MD final restart (segment endpoint)
+    │   │   ├── seg.nc              AMBER MD trajectory (NetCDF binary)
+    │   │   ├── seg.info            AMBER MD info file
+    │   │   ├── rmsd_toNMR.dat      Progress coordinate dim 0 (RMSD)
+    │   │   └── mindist.dat         Progress coordinate dim 1 (MinDist)
+    │   ├── 00000002/     Segment 2 trajectory data
+    │   │   ├── struct.prmtop
+    │   │   ├── md4.ncrst
+    │   │   ├── seg.out
+    │   │   ├── seg.rst
+    │   │   ├── seg.nc
+    │   │   ├── seg.info
+    │   │   ├── rmsd_toNMR.dat
+    │   │   └── mindist.dat
+    │   └── ...
+    │
+    ├── 00000002/         Iteration 2 directory
+    │   ├── 00000001/     Segment 1 (reseeded from iteration 1, parent seg.rst → md4.ncrst)
+    │   │   ├── struct.prmtop
+    │   │   ├── md4.ncrst           ← linked from iteration 1 parent seg.rst
+    │   │   ├── seg.out
+    │   │   ├── seg.rst
+    │   │   ├── seg.nc
+    │   │   ├── seg.info
+    │   │   ├── rmsd_toNMR.dat
+    │   │   └── mindist.dat
+    │   ├── 00000002/     Segment 2 (reseeded from iteration 1)
+    │   ├── 00000003/     Segment 3 (new walker from trajectory split in iteration 1)
+    │   └── ...
+    │
+    ├── 00000003/         Iteration 3 directory
+    └── ...
 ```
 
 **Key points:**
-- `seg_logs/NNNNNNNN.log` — captured output from `runseg.sh` for each segment in that iteration
-- `traj_seg/NNNNNNNN/` — AMBER trajectory files (`.nc`, `.ncrst`, `.log`) for each segment
-- Segment IDs are **recycled** across iterations (e.g., seg 1 in iter 1 and iter 2 are distinct walkers)
-- `.nc` files are AMBER NetCDF trajectories (binary); `.ncrst` are restart files
-- Individual segment logs and trajectories can be stitched together via `amberTraj.sh` to reconstruct complete pathways
+- `seg_logs/*.log` — flat directory containing all segment logs sequentially; log files are generated as `runseg.sh` runs for each segment
+- `traj_segs/NNNNNNNN/` — iteration-specific directories containing all segments executed in that iteration
+- `traj_segs/NNNNNNNN/SSSSSSSS/` — individual segment trajectory data directory with AMBER files and progress coordinate outputs
+- Segment IDs are **recycled** within each iteration but represent different walkers across iterations
+- `seg.rst` (current segment endpoint) becomes `md4.ncrst` (initial restart) for child segments in the next iteration when reseeded
+- `struct.prmtop` is typically symbolic-linked from `common_files/` for all segments
+- Progress coordinate files (e.g., `rmsd_toNMR.dat`, `mindist.dat`) are generated by `cpptraj` for each segment
 
 ---
 
