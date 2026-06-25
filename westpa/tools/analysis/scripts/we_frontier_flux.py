@@ -11,10 +11,11 @@ For each pcoord dimension it plots, per iteration:
   (b) the total weight sitting in the leading 20% of the explored range — the
       flux that has actually populated the frontier region
 
-Direction is inferred from the simulation objective (system.py docstring /
-directory name). For a bidirectional / total-coverage run it reports BOTH the
-outward (high-value) and inward (low-value) tails so folding and unfolding are
-both visible. Everything is read from west.h5 at runtime — trial-agnostic.
+For a bidirectional / total-coverage run (ADP PPII<->aL is one: the two basins
+sit on opposite sides of each dihedral range) it reports BOTH the outward
+(high-value) and inward (low-value) tails of every pcoord dimension, so spreading
+in either direction is visible. Everything is read from west.h5 at runtime —
+trial-agnostic; the axis labels and degree units come from system.py via we_lib.
 
 Run from the trial root (after `source env.sh`):
     python3 analysis/scripts/we_frontier_flux.py
@@ -40,7 +41,7 @@ def main():
     N = L.last_completed_iter(h5)
     pc0, _ = L.iter_final_pcoord(1, h5)
     ndim = pc0.shape[1]
-    labels = L.short_labels(ndim)
+    labels = L.axis_labels(ndim)
 
     # global explored range per dim (across all iterations) to fix the tail bands
     gmin = np.full(ndim, np.inf)
@@ -62,8 +63,8 @@ def main():
     report_lines = []
     for d in range(ndim):
         rng = gmax[d] - gmin[d]
-        hi_band = gmax[d] - LEAD_FRAC * rng   # outward (e.g. unfolding) tail
-        lo_band = gmin[d] + LEAD_FRAC * rng   # inward  (e.g. folding) tail
+        hi_band = gmax[d] - LEAD_FRAC * rng   # outward (high-value) tail of the dim
+        lo_band = gmin[d] + LEAD_FRAC * rng   # inward  (low-value)  tail of the dim
         its, fmax, fmin, w_hi, w_lo = [], [], [], [], []
         for n, pc, w in per_iter:
             x = pc[:, d]

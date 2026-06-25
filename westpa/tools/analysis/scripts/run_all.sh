@@ -12,13 +12,13 @@
 
 set -u
 TOOLS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ITER=$1
+#ITER=$2
 
 
 # Resolve the trial root: $WEST_SIM_ROOT, else walk up from CWD (then from this
 # script's location) to the nearest directory containing west.cfg.
 find_root() {
-    local d="$2"
+    local d="$1"
     while [ "$d" != "/" ]; do
         [ -f "$d/west.cfg" ] && { echo "$d"; return 0; }
         d="$(dirname "$d")"
@@ -61,7 +61,7 @@ echo "westpa-analyst tools | $(basename "$ROOT") | data=$DATA | running=$RUNNING
 # 1. probability distribution + plothist plots. Axis labels come from system.py
 #    via we_lib as DIM::LABEL dimspecs; they are comma-free (plothist treats a
 #    comma in a dimspec as a bounds separator) and re-derive per trial.
-mapfile -t _LBL < <(python3 -c "import sys; sys.path.insert(0,'$TOOLS'); import we_lib as L; [print(s) for s in L.short_labels(2)]")
+mapfile -t _LBL < <(python3 -c "import sys; sys.path.insert(0,'$TOOLS'); import we_lib as L; [print(s) for s in L.axis_labels(2)]")
 LBL0="${_LBL[0]:-pcoord 0}"; LBL1="${_LBL[1]:-pcoord 1}"
 # plothist reads a comma in a dimspec as a lb,ub bounds separator -> strip from
 # labels (e.g. a multi-range mask like ':1-5,10-14'). Colons are fine.
@@ -77,7 +77,14 @@ run plothist evolution analysis/pdist.h5 "0::$LBL0" -o "analysis/hist_${NAME0}.p
 run plothist instant analysis/pdist.h5 "0::$LBL0" -o "analysis/instant_${NAME0}.pdf"
 run plothist evolution analysis/pdist.h5 "1::$LBL1" -o "analysis/hist_${NAME1}.pdf"
 run plothist instant analysis/pdist.h5 "1::$LBL1" -o "analysis/instant_${NAME1}.pdf"
-run plothist average analysis/pdist.h5 "0::$LBL0" "1::$LBL1" -o analysis/avg_last.pdf --first-iter $ITER --last-iter $ITER
+# average over the LAST completed iteration only. we_lib finds the highest
+# propagated iteration in $DATA (skips the unrun trailer WESTPA pre-creates).
+ITER=$(python3 -c "import sys; sys.path.insert(0,'$TOOLS'); import we_lib as L; print(L.last_completed_iter('$ROOT/$DATA'))" 2>>"$LOG")
+if [ -n "$ITER" ] && [ "$ITER" -gt 0 ] 2>/dev/null; then
+    run plothist average analysis/pdist.h5 "0::$LBL0" "1::$LBL1" -o analysis/avg_last.pdf --first-iter "$ITER" --last-iter "$ITER"
+else
+    echo "skipping avg_last.pdf: could not determine last completed iteration (got '$ITER')" | tee -a "$LOG"
+fi
 
 # 2. bin occupancy snapshot (only against west.h5 when the run is NOT live;
 #    pass westBackup.h5 as $2 if the simulation is running).

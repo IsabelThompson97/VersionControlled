@@ -2,14 +2,32 @@
 """
 WESTPA Binning Visualizer - COMPLETELY AGNOSTIC
 
-Works with ANY WESTPA system.py file:
-- Finds ALL RectilinearBinMapper calls
-- Uses dimension INDICES (0, 1, 2...) internally
-- No assumptions about variable names or types
-- Supports both 1D and 2D progress coordinates
-- User provides labels if desired
+Visualizes the bin scheme of ANY WESTPA system.py, regardless of HOW the bin
+boundaries are written. There are two acquisition paths, tried in order:
+
+1. IMPORT (preferred, "any definition"): import the trial's system.py, build the
+   System, and read the boundaries straight off the realized `bin_mapper`. Because
+   it reads the *constructed* mapper rather than the source text, it does not care
+   whether the edges came from literal lists, np.arange, a comprehension, or a
+   helper such as the ADP `_dihedral_bin_edges(BIN_WIDTH)` — it sees the same
+   final grid WESTPA will use. Requires `westpa` to be importable (i.e. run inside
+   the WESTPA environment, the normal analysis setting). Handles flat
+   RectilinearBinMapper of any dimensionality.
+
+2. SOURCE PARSE (fallback): if the import path is unavailable (westpa not on the
+   path, or a RecursiveBinMapper whose nested structure import can't enumerate),
+   fall back to regex-parsing system.py for literal `name = [...]` boundary lists
+   plus RectilinearBinMapper / RecursiveBinMapper / add_mapper calls. This is the
+   original behavior and still covers the recursive/literal-list templates.
+
+Carries NO system-specific assumptions (no topology names, masks, or basin
+labels). Axis labels are taken from --xlabel/--ylabel; if omitted, they default
+from the system.py docstring 'pcoord dimensions:' block via we_lib when available
+(for ADP that yields 'phi (deg)' / 'psi (deg)').
 """
 
+import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -17,6 +35,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 import re
 import argparse
+import importlib.util
 from typing import List, Tuple, Optional, Dict
 
 
@@ -684,8 +703,16 @@ class AgnosticBinVisualizer:
         plot_min_0 = min_0 - 5 if has_inf_min_0 else min_0
         plot_min_1 = min_1 - 5 if has_inf_min_1 else min_1
 
-        # Colors - uniform for all bins
-        color = {'face': '#B3D9E6', 'edge': '#1E4D66', 'width': 1.2, 'alpha': 0.7}
+        # A flat RectilinearBinMapper has no outer/nested distinction — every edge
+        # is just a grid line. The heavy red "outer boundary" overlay only makes
+        # sense for a RecursiveBinMapper (few coarse outer bins subdivided by
+        # nested mappers); on a flat fine grid it buries the bins under a red mesh.
+        has_nesting = any(b.get('level', 0) > 0 for b in self.bins)
+
+        # Colors - uniform for all bins. Thin the edges on dense grids so the
+        # individual bins stay legible instead of merging into a solid block.
+        edge_w = 0.4 if len(self.bins) > 200 else 1.2
+        color = {'face': '#B3D9E6', 'edge': '#1E4D66', 'width': edge_w, 'alpha': 0.7}
 
         # Draw bins
         for idx, b in enumerate(self.bins):
@@ -714,8 +741,8 @@ class AgnosticBinVisualizer:
                            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8),
                            zorder=100)
 
-        # Outer boundary lines
-        if self.outer_bounds:
+        # Outer boundary lines — only when there is real nesting to delineate.
+        if self.outer_bounds and has_nesting:
             dim0_bounds, dim1_bounds = self.outer_bounds
 
             for v in dim0_bounds[1:-1]:
@@ -741,10 +768,11 @@ class AgnosticBinVisualizer:
             ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, zorder=0)
 
         # Legend
-        legend = [
-            Line2D([0], [0], color='#8B0000', linewidth=4, label='Outer boundaries'),
-            mpatches.Patch(facecolor='#B3D9E6', edgecolor='#1E4D66', label='Bins', alpha=0.7)
-        ]
+        legend = [mpatches.Patch(facecolor='#B3D9E6', edgecolor='#1E4D66',
+                                 label='Bins', alpha=0.7)]
+        if has_nesting:
+            legend.insert(0, Line2D([0], [0], color='#8B0000', linewidth=4,
+                                    label='Outer boundaries'))
         ax.legend(handles=legend, loc='upper right', fontsize=11, framealpha=0.95)
 
         # Info
@@ -760,6 +788,71 @@ class AgnosticBinVisualizer:
             print(f"\n✓ Saved: {output}")
 
         return fig, ax
+
+
+def load_bins_via_import(system_path: str) -> Optional[Dict]:
+    """Build the bin data dict by IMPORTING system.py and reading the realized
+    bin_mapper, so boundaries are recovered no matter how they were written
+    (literal lists, np.arange, a comprehension, or a helper function).
+
+    Returns a data dict compatible with AgnosticBinVisualizer for a flat
+    RectilinearBinMapper of any dimensionality, or None to signal the caller to
+    fall back to source parsing -- either because westpa is not importable, or
+    because the mapper is a RecursiveBinMapper whose nested structure cannot be
+    enumerated from the constructed object alone (the regex parser handles that)."""
+    spec = importlib.util.spec_from_file_location("trial_system", system_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)                       # raises if westpa missing
+
+    system = module.System()
+    # WESTSystem.__init__ installs a PLACEHOLDER NopMapper (1 bin) — bin_mapper is
+    # therefore never None, so a `is None` guard would skip initialize() and leave
+    # us reading the placeholder (the bug that made this report "0 bins"). The real
+    # bin grid is only built by initialize(), which the framework normally calls;
+    # call it here unconditionally to realize this trial's actual mapper.
+    system.initialize()
+    mapper = system.bin_mapper
+    cls = type(mapper).__name__
+
+    # Only the flat rectilinear case is fully reconstructible from boundaries.
+    # Hand RecursiveBinMapper (or any mapper without rectilinear .boundaries) back
+    # to the source parser, which understands nested add_mapper structure.
+    boundaries = getattr(mapper, "boundaries", None)
+    if cls == "RecursiveBinMapper" or boundaries is None:
+        return None
+
+    bounds = [[float(x) for x in np.asarray(b).ravel()] for b in boundaries]
+    ndim = int(getattr(system, "pcoord_ndim", len(bounds)))
+
+    tc = getattr(system, "bin_target_counts", 8)
+    try:
+        target = int(np.asarray(tc).ravel()[0])
+    except (TypeError, IndexError, ValueError):
+        target = int(tc)
+
+    dim_vars = [f"dim{i}" for i in range(len(bounds))]
+    return {
+        "pcoord_ndim": ndim,
+        "target_counts": target,
+        "arrays": {v: bounds[i] for i, v in enumerate(dim_vars)},
+        "mappers": {cls: dim_vars},
+        "outer_mapper": {"name": cls, "vars": dim_vars, "bounds": bounds},
+        "nested_mappers": [],
+    }
+
+
+def _auto_labels(ndim: int):
+    """Best-effort axis labels taken verbatim from the system.py docstring via
+    we_lib (whatever name + unit the author wrote). Returns (xlabel, ylabel);
+    either may be None if we_lib is unavailable."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import we_lib
+        labs = we_lib.axis_labels(ndim)
+        return (labs[0] if len(labs) > 0 else None,
+                labs[1] if len(labs) > 1 else None)
+    except Exception:
+        return None, None
 
 
 def main():
@@ -778,14 +871,36 @@ def main():
     parser.add_argument('--title', help='Custom title')
     parser.add_argument('--xlabel', help='Dimension 0 label')
     parser.add_argument('--ylabel', help='Dimension 1 label (2D only)')
+    parser.add_argument('--source-parse', action='store_true',
+                       help='Skip the import path; force regex source parsing')
 
     args = parser.parse_args()
 
-    print(f"Parsing {args.system}...")
-    p = AgnosticBinParser(args.system)
-    data = p.parse()
+    # Prefer reading the realized bin_mapper by importing system.py (handles bins
+    # defined any way); fall back to regex source parsing if that is unavailable.
+    data = None
+    if not args.source_parse:
+        try:
+            data = load_bins_via_import(args.system)
+            if data is not None:
+                grid = 'x'.join(str(len(b) - 1) for b in data['outer_mapper']['bounds'])
+                print(f"Read realized {data['outer_mapper']['name']} from "
+                      f"{args.system} via import ({grid} grid).")
+        except Exception as e:
+            print(f"(import path unavailable: {e})")
+    if data is None:
+        print(f"Parsing {args.system} (source) ...")
+        p = AgnosticBinParser(args.system)
+        data = p.parse()
 
-    viz = AgnosticBinVisualizer(data, dim0_label=args.xlabel, dim1_label=args.ylabel)
+    # Default axis labels from the system.py docstring if not given on the CLI.
+    ndim = data.get('pcoord_ndim', 2)
+    xlabel, ylabel = args.xlabel, args.ylabel
+    if xlabel is None and ylabel is None:
+        ax_lab, ay_lab = _auto_labels(ndim)
+        xlabel, ylabel = ax_lab, ay_lab
+
+    viz = AgnosticBinVisualizer(data, dim0_label=xlabel, dim1_label=ylabel)
 
     # Default figsize depends on dimensionality
     if args.figsize:

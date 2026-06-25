@@ -36,7 +36,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import we_lib as L
 _edges  = L.parse_bins_log()['edges']
-_labels = L.short_labels(len(_edges) if _edges else 2)
+_labels = L.axis_labels(len(_edges) if _edges else 2)
 
 # ===========================================================================
 # CONFIG

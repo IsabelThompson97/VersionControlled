@@ -12,9 +12,44 @@ Source of truth precedence:
                            because bins.log is generated FROM system.py)
   - per-iteration stats <- west.h5 'summary' table + per-iter pcoord/weights
   - pcoord axis labels  <- system.py docstring ("pcoord dimensions:" block),
-                           order confirmed by runseg.sh paste line
-  - reference points    <- system.py docstring "*Control Reference*" blocks,
-                           falling back to west.cfg analysis_schemes states
+                           used VERBATIM (name + any unit the author put in
+                           parentheses); nothing about the coordinate or its
+                           unit is hardcoded here
+  - reference points    <- system.py docstring "pcoord references:" block
+                           (preferred, dim-indexed; basin names read from the
+                           file, e.g. PPII/aL), falling back to the older
+                           "*Control Reference*" prose blocks, then to
+                           west.cfg analysis_schemes states
+
+
+REFERENCE-COORD FORMAT (put this in the FIRST / class docstring of system.py,
+right under the "pcoord dimensions:" block — NOT in the initialize() docstring):
+
+    pcoord dimensions:
+      0: phi ϕ (°)
+      1: psi ψ (°)
+
+    pcoord references:
+      0: PPII=-75 aL=55
+      1: PPII=145 aL=40
+
+The "pcoord dimensions:" block: one line per dim, `<index>: <label>`. The label
+is taken VERBATIM as the axis label, so put the unit in parentheses right in the
+label (e.g. `(°)`, `(Å)`, `(nm)`). No unit is ever assumed by the tooling.
+
+Rules for the "pcoord references:" block:
+  - One line per pcoord dimension, keyed by the SAME integer index used in the
+    "pcoord dimensions:" block. This index-based mapping is what makes it work
+    when two dims share a measure (e.g. rmsd_stem AND rmsd_loop, or here two
+    dihedral angles) — labels are never keyword-matched, so there is no ambiguity.
+  - Each line gives the basin reference VALUE for that dim: `<basin>=<value>` for
+    EACH basin (whitespace around '=' optional; order on the line free). The basin
+    NAMES are read from the file — here `PPII` and `aL`, the two ADP conformers —
+    so no particular basin name is hardcoded by the parser.
+  - Values are the mean / representative coordinate of each basin along that dim
+    (for ADP, the central-alanine phi/psi of the basin, in degrees).
+  - A blank line (or the "Notes:" line, or the closing triple-quote) terminates
+    the block.
 """
 
 import os
@@ -130,7 +165,8 @@ def pcoord_labels():
     Falls back to pcoord_0/pcoord_1 ... if the block is absent."""
     txt = _read(paths()["system"])
     labels = {}
-    m = re.search(r"pcoord dimensions:(.*?)(?:\n\s*\n|Notes:|\"\"\")", txt, re.S | re.I)
+    m = re.search(r"pcoord dimensions:(.*?)(?:\n\s*\n|pcoord references:|Notes:|\"\"\")",
+                  txt, re.S | re.I)
     block = m.group(1) if m else ""
     for ln in block.splitlines():
         mm = re.match(r"\s*(\d+)\s*:\s*(.+?)\s*$", ln)
@@ -139,26 +175,28 @@ def pcoord_labels():
     return labels
 
 
-def short_labels(ndim, unit="Å"):
-    """Descriptive axis labels from the system.py docstring 'pcoord dimensions:'
-    block, formatted '<name> (<mask>) (<unit>)' — e.g. 'MinDist (1:14) (Å)',
-    'RMSD - Loop (:6-9) (Å)'. Re-derives itself per trial, so the wording follows
-    whatever the docstring says. Always returns ndim entries.
+def axis_labels(ndim):
+    """Per-dimension axis labels, taken VERBATIM from the system.py docstring
+    'pcoord dimensions:' block.
 
-    Labels are kept COMMA-FREE on purpose: plothist treats a comma inside a
-    dimspec (DIM::LABEL) as a LB,UB bounds separator and would error otherwise."""
+    The label string is used exactly as the author wrote it — including whatever
+    units they put in parentheses — so this tooling makes NO assumption about
+    what each coordinate is or what unit it carries. Whatever the docstring says
+    is the label. For this trial the block reads
+
+        pcoord dimensions:
+          0: phi ϕ (°)
+          1: psi ψ (°)
+
+    so the labels are 'phi ϕ (°)' / 'psi ψ (°)'. A distance pcoord would simply
+    write e.g. '0: end-to-end distance (Å)' and that whole string becomes the
+    label. Falls back to 'pcoord <i>' for any dim the block does not define;
+    always returns ndim entries.
+
+    plothist note: a comma inside a DIM::LABEL dimspec is read by plothist as an
+    LB,UB bounds separator, so any comma in a label is converted to a space."""
     lab = pcoord_labels()
-    out = []
-    for i in range(ndim):
-        raw = lab.get(i, f"pcoord_{i}").strip()
-        # trailing residue/atom mask: whitespace, then a cpptraj-style selection
-        m = re.search(r"\s([:@]?\d[\w:\-.@]*)\s*$", raw)
-        if m:
-            name = raw[:m.start()].strip(" -")
-            out.append(f"{name} ({m.group(1)}) ({unit})")
-        else:
-            out.append(f"{raw} ({unit})")
-    return out
+    return [lab.get(i, f"pcoord {i}").replace(",", " ").strip() for i in range(ndim)]
 
 
 # --------------------------------------------------------------------------
@@ -228,30 +266,84 @@ def occupied_extent(parsed=None):
 
 
 # --------------------------------------------------------------------------
-# Reference points (folded / unfolded) for FES annotation
+# Reference points (the trial's named basins) for FES annotation
 # --------------------------------------------------------------------------
-def reference_points():
-    """Return {'folded': [d0, d1, ...], 'unfolded': [...], 'source': str}.
+_TOKEN_RE = re.compile(r"[a-z0-9][\w:\-.@]*")
+# words too generic to help match a reference title to a specific pcoord dim
+_STOP_TOKENS = {"to", "the", "of", "and", "res", "average", "median", "maximum",
+                "minimum", "standard", "deviation", "control", "reference",
+                "folded", "unfolded", "nmr", "frame"}
 
-    Primary source: system.py docstring blocks labelled '... Control Reference'
-    with 'Average ...: <number>' lines, mapped to pcoord dims by matching the
-    measure keyword (RMSD vs Distance/MinDist) to each dim's label.
-    Fallback: west.cfg analysis_schemes states (folded/unfolded) coords."""
+
+def _tokens(text):
+    return [t for t in _TOKEN_RE.findall(text.lower()) if t not in _STOP_TOKENS]
+
+
+def reference_points():
+    """Return {'points': {<basin>: [d0, d1, ...], ...}, 'source': str}.
+
+    The basin NAMES are whatever the trial defines — they are read from the file,
+    never hardcoded. For this ADP trial the basins are 'PPII' and 'aL'; for an
+    RNA folding trial they might be 'folded' and 'unfolded'. Any number of basins
+    is supported. A coordinate list contains one value per pcoord dimension (or
+    None for a dim whose value the source did not supply).
+
+    Source precedence:
+      1. system.py docstring 'pcoord references:' block — dim-indexed, with one
+         `<basin>=<value>` token per basin on each dim line
+         (`0: PPII=-75 aL=55`). PREFERRED: keyed by dim index, so it is
+         unambiguous even when two dims share a measure (two dihedrals here, or
+         rmsd_stem AND rmsd_loop). See the module docstring for the exact format.
+      2. system.py docstring '... Control Reference' prose blocks with
+         'Average ...: <number>' lines (legacy RNA-style 'folded'/'unfolded'
+         basins), mapped to pcoord dims by scoring word overlap between each
+         block title and each dim's label.
+      3. west.cfg analysis_schemes states' coords (each state's label becomes a
+         basin name)."""
     labels = pcoord_labels()
     ndim = max(labels) + 1 if labels else 2
-
-    def dim_for(measure):
-        # measure is a free-text header; match it to a pcoord dim by keyword
-        is_rmsd = "rmsd" in measure.lower()
-        for i in range(ndim):
-            lab = labels.get(i, "").lower()
-            if is_rmsd and "rmsd" in lab:
-                return i
-            if (not is_rmsd) and ("dist" in lab or "mindist" in lab):
-                return i
-        return None
-
     txt = _read(paths()["system"])
+
+    # --- 1. preferred: dim-indexed 'pcoord references:' block ----------------
+    # Each dim line carries one `<name>=<value>` token per basin; the names are
+    # collected from the file so no particular basin label is assumed.
+    m = re.search(r"pcoord references:(.*?)(?:\n\s*\n|Notes:|\"\"\")",
+                  txt, re.S | re.I)
+    if m:
+        pts = {}   # basin name -> [val per dim], filled as names are discovered
+        for ln in m.group(1).splitlines():
+            mm = re.match(r"\s*(\d+)\s*:\s*(.+?)\s*$", ln)
+            if not mm:
+                continue
+            d = int(mm.group(1))
+            if not (0 <= d < ndim):
+                continue
+            for nm, val in re.findall(r"([A-Za-z]\w*)\s*=\s*([-\d.eE+]+)", mm.group(2)):
+                pts.setdefault(nm, [None] * ndim)[d] = float(val)
+        # keep only basins whose coordinate is fully specified across all dims
+        pts = {nm: v for nm, v in pts.items() if None not in v}
+        if pts:
+            return {"points": pts,
+                    "source": "system.py 'pcoord references:' block"}
+
+    # --- 2. fallback: prose 'Control Reference' blocks (legacy RNA style) -----
+    def dim_for(title):
+        # score each dim's label by shared significant tokens with the title;
+        # break ties (and zero-overlap) by the RMSD-vs-Distance measure keyword.
+        title_toks = set(_tokens(title))
+        title_rmsd = "rmsd" in title.lower()
+        best, best_score = None, -1
+        for i in range(ndim):
+            lab = labels.get(i, "")
+            score = len(title_toks & set(_tokens(lab)))
+            lab_rmsd = "rmsd" in lab.lower()
+            lab_dist = "dist" in lab.lower()
+            if (title_rmsd and lab_rmsd) or (not title_rmsd and lab_dist):
+                score += 1  # measure-keyword agreement as a tie-breaker
+            if score > best_score:
+                best, best_score = i, score
+        return best if best_score > 0 else None
+
     pts = {}
     # split the docstring on the dashed header lines that name a reference set
     headers = list(re.finditer(r"-{3,}(.*?Control Reference.*?)-{3,}", txt))
@@ -268,22 +360,21 @@ def reference_points():
             continue
         pts.setdefault(which, [None] * ndim)[d] = val
 
-    folded = pts.get("folded")
-    unfolded = pts.get("unfolded")
-    if folded and unfolded and None not in folded and None not in unfolded:
-        return {"folded": folded, "unfolded": unfolded, "source": "system.py docstring"}
+    pts = {nm: v for nm, v in pts.items() if None not in v}
+    if pts:
+        return {"points": pts,
+                "source": "system.py 'Control Reference' blocks"}
 
-    # --- fallback: west.cfg analysis_schemes states ---
+    # --- 3. fallback: west.cfg analysis_schemes states ---
+    # Each state label becomes a basin name; works for any scheme (PPII/aL here).
     cfg = _read(paths()["cfg"])
     states = {}
     for sm in re.finditer(r"label:\s*(\w+).*?coords:\s*\n\s*-\s*\[([^\]]+)\]", cfg, re.S):
-        states[sm.group(1).lower()] = [float(x) for x in sm.group(2).split(",")]
-    folded = states.get("folded")
-    unfolded = states.get("unfolded")
-    if folded and unfolded:
-        return {"folded": folded, "unfolded": unfolded,
+        states[sm.group(1)] = [float(x) for x in sm.group(2).split(",")]
+    if states:
+        return {"points": states,
                 "source": "west.cfg analysis_schemes (approximate)"}
-    return {"folded": None, "unfolded": None, "source": "not found"}
+    return {"points": {}, "source": "not found"}
 
 
 # --------------------------------------------------------------------------

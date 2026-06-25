@@ -34,9 +34,9 @@ _edges  = _parsed['edges']
 if len(_edges) < 2:
     raise SystemExit("bins.log has no bin boundaries — run `w_bins info "
                      "--detail --bins-from-system > progress_logs/bins.log` first.")
-we_bounds_x = _edges[0]                    # pcoord 0 boundaries (e.g. MinDist)
-we_bounds_y = _edges[1]                    # pcoord 1 boundaries (e.g. RMSD-Loop)
-_labels = L.short_labels(len(_edges))      # axis labels parsed from system.py
+we_bounds_x = _edges[0]                    # pcoord 0 boundaries (here phi, deg)
+we_bounds_y = _edges[1]                    # pcoord 1 boundaries (here psi, deg)
+_labels = L.axis_labels(len(_edges))       # axis labels parsed from system.py
 
 # Resolve I/O under the trial's analysis/ dir so outputs land there no matter the
 # cwd (run from the trial root via run_all.sh, or standalone from analysis/).

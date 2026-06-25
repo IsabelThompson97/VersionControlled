@@ -8,10 +8,10 @@ re-orients itself to whatever trial it is dropped into.
   E5  WE bin boundaries are read from progress_logs/bins.log (which is generated
       FROM system.py), so the overlaid grid always matches the real mapper — no
       hardcoded boundary arrays to fall stale (the bug in the old pdist_plotbins.py).
-  E6  Folded / unfolded reference points and the axis labels are parsed from this
-      trial's system.py docstring at runtime (fallback: west.cfg states), so
-      moving the script to a new trial directory automatically re-annotates it
-      with that trial's references and coordinate names.
+  E6  The named reference basins (here the ADP PPII and aL conformers) and the
+      axis labels are parsed from this trial's system.py docstring at runtime
+      (fallback: west.cfg states), so moving the script to a new trial directory
+      automatically re-annotates it with that trial's basins and coordinate names.
 
 The 2D histogram is computed directly from west.h5 (final pcoord points, weighted),
 so no pdist.h5 file or fixed grid is required.
@@ -55,7 +55,7 @@ def main():
         print("FES plot needs >=2 pcoord dims; got", ndim)
         return
 
-    labels = L.short_labels(ndim)
+    labels = L.axis_labels(ndim)
 
     # --- WE boundaries (E5) from bins.log ---
     parsed = L.parse_bins_log()
@@ -86,11 +86,16 @@ def main():
         ax.set_xlim(edges[0].min(), edges[0].max())
         ax.set_ylim(edges[1].min(), edges[1].max())
 
-    # E6 annotation: reference points parsed at runtime
+    # E6 annotation: named reference basins parsed at runtime. Basin names come
+    # from the file (here PPII and aL); marker/color cycle so any set of basins
+    # is rendered distinctly without hardcoding their names.
     refs = L.reference_points()
-    for name, marker, color in (("folded", "*", "white"), ("unfolded", "X", "red")):
-        coords = refs.get(name)
+    _markers = ["*", "X", "P", "D", "^", "v"]
+    _colors = ["white", "red", "yellow", "cyan", "magenta", "orange"]
+    for k, (name, coords) in enumerate(sorted(refs["points"].items())):
         if coords and len(coords) >= 2 and None not in coords[:2]:
+            marker = _markers[k % len(_markers)]
+            color = _colors[k % len(_colors)]
             ax.scatter([coords[0]], [coords[1]], marker=marker, s=240,
                        edgecolors="black", linewidths=1.2, color=color, zorder=5)
             ax.annotate(f"{name}\n({coords[0]:.1f}, {coords[1]:.1f})",
@@ -108,8 +113,7 @@ def main():
     out = os.path.join(p["analysis"], "fes_with_bins.png")
     fig.savefig(out, dpi=200)
     print(f"wrote {out}")
-    print(f"reference source: {refs['source']}  folded={refs.get('folded')}  "
-          f"unfolded={refs.get('unfolded')}")
+    print(f"reference source: {refs['source']}  basins={refs['points']}")
 
 
 if __name__ == "__main__":
